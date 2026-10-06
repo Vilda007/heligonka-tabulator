@@ -97,7 +97,7 @@ async function newSong() {
 async function saveSong() {
     const user = getUser();
     if (!roleCanEdit(user)) { alert('Ukládat mohou jen editoři. Napiš adminovi, ať ti dá roli Editor.'); return; }
-    const title = EDITING ? EDITING.title : (($('song-title') && $('song-title').value.trim()) || prompt('Název písně:') || 'Bez názvu');
+    const title = ($('song-title') && $('song-title').value.trim()) || EDITING.title || 'Bez názvu';
     const payload = { title, key: $('key') ? $('key').value : EDITING.the_key, data: $('input') ? $('input').value : EDITING.data };
     let r;
     if (EDITING) { payload.id = EDITING.id; r = await api('update', { method: 'POST', body: payload }); }

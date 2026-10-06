@@ -413,6 +413,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     const isAnon = !getUser();
     EDITING = isAnon ? null : s;
     OPENED_TITLE = s.title || '';
+    /* editační pole názvu — přihlášeným (titul se pak používá při ukládání) */
+    const tw = $('title-edit-wrap');
+    if (tw) {
+      tw.style.display = getUser() ? 'inline' : 'none';
+      if ($('song-title')) $('song-title').value = s.title || '';
+    }
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
     $('save-status').textContent = isAnon ? '' : ('Editace: ' + s.title + ' (v' + s.version + ')');
