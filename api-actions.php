@@ -83,7 +83,7 @@ function api_logout() {
 }
 function api_me($U) {
     if (!$U) err('unauthenticated');
-    echo '{"status":"ok","user":' . jt_json(array('username' => $U['username'], 'role' => $U['role'], 'approved' => (bool)(int)$U['approved'], 'layout' => $U['layout'])) . '}';
+    echo '{"status":"ok","user":' . jt_json(array('username' => $U['username'], 'role' => $U['role'], 'approved' => (bool)(int)$U['approved'], 'layout' => $U['layout'], 'bio' => $U['bio'], 'ui_lang' => ht_norm_ui_lang($U['ui_lang']), 'def_lang' => ht_norm_lang($U['def_lang']))) . '}';
 }
 
 /* Můj nástroj: uložení layoutu (počet řad, knoflíků, ladění) — "2;12;F" formát */
@@ -93,6 +93,46 @@ function api_save_layout($U) {
     $layout = substr(strval(g($d, 'layout', '')), 0, 50);
     if (!preg_match('/^[0-9]{1,2};[0-9]{1,2};(F|C|G|A|D|Bb)$/', $layout)) err('invalid_input');
     mysql_query("UPDATE `" . HT_PREFIX . "users` SET layout = '" . dbq($layout) . "' WHERE id = " . (int)$U['id'], $GLOBALS['conn']);
+    echo '{"status":"ok"}';
+}
+
+/* Můj účet: změna hesla (staré + nové) */
+function api_change_password($U) {
+    if (!$U) err('unauthenticated');
+    $d = body_json();
+    $old = g($d, 'old');
+    $new = g($d, 'new');
+    if (!ht_valid_password($new)) err('invalid_input');
+    $q = mysql_query("SELECT pass_hash FROM `" . HT_PREFIX . "users` WHERE id = " . (int)$U['id'], $GLOBALS['conn']);
+    $r = mysql_fetch_assoc($q);
+    if (!$r || !password_verify_compat($old, $r['pass_hash'])) err('bad_credentials');
+    $hash = password_hash_compat($new);
+    mysql_query("UPDATE `" . HT_PREFIX . "users` SET pass_hash = '" . dbq($hash) . "' WHERE id = " . (int)$U['id'], $GLOBALS['conn']);
+    echo '{"status":"ok"}';
+}
+
+/* Můj účet: uložení profilu — bio, jazyk UI, výchozí jazyk písní */
+function api_save_profile($U) {
+    if (!$U) err('unauthenticated');
+    $d = body_json();
+    $bio = ht_clean_bio(g($d, 'bio', ''));
+    $ui_lang = ht_norm_ui_lang(g($d, 'ui_lang', 'CZ'));
+    $def_lang = ht_norm_lang(g($d, 'def_lang', 'CZ'));
+    mysql_query("UPDATE `" . HT_PREFIX . "users` SET bio = '" . dbq($bio) . "', ui_lang = '" . dbq($ui_lang) . "', def_lang = '" . dbq($def_lang) . "' WHERE id = " . (int)$U['id'], $GLOBALS['conn']);
+    echo '{"status":"ok"}';
+}
+
+/* Můj účet: smazání účtu (dvojité potvrzení na klientu) — písně zůstávají (autor se vynuluje) */
+function api_delete_account($U) {
+    if (!$U) err('unauthenticated');
+    $d = body_json();
+    if (g($d, 'confirm') !== 'DELETE') err('invalid_input');
+    $uid = (int)$U['id'];
+    /* písně zůstávají — jen se odpojí autor */
+    mysql_query("UPDATE `" . HT_PREFIX . "songs` SET author_id = 0 WHERE author_id = $uid", $GLOBALS['conn']);
+    mysql_query("DELETE FROM `" . HT_PREFIX . "ratings` WHERE user_id = $uid", $GLOBALS['conn']);
+    mysql_query("DELETE FROM `" . HT_PREFIX . "sessions` WHERE user_id = $uid", $GLOBALS['conn']);
+    mysql_query("DELETE FROM `" . HT_PREFIX . "users` WHERE id = $uid", $GLOBALS['conn']);
     echo '{"status":"ok"}';
 }
 

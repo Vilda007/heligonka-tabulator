@@ -35,12 +35,13 @@ function setLayout(l) { localStorage.setItem('ht_layout', JSON.stringify(l)); }
 
 /* ---------- horní menu ---------- */
 const MENU = [
-    { href: 'index.html',    id: 'menu-tab',  label: '🎹 Tabulátor' },
-    { href: 'knihovna.html', id: 'menu-lib',  label: '📚 Knihovna' },
-    { href: 'uzivatele.html', id: 'menu-usr',  label: '👥 Uživatelé', admin: true },
-    { href: 'akordy.html',   id: 'menu-ak',   label: '🎼 Akordy' },
-    { href: 'predloha.html', id: 'menu-print', label: '🖨️ Předloha' },
-    { href: 'napoveda.html', id: 'menu-help', label: '❓ Nápověda' }
+    { href: 'index.html',    id: 'menu-tab',  label: '🎹 Tabulátor', i18n: 'menu.tab' },
+    { href: 'knihovna.html', id: 'menu-lib',  label: '📚 Knihovna', i18n: 'menu.lib' },
+    { href: 'uzivatele.html', id: 'menu-usr',  label: '👥 Uživatelé', i18n: 'menu.usr', admin: true },
+    { href: 'ucet.html',     id: 'menu-acc',  label: '👤 Můj účet', i18n: 'menu.acc', auth: true },
+    { href: 'akordy.html',   id: 'menu-ak',   label: '🎼 Akordy', i18n: 'menu.ak' },
+    { href: 'predloha.html', id: 'menu-print', label: '🖨️ Předloha', i18n: 'menu.pred' },
+    { href: 'napoveda.html', id: 'menu-help', label: '❓ Nápověda', i18n: 'menu.help' }
 ];
 function renderMenu() {
     const nav = document.getElementById('topmenu');
@@ -49,8 +50,10 @@ function renderMenu() {
     const cur = location.pathname.split('/').pop() || 'index.html';
     nav.innerHTML = MENU.map(m => {
         if (m.admin && (!user || user.role !== 'admin')) return '';
+        if (m.auth && !user) return '';
         const active = cur === m.href ? ' class="active"' : '';
-        return `<a href="${m.href}"${active} title="${m.label.replace(/^[^\w]+ /, '')}">${m.label}</a>`;
+        const label = (typeof t === 'function' && I18N[m.i18n]) ? t(m.i18n) : m.label;
+        return `<a href="${m.href}"${active}>${label}</a>`;
     }).join('') + '<span id="auth-mini" style="margin-left:auto;font-size:.85rem;"></span>';
     renderAuthMini();
 }
@@ -58,9 +61,11 @@ function renderAuthMini() {
     const el = document.getElementById('auth-mini');
     if (!el) return;
     const user = getUser();
+    const logoutLbl = (typeof t === 'function') ? t('menu.logout') : 'Odhlásit';
+    const loginLbl = (typeof t === 'function') ? t('menu.login') : 'Přihlásit / registrovat';
     el.innerHTML = user
-        ? `👤 <b>${esc(user.username)}</b> <span class="hint">(${esc(user.role)})</span> <button class="mini" onclick="doLogout()">Odhlásit</button>`
-        : `<a href="knihovna.html">Přihlásit / registrovat</a>`;
+        ? `👤 <b>${esc(user.username)}</b> <span class="hint">(${esc(user.role)})</span> <button class="mini" onclick="doLogout()">${logoutLbl}</button>`
+        : `<a href="knihovna.html">${loginLbl}</a>`;
 }
 
 /* ---------- přihlášení (formulář na knihovně i uživatelích) ---------- */
@@ -139,4 +144,7 @@ function wireSortPager(theadEl, containerEl, state, rerender) {
     });
 }
 
-window.addEventListener('DOMContentLoaded', renderMenu);
+window.addEventListener('DOMContentLoaded', () => {
+    renderMenu();
+    if (typeof applyI18n === 'function') applyI18n();
+});

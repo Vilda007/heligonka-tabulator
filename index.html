@@ -27,20 +27,20 @@
 <body>
 <header>
   <nav id="topmenu" class="topmenu"></nav>
-  <h1>🎹 Heligonka Tabulator</h1>
-  <p class="lead">Zadej melodii, vyber tóninu — aplikace transponuje a vykreslí tabulaturu. Import z MIDI/XLS/textu, export, tisk.</p>
+  <h1 data-i18n="tab.title">🎹 Heligonka Tabulator</h1>
+  <p class="lead" data-i18n="tab.lead">Zadej melodii, vyber tóninu — aplikace transponuje a vykreslí tabulaturu. Import z MIDI/XLS/textu, export, tisk.</p>
 </header>
 
 <main>
 <section id="editor">
-  <h2>1. Melodie</h2>
+  <h2 data-i18n="tab.melody">1. Melodie</h2>
   <div class="controls">
     <span id="title-edit-wrap" style="display:none">
       <label>Název:
         <input type="text" id="song-title" placeholder="Název písně" size="16" style="padding:.25em" title="Název písně — použije se při ukládání">
       </label>
     </span>
-    <label>Tónina:
+    <label><span data-i18n="tab.key">Tónina:</span>
       <select id="key" title="Tónina heligonky — změna přetransponuje celou tabulaturu (čísla tlačítek i basy)">
         <option value="F" selected>F dur (klasika C/F)</option>
         <option value="C">C dur</option>
@@ -50,7 +50,7 @@
         <option value="Bb">B dur</option>
       </select>
     </label>
-    <label>Jazyk:
+    <label><span data-i18n="tab.lang">Jazyk:</span>
       <select id="song-lang" title="Jazyk písně — vlaječka země, v jejímž jazyce se zpívá">
         <option value="CZ" selected>🇨🇿 CZ</option>
         <option value="SK">🇸🇰 SK</option>
@@ -71,7 +71,7 @@
       </select>
     </label>
     <span id="lang-flag-box" class="hint"></span>
-    <label>Import: <input type="file" id="file" accept=".txt,.abc,.mid,.midi,.xls,.xlsx,text/plain,audio/midi,application/vnd.ms-excel" title="Nahraj soubor: .txt/.abc (textový zápis), .mid/.midi (automatické rozpoznání not) nebo .xls/.xlsx (notovací tabulka — německá notace, Tlak/Tah, basy)"></label>
+    <label><span data-i18n="tab.import">Import:</span> <input type="file" id="file" accept=".txt,.abc,.mid,.midi,.xls,.xlsx,text/plain,audio/midi,application/vnd.ms-excel" title="Nahraj soubor: .txt/.abc (textový zápis), .mid/.midi (automatické rozpoznání not) nebo .xls/.xlsx (notovací tabulka — německá notace, Tlak/Tah, basy)"></label>
   </div>
   <div id="keyinfo" class="hint">F dur (klasika, 2řadá C/F — hraje se v F)</div>
   <details id="tool-layout" class="hint" style="margin:.3rem 0">
@@ -113,9 +113,9 @@
     Basy se doplní automaticky dle tóniny, pokud je nezadáš.
   </div>
   <div class="controls">
-    <button id="render" title="Vykreslí tabulaturu z aktuálního textu">Vygenerovat tabulaturu</button>
-    <button id="save-song" title="Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)">💾 Uložit do knihovny</button>
-    <button id="export-xls" title="Export písně do .xls (notovací tabulka — německá notace, Tlak/Tah, basy)">📊 Export XLS</button>
+    <button id="render" title="Vykreslí tabulaturu z aktuálního textu" data-i18n="tab.render">Vygenerovat tabulaturu</button>
+    <button id="save-song" title="Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)" data-i18n="tab.save">💾 Uložit do knihovny</button>
+    <button id="export-xls" title="Export písně do .xls (notovací tabulka — německá notace, Tlak/Tah, basy)" data-i18n="tab.xls">📊 Export XLS</button>
     <button id="export-midi" title="Export písně do .mid (melodie + basy, 120 BPM)">🎵 Export MIDI</button>
     <button id="toggle-alts" title="Zobrazí pod každou notu alternativní knoflíky se stejným tónem (jiná řada/pozice) — orientační">🔀 Alternativy</button>
     <button id="toggle-osnova" title="Vykreslí melodii v notové osnově (VexFlow) pod tabulaturou">🎼 Osnova</button>
@@ -125,7 +125,7 @@
 </section>
 
 <section id="output-section">
-  <h2>2. Tabulatura</h2>
+  <h2 data-i18n="tab.output">2. Tabulatura</h2>
   <div id="output" class="sheet"></div>
   <div id="osnova-output" style="display:none" class="sheet"></div>
   <div id="print-footer" class="print-footer screen-hidden">🦞 Klepeto & Heligonka - https://klepeto.kuzelovi.cz/heligonka/</div>
@@ -138,6 +138,7 @@
 
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a> · chyby hlaste jako <a href="https://github.com/Vilda007/heligonka-tabulator/issues">issue</a>.</footer>
 <script src="shared.js"></script>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 <script src="midi.js"></script>
 <script src="xls.js"></script>

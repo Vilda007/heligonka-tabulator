@@ -52,11 +52,17 @@ function ensure_tables() {
         role VARCHAR(20) NOT NULL DEFAULT 'reader',
         approved INT NOT NULL DEFAULT 0,
         layout VARCHAR(50) NOT NULL DEFAULT '',
+        bio TEXT,
+        ui_lang VARCHAR(5) NOT NULL DEFAULT 'CZ',
+        def_lang VARCHAR(5) NOT NULL DEFAULT 'CZ',
         created_at VARCHAR(30)
     ) TYPE=MyISAM");
 
-    /* Můj nástroj: přidej sloupec, pokud chybí (staré instalace) */
+    /* Můj účet: přidej sloupce, pokud chybí (staré instalace) */
     mysql_query("ALTER TABLE `" . HT_PREFIX . "users` ADD layout VARCHAR(50) NOT NULL DEFAULT ''", $GLOBALS['conn']);
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "users` ADD bio TEXT", $GLOBALS['conn']);
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "users` ADD ui_lang VARCHAR(5) NOT NULL DEFAULT 'CZ'", $GLOBALS['conn']);
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "users` ADD def_lang VARCHAR(5) NOT NULL DEFAULT 'CZ'", $GLOBALS['conn']);
 
     mysql_query("CREATE TABLE IF NOT EXISTS `" . HT_PREFIX . "sessions` (
         sid VARCHAR(64) PRIMARY KEY,
@@ -235,6 +241,18 @@ function ht_norm_lang($l) {
     $valid = array('CZ','SK','UA','PL','GE','HU','RO','SI','EN','FR','SP','PT','NO','SE','FI','IT');
     $l = strtoupper(trim(strval($l)));
     return in_array($l, $valid, true) ? $l : 'CZ';
+}
+/* Jazyk UI: jen CZ/EN */
+function ht_norm_ui_lang($l) {
+    $l = strtoupper(trim(strval($l)));
+    return ($l === 'EN') ? 'EN' : 'CZ';
+}
+/* Bio: bezpečné uložení — žádné HTML/tagy (anti-injection), max 500 znaků */
+function ht_clean_bio($b) {
+    $b = strip_tags(strval($b));
+    $b = str_replace(array('<', '>', '"', "'", chr(0)), '', $b);
+    $b = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $b);
+    return trim(substr($b, 0, 500));
 }
 /* data (píseň): text, sane size limit 200 KB */
 function ht_valid_data($data) {

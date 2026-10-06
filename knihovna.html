@@ -25,16 +25,16 @@
 <body>
 <header>
   <nav id="topmenu" class="topmenu"></nav>
-  <h1>📚 Knihovna písní</h1>
+  <h1 data-i18n="lib.title">📚 Knihovna písní</h1>
   <p class="lead">Všechny písně všech uživatelů. Klikni na název pro otevření v tabulátoru, seřaď kliknutím na záhlaví.</p>
 </header>
 <main>
 <section>
   <div id="auth-box"></div>
-  <input id="lib-search" title="Hledá ve všech písních (název / autor / tónina)" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
-  <label style="display:inline-flex;align-items:center;gap:.4rem;margin:.3rem 0;">Jazyk:
+  <input id="lib-search" data-i18n-placeholder="lib.search" title="Hledá ve všech písních (název / autor / tónina)" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
+  <label style="display:inline-flex;align-items:center;gap:.4rem;margin:.3rem 0;"><span data-i18n="lib.langf">Jazyk:</span>
     <select id="lib-lang-filter" title="Filtr písní podle jazyka">
-      <option value="">Všechny</option>
+      <option value="" data-i18n="lib.all">Všechny</option>
       <option value="CZ">🇨🇿 CZ</option>
       <option value="SK">🇸🇰 SK</option>
       <option value="UA">🇺🇦 UA</option>
@@ -60,13 +60,14 @@
   </table>
   <div id="lib-pager"></div>
   <div class="controls" style="margin-top:.6rem;">
-    <button id="new-song" title="Založí novou píseň (dotaz na název) a otevře ji v Tabulátoru">➕ Nová píseň</button>
+    <button id="new-song" title="Založí novou píseň (dotaz na název) a otevře ji v Tabulátoru" data-i18n="lib.new">➕ Nová píseň</button>
   </div>
   <div class="hint">Hodnocení: klikni na hvězdičky v detailu písně (přihlášení uživatelé). Kopírování k sobě (📄) může editor.</div>
 </section>
 </main>
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
 <script src="shared.js"></script>
+<script src="i18n.js"></script>
 <script src="library.js"></script>
 </body>
 </html>

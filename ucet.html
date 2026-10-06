@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Můj účet — Heligonka Tabulator</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Nastavení účtu aplikace Heligonka Tabulator — heslo, nástroj, jazyky, bio, smazání účtu.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#7a4a1d">
+<link rel="stylesheet" href="style.css?v=2026100614">
+</head>
+<body>
+<header>
+  <nav id="topmenu" class="topmenu"></nav>
+  <h1 data-i18n="acc.title">👤 Můj účet</h1>
+  <p class="lead" data-i18n="acc.lead">Nastavení tvého účtu: heslo, nástroj, jazyky, bio.</p>
+</header>
+<main>
+<section>
+  <h3 data-i18n="acc.pass">Změna hesla</h3>
+  <div class="controls">
+    <label><span data-i18n="acc.oldpass">Staré heslo:</span> <input type="password" id="old-pass" size="12"></label>
+    <label><span data-i18n="acc.newpass">Nové heslo:</span> <input type="password" id="new-pass" size="12"></label>
+    <button id="chg-pass" data-i18n="acc.chgpass">Změnit heslo</button>
+    <span id="pass-status" class="hint"></span>
+  </div>
+</section>
+
+<section>
+  <h3 data-i18n="acc.tool">🎻 Můj nástroj</h3>
+  <div class="controls">
+    <label><span data-i18n="acc.rows">Řady:</span> <input type="number" id="layout-rows" min="1" max="3" value="2" style="width:3.5em"></label>
+    <label><span data-i18n="acc.buttons">Knoflíků na řadu:</span> <input type="number" id="layout-buttons" min="5" max="20" value="11" style="width:3.5em"></label>
+    <label><span data-i18n="acc.tuning">Ladění:</span>
+      <select id="layout-key">
+        <option value="F">F (klasika C/F)</option>
+        <option value="C">C</option>
+        <option value="G">G</option>
+        <option value="A">A</option>
+        <option value="D">D</option>
+        <option value="Bb">B</option>
+      </select>
+    </label>
+    <button id="save-layout" data-i18n="acc.save">💾 Uložit nástroj</button>
+    <span id="layout-status" class="hint"></span>
+  </div>
+</section>
+
+<section>
+  <h3 data-i18n="acc.deflang">Výchozí jazyk nových písní:</h3>
+  <div class="controls">
+    <select id="def-lang">
+      <option value="CZ">🇨🇿 CZ</option>
+      <option value="SK">🇸🇰 SK</option>
+      <option value="UA">🇺🇦 UA</option>
+      <option value="PL">🇵🇱 PL</option>
+      <option value="GE">🇩🇪 GE</option>
+      <option value="HU">🇭🇺 HU</option>
+      <option value="RO">🇷🇴 RO</option>
+      <option value="SI">🇸🇮 SI</option>
+      <option value="EN">🇬🇧 EN</option>
+      <option value="FR">🇫🇷 FR</option>
+      <option value="SP">🇪🇸 SP</option>
+      <option value="PT">🇵🇹 PT</option>
+      <option value="NO">🇳🇴 NO</option>
+      <option value="SE">🇸🇪 SE</option>
+      <option value="FI">🇫🇮 FI</option>
+      <option value="IT">🇮🇹 IT</option>
+    </select>
+    <span id="deflang-flag-box" class="hint"></span>
+  </div>
+  <h3 data-i18n="acc.uilang">Jazyk rozhraní:</h3>
+  <div class="controls">
+    <select id="ui-lang">
+      <option value="CZ">Čeština</option>
+      <option value="EN">English</option>
+    </select>
+    <button id="save-profile" data-i18n="acc.saveprof">💾 Uložit profil</button>
+    <span id="profile-status" class="hint"></span>
+  </div>
+</section>
+
+<section>
+  <h3 data-i18n="acc.bio">Bio:</h3>
+  <textarea id="bio" rows="4" cols="60" maxlength="500" data-i18n-title="acc.biohint" title="Krátký text o tobě (max 500 znaků, bez HTML)."></textarea>
+  <p class="hint" data-i18n="acc.biohint">Krátký text o tobě (max 500 znaků, bez HTML).</p>
+</section>
+
+<section>
+  <h3 data-i18n="acc.delete">🗑️ Smazat účet</h3>
+  <p class="hint" data-i18n="acc.delhint">Smazání účtu je nevratné. Tvoje písně zůstávají v knihovně (bez autora).</p>
+  <button id="del-account" data-i18n="acc.delbtn" style="background:#a33;color:#fff">Smazat účet</button>
+</section>
+</main>
+
+<footer>Heligonka Tabulator — <a href="index.html">Zpět do aplikace</a></footer>
+<script src="shared.js"></script>
+<script src="i18n.js"></script>
+<script>
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+async function loadProfile() {
+    const user = getUser();
+    if (!user) {
+        document.querySelector('main').innerHTML = '<p class="hint">' + esc(t('acc.lead')) + ' <a href="knihovna.html">' + esc(t('menu.login')) + '</a></p>';
+        return;
+    }
+    const r = await api('me');
+    if (r.status !== 'ok') return;
+    const me = r.user;
+    /* layout: "2;11;F" */
+    if (me.layout) {
+        const parts = me.layout.split(';');
+        if ($('layout-rows')) $('layout-rows').value = parts[0] || 2;
+        if ($('layout-buttons')) $('layout-buttons').value = parts[1] || 11;
+        if ($('layout-key')) $('layout-key').value = parts[2] || 'F';
+    }
+    if ($('ui-lang')) $('ui-lang').value = me.ui_lang || 'CZ';
+    if ($('def-lang')) $('def-lang').value = me.def_lang || 'CZ';
+    if ($('deflang-flag-box') && typeof flagImg === 'function') $('deflang-flag-box').innerHTML = flagImg(me.def_lang || 'CZ');
+    if ($('bio')) $('bio').value = me.bio || '';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    applyI18n();
+    loadProfile();
+
+    $('chg-pass').addEventListener('click', async () => {
+        const r = await api('change_password', { method: 'POST', body: { old: $('old-pass').value, new: $('new-pass').value } });
+        $('pass-status').textContent = r.status === 'ok' ? t('acc.pass') + ' ✓' : 'Chyba: ' + (r.code || '?');
+        if (r.status === 'ok') { $('old-pass').value = ''; $('new-pass').value = ''; }
+    });
+
+    $('save-layout').addEventListener('click', async () => {
+        const l = { rows: +$('layout-rows').value || 2, buttons: +$('layout-buttons').value || 11, key: $('layout-key').value || 'F' };
+        setLayout(l);
+        const fmt = l.rows + ';' + l.buttons + ';' + l.key;
+        const r = await api('save_layout', { method: 'POST', body: { layout: fmt } });
+        $('layout-status').textContent = r.status === 'ok' ? '✓' : 'Chyba: ' + (r.code || '?');
+    });
+
+    $('save-profile').addEventListener('click', async () => {
+        const body = { bio: $('bio').value, ui_lang: $('ui-lang').value, def_lang: $('def-lang').value };
+        const r = await api('save_profile', { method: 'POST', body });
+        if (r.status === 'ok') {
+            setUiLang($('ui-lang').value);
+            /* aktualizuj user v localStorage (ui_lang pro menu) */
+            const user = getUser();
+            if (user) { user.ui_lang = $('ui-lang').value; user.def_lang = $('def-lang').value; localStorage.setItem('ht_user', JSON.stringify(user)); }
+            $('profile-status').textContent = '✓';
+            if ($('deflang-flag-box') && typeof flagImg === 'function') $('deflang-flag-box').innerHTML = flagImg($('def-lang').value);
+            applyI18n(); /* překlábit UI hned */
+        } else {
+            $('profile-status').textContent = 'Chyba: ' + (r.code || '?');
+        }
+    });
+
+    $('del-account').addEventListener('click', async () => {
+        /* dvojité potvrzení */
+        if (!confirm(t('acc.del1'))) return;
+        if (!confirm(t('acc.del2'))) return;
+        const r = await api('delete_account', { method: 'POST', body: { confirm: 'DELETE' } });
+        if (r.status === 'ok') {
+            clearAuth();
+            location.href = 'index.html';
+        } else {
+            alert('Chyba: ' + (r.code || '?'));
+        }
+    });
+});
+</script>
+</body>
+</html>

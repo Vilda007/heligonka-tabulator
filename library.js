@@ -37,14 +37,14 @@ function renderLibrary() {
     const all = filteredSongs();
     const rows = sortPage(all, LIB_STATE);
     $('lib-thead').innerHTML = sortHeader([
-        { key: 'title', label: 'Název' },
-        { key: 'the_key', label: 'Tónina' },
-        { key: 'lang', label: 'Jazyk' },
-        { key: 'author', label: 'Autor' },
-        { key: 'rating_avg', label: 'Hodnocení' },
-        { key: 'completeness', label: 'Úplnost' },
-        { key: 'updated_at', label: 'Upraveno' },
-        { label: 'Akce' }
+        { key: 'title', label: t('lib.name') },
+        { key: 'the_key', label: t('lib.key') },
+        { key: 'lang', label: t('lib.lang') },
+        { key: 'author', label: t('lib.author') },
+        { key: 'rating_avg', label: t('lib.rating') },
+        { key: 'completeness', label: t('lib.compl') },
+        { key: 'updated_at', label: t('lib.updated') },
+        { label: t('lib.actions') }
     ], LIB_STATE);
     $('library-rows').innerHTML = rows.map(s => {
         const mine = user && s.author === user.username;
