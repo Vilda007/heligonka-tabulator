@@ -35,7 +35,10 @@ function api_register() {
         $ip = isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP']
             : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim(array_shift(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']))) : '');
         if (!$ip) $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'neznámá';
-        ht_notify_admin_new_user($u, substr($ip, 0, 64));
+        // SMTP direct (mail() na hostingu nefunguje); fallback i na staré ht_notify_admin_new_user
+        if (!ht_notify_admin_new_user_smtp($u, substr($ip, 0, 64))) {
+            ht_notify_admin_new_user($u, substr($ip, 0, 64));
+        }
     }
     echo '{"status":"ok","pending":' . ($appr ? 'false' : 'true') . ',"role":"' . $role . '"}';
 }
@@ -331,4 +334,65 @@ function ht_notify_admin_new_user($username, $ip) {
         "Reply-To: sprostaveverka@seznam.cz\r\n";
     // nečekáme na SMTP dlouho; @ — selhání nesmí rozbít registraci
     return @mail($to, $subject, $body, $headers, '-fsprostaveverka@seznam.cz');
+}
+
+/* ---------- SMTP direct send (hosting mail() nefunkční; mail.don.cz:25 STARTTLS) ---------- */
+
+function ht_smtp_cmd($sock, $cmd) {
+    fwrite($sock, $cmd . "\r\n");
+    $d = '';
+    while (($l = fgets($sock, 515)) !== false) {
+        $d .= $l;
+        if (strlen($l) < 4 || $l[3] === ' ') break;
+    }
+    return $d;
+}
+function ht_smtp_expect($sock, $code) {
+    $r = ht_smtp_cmd_read($sock);
+    return (strpos($r, $code) === 0);
+}
+function ht_smtp_cmd_read($sock) {
+    $d = '';
+    while (($l = fgets($sock, 515)) !== false) {
+        $d .= $l;
+        if (strlen($l) < 4 || $l[3] === ' ') break;
+    }
+    return $d;
+}
+
+function ht_smtp_send($to, $subject_utf8, $body) {
+    // Credentials čte se z lokálního souboru mimo webroot (chmod 600)
+    $credfile = dirname(__FILE__) . '/protected/.ht-mail-cred';
+    if (!is_readable($credfile)) return false;
+    $cred = parse_ini_file($credfile);
+    if (!$cred || empty($cred['user']) || empty($cred['pass'])) return false;
+    $user = $cred['user']; $pass = $cred['pass'];
+    $host = 'mail.don.cz'; $port = 25;
+    $subj = '=?UTF-8?B?' . base64_encode($subject_utf8) . '?=';
+    $hdrs = "From: Klepeto <$user>\r\nContent-Type: text/plain; charset=UTF-8\r\nReply-To: $user\r\n";
+    $sock = @fsockopen($host, $port, $errno, $errstr, 12);
+    if (!$sock) return false;
+    ht_smtp_expect($sock, '220');
+    ht_smtp_cmd($sock, 'EHLO heligonka.kuzelovi.cz');
+    ht_smtp_expect($sock, '250');
+    // AUTH LOGIN bez TLS (mx.don.cz dovoluje AUTH na plain spojení; creds jsou app-specific)
+    ht_smtp_cmd($sock, 'AUTH LOGIN');
+    ht_smtp_cmd($sock, base64_encode($user));
+    $r = ht_smtp_cmd($sock, base64_encode($pass));
+    if (strpos($r, '235') !== 0) { fclose($sock); return false; }
+    ht_smtp_cmd($sock, 'MAIL FROM:<' . $user . '>');
+    $rc = ht_smtp_cmd($sock, 'RCPT TO:<' . $to . '>');
+    if (strpos($rc, '250') !== 0 && strpos($rc, '251') !== 0) { fclose($sock); return false; }
+    ht_smtp_cmd($sock, 'DATA');
+    $msg = "Subject: $subj\r\n$hdrs\r\n" . $body . "\r\n.";
+    $r = ht_smtp_cmd($sock, $msg);
+    ht_smtp_cmd($sock, 'QUIT');
+    fclose($sock);
+    return strpos($r, '250') === 0;
+}
+/* Vilda cílový mail pro notifikace */
+define('HT_NOTIFY_TO', 'vilem@kuzelovi.cz');
+function ht_notify_admin_new_user_smtp($username, $ip) {
+    $body = "\nNová registrace v Heligonka Tabulator:\n\n  Uživatel:  " . $username . "\n  Čas:       " . date('j.n.Y H:i') . "\n  IP:        " . $ip . "\n\nSchválit: https://klepeto.kuzelovi.cz/heligonka/ (Admin panel)\n\n-- \nKlepeto (Heligonka Tabulator)";
+    return ht_smtp_send(HT_NOTIFY_TO, 'Heligonka: nová registrace — ' . $username, $body);
 }
