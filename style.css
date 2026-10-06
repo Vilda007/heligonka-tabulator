@@ -130,6 +130,10 @@ button:hover { filter: brightness(1.1); }
 }
 .m-push.m-end::after { right: calc(12% - 9px); border-left: 9px solid #222; }
 .m-pull.m-start::after { left: calc(12% - 9px); border-right: 9px solid #222; }
+/* patička tisků — na obrazovce skrytá, při tisku viditelná */
+.print-footer { text-align: center; font-size: .75rem; color: #999; margin-top: 1.2rem; }
+.print-footer.screen-hidden { display: none; }
+@media print { .print-footer.screen-hidden { display: block !important; } }
 /* v5 — horní menu, stránkování, knihovna/admin tabulky */
 .topmenu { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; border-bottom: 2px solid var(--line); padding: .3rem 0 .5rem; margin-bottom: .8rem; }
 .topmenu a { text-decoration: none; color: var(--accent); padding: .15em .6em; border-radius: 4px; font-size: .95rem; }

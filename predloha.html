@@ -10,7 +10,7 @@
 <meta name="description" content="Prázdná tisková předloha tabulatury pro heligonku — vytiskni si prázdné řádky (II./I./B/M/text) pro ruční zápis hmatů.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#7a4a1d">
-<link rel="stylesheet" href="style.css?v=2026100606">
+<link rel="stylesheet" href="style.css?v=2026100607">
 <style>
   .predloha-ctrl { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin: .6rem 0; }
   .predloha-ctrl label { font-size: .9rem; }
@@ -18,8 +18,7 @@
   .sheet-inner.predloha { min-width: 0; width: 210mm; min-height: 297mm; padding: 15mm 12mm; margin: 0 auto; background: #fffdf5; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
   @page { size: A4 portrait; margin: 0; }
   .predloha-title { text-align: center; font-size: 1.3rem; margin: 0 0 .6em; }
-  .predloha-head-fields { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; font-size: .95rem; }
-  .predloha-head-fields span { border-bottom: 1.5px solid #999; min-width: 9em; display: inline-block; padding: 0 .4em; }
+  .print-footer { text-align: center; font-size: .75rem; color: #999; margin-top: 1.2rem; }
   @media print {
     #editor-controls, header, footer, .topmenu, .predloha-ctrl, #print-note { display: none !important; }
     body { background: #fff; padding: 0; }
@@ -77,9 +76,8 @@ function buildPredloha() {
   const nm = (document.getElementById('song-name').value || '').trim();
   const ky = (document.getElementById('song-key').value || '').trim();
   const nmHtml = nm ? esc(nm) : '&nbsp;';
-  const kyHtml = ky ? esc(ky + ' dur') : '&nbsp;';
-  head.innerHTML = '<div class="predloha-title">' + nmHtml + '</div>' +
-    '<div class="predloha-head-fields"><span class="hf-name">' + nmHtml + '</span><span class="hf-key" style="min-width:5em">' + kyHtml + '</span></div>';
+  const kyHtml = ky ? ' <span style="font-weight:normal">(' + esc(ky + ' dur') + ')</span>' : '';
+  head.innerHTML = '<div class="predloha-title">' + (nm ? '<b>' + nmHtml + '</b>' + kyHtml : '&nbsp;') + '</div>';
   wrap.appendChild(head);
   for (let r = 0; r < rows; r++) {
     const sys = document.createElement('div'); sys.className = 'system';
@@ -96,6 +94,11 @@ function buildPredloha() {
     wrap.appendChild(sys);
   }
   out.appendChild(wrap);
+  /* patička tisku */
+  const foot = document.createElement('div');
+  foot.className = 'print-footer';
+  foot.textContent = '\u{1F99E} Klepeto & Heligonka - https://klepeto.kuzelovi.cz/heligonka/';
+  wrap.appendChild(foot);
 }
 window.addEventListener('DOMContentLoaded', buildPredloha);
 </script>
