@@ -183,6 +183,9 @@ footer a { color: var(--accent); }
 .controls label { font-size: .9rem; }
 .controls select, .controls input[type=file] { font-family: inherit; font-size: .9rem; padding: .25em; }
 .labs { display: grid; grid-template-rows: 2.4em 2.4em 2.4em 1.2em 1.6em; border-right: 2px solid var(--line); }
+/* režim Alternativ: 6 řádků (II/I/alt/B/M/text) — buňky i levý sloupec */
+.alts .cell { grid-template-rows: 2.4em 2.4em 1.2em 2.4em 1.2em 1.6em; }
+.alts .labs { grid-template-rows: 2.4em 2.4em 1.2em 2.4em 1.2em 1.6em; }
 
 /* v3 — knihovna + auth */
 #library table { width: 100%; border-collapse: collapse; font-size: .9rem; }
