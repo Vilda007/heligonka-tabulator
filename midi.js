@@ -2,7 +2,7 @@
    Používá @tonejs/midi (CDN unpkg) — parse MIDI v prohlížeči.
    Vstup: .mid soubor → hlavní melodický hlas + basy → textový formát → input pole. */
 
-const MIDI_CDN = 'https://unpkg.com/@tonejs/midi@2.0.28/build/Midi.min.js';
+const MIDI_CDN = 'https://unpkg.com/@tonejs/midi@2.0.28/build/Midi.js';
 
 function loadMidiLib(cb) {
     if (window.Midi) { cb(); return; }
