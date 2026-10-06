@@ -1,7 +1,7 @@
 /* Heligonka Tabulator — library.js: knihovna písní (řazení, stránkování, hodnocení, fork) */
 let SONGS = [];
 let EDITING = null;
-const LIB_STATE = { sortKey: 'title', sortDir: 1, page: 0, perPage: 10 };
+const LIB_STATE = { sortKey: 'title', sortDir: 1, page: 0, perPage: 20 };
 const LANG_FLAGS = { CZ:'🇨🇿', SK:'🇸🇰', UA:'🇺🇦', PL:'🇵🇱', GE:'🇩🇪', HU:'🇭🇺', RO:'🇷🇴', SI:'🇸🇮', EN:'🇬🇧', FR:'🇫🇷', SP:'🇪🇸', PT:'🇵🇹', NO:'🇳🇴', SE:'🇸🇪', FI:'🇫🇮', IT:'🇮🇹' };
 /* obrázková vlaječka (Twemoji SVG) — Windows nerozpoznává vlaječkové emoji v selectech */
 const LANG_TWEMOJI = { CZ:'1f1e8-1f1ff', SK:'1f1f8-1f1f0', UA:'1f1fa-1f1e6', PL:'1f1f5-1f1f1', GE:'1f1e9-1f1ea', HU:'1f1ed-1f1fa', RO:'1f1f7-1f1f4', SI:'1f1f8-1f1ee', EN:'1f1ec-1f1f7', FR:'1f1eb-1f1f7', SP:'1f1ea-1f1f8', PT:'1f1f5-1f1f9', NO:'1f1f3-1f1f4', SE:'1f1f8-1f1ea', FI:'1f1eb-1f1ee', IT:'1f1ee-1f1f9' };
