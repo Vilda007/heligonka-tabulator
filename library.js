@@ -2,7 +2,7 @@
 let SONGS = [];
 let EDITING = null;
 const LIB_STATE = { sortKey: 'title', sortDir: 1, page: 0, perPage: 10 };
-const LANG_FLAGS = { CZ:'🇨🇿', SK:'🇸🇰', UA:'🇺🇦', PL:'🇵🇱', GE:'🇩🇪', HU:'🇭🇺', RO:'🇷🇴', SI:'🇸🇮', EN:'🇬🇧', FR:'🇫🇷', SP:'🇪🇸', PT:'🇵🇹' };
+const LANG_FLAGS = { CZ:'🇨🇿', SK:'🇸🇰', UA:'🇺🇦', PL:'🇵🇱', GE:'🇩🇪', HU:'🇭🇺', RO:'🇷🇴', SI:'🇸🇮', EN:'🇬🇧', FR:'🇫🇷', SP:'🇪🇸', PT:'🇵🇹', NO:'🇳🇴', SE:'🇸🇪', FI:'🇫🇮', IT:'🇮🇹' };
 
 async function loadLibrary() {
     const r = await api('list');

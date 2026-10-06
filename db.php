@@ -232,7 +232,7 @@ function ht_norm_key($k) {
 }
 /* Jazyk písně: whitelist kódů, default CZ */
 function ht_norm_lang($l) {
-    $valid = array('CZ','SK','UA','PL','GE','HU','RO','SI','EN','FR','SP','PT');
+    $valid = array('CZ','SK','UA','PL','GE','HU','RO','SI','EN','FR','SP','PT','NO','SE','FI','IT');
     $l = strtoupper(trim(strval($l)));
     return in_array($l, $valid, true) ? $l : 'CZ';
 }
