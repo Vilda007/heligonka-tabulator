@@ -110,7 +110,7 @@ function author_name($id) {
 }
 function api_list() {
     ensure_tables();
-    $q = mysql_query("SELECT id, title, the_key, author_id, forked_from, published, completeness, created_at, updated_at, version
+    $q = mysql_query("SELECT id, title, the_key, author_id, forked_from, published, completeness, lang, created_at, updated_at, version
                       FROM `" . HT_PREFIX . "songs` ORDER BY updated_at DESC", $GLOBALS['conn']);
     $out = array();
     while ($r = mysql_fetch_assoc($q)) {
@@ -169,8 +169,9 @@ function api_create($U) {
     $title = ht_clean_title(g($d, 'title')); $data = g($d, 'data'); $key = ht_norm_key(g($d, 'key', 'F'));
     if (!$title || !ht_valid_data($data) || !ht_valid_key($key)) err('invalid_input');
     $comp = ht_completeness($data);
-    mysql_query("INSERT INTO `" . HT_PREFIX . "songs` (title, the_key, data, author_id, published, completeness, created_at, updated_at)
-                 VALUES ('" . dbq($title) . "', '" . dbq($key) . "', '" . dbq($data) . "', " . (int)$U['id'] . ", 1, '" . dbq($comp) . "', '" . now() . "', '" . now() . "')", $GLOBALS['conn']);
+    $lang = ht_norm_lang(g($d, 'lang', 'CZ'));
+    mysql_query("INSERT INTO `" . HT_PREFIX . "songs` (title, the_key, data, author_id, published, completeness, lang, created_at, updated_at)
+                 VALUES ('" . dbq($title) . "', '" . dbq($key) . "', '" . dbq($data) . "', " . (int)$U['id'] . ", 1, '" . dbq($comp) . "', '" . dbq($lang) . "', '" . now() . "', '" . now() . "')", $GLOBALS['conn']);
     $id = (int)mysql_insert_id($GLOBALS['conn']);
     echo '{"status":"ok","id":' . $id . '}';
 }
@@ -190,7 +191,7 @@ function api_update($U) {
     $nv = (int)$s['version'] + 1;
     $comp = ht_completeness($data);
     mysql_query("UPDATE `" . HT_PREFIX . "songs` SET title = '" . dbq($title) . "', the_key = '" . dbq($key) . "',
-                 data = '" . dbq($data) . "', completeness = '" . dbq($comp) . "', version = $nv, updated_at = '" . now() . "' WHERE id = $id", $GLOBALS['conn']);
+                 data = '" . dbq($data) . "', completeness = '" . dbq($comp) . "', lang = '" . dbq(ht_norm_lang(g($d, 'lang', $s['lang']))) . "', version = $nv, updated_at = '" . now() . "' WHERE id = $id", $GLOBALS['conn']);
     echo '{"status":"ok","version":' . $nv . '}';
 }
 function api_delete($U) {
@@ -214,9 +215,9 @@ function api_fork($U) {
     if (!$s) err('not_found');
     $nt = ht_clean_title($s['title']) . ' (kopie ' . $U['username'] . ')';
     $comp = ht_completeness($s['data']);
-    mysql_query("INSERT INTO `" . HT_PREFIX . "songs` (title, the_key, data, author_id, forked_from, published, completeness, created_at, updated_at)
+    mysql_query("INSERT INTO `" . HT_PREFIX . "songs` (title, the_key, data, author_id, forked_from, published, completeness, lang, created_at, updated_at)
                  VALUES ('" . dbq($nt) . "', '" . dbq($s['the_key']) . "', '" . dbq($s['data']) . "',
-                         " . (int)$U['id'] . ", $id, 1, '" . dbq($comp) . "', '" . now() . "', '" . now() . "')", $GLOBALS['conn']);
+                         " . (int)$U['id'] . ", $id, 1, '" . dbq($comp) . "', '" . dbq(ht_norm_lang($s['lang'])) . "', '" . now() . "', '" . now() . "')", $GLOBALS['conn']);
     echo '{"status":"ok","id":' . (int)mysql_insert_id($GLOBALS['conn']) . '}';
 }
 function api_versions() {

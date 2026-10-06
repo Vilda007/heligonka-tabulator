@@ -418,6 +418,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (tw) {
       tw.style.display = getUser() ? 'inline' : 'none';
       if ($('song-title')) $('song-title').value = s.title || '';
+      if ($('song-lang')) $('song-lang').value = s.lang || 'CZ';
     }
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }

@@ -74,9 +74,14 @@ function ensure_tables() {
         version INT NOT NULL DEFAULT 1,
         published INT NOT NULL DEFAULT 0,
         completeness VARCHAR(20) NOT NULL DEFAULT '',
+        lang VARCHAR(5) NOT NULL DEFAULT 'CZ',
         created_at VARCHAR(30),
         updated_at VARCHAR(30)
     ) TYPE=MyISAM");
+
+    /* Jazyk písně: přidej sloupec, pokud chybí (staré instalace); stávající = CZ */
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "songs` ADD lang VARCHAR(5) NOT NULL DEFAULT 'CZ'", $GLOBALS['conn']);
+    mysql_query("UPDATE `" . HT_PREFIX . "songs` SET lang = 'CZ' WHERE lang = ''", $GLOBALS['conn']);
 
     /* Úplnost: přidej sloupec, pokud chybí (staré instalace), a jednorázově dopočti pro všechny písně */
     mysql_query("ALTER TABLE `" . HT_PREFIX . "songs` ADD completeness VARCHAR(20) NOT NULL DEFAULT ''", $GLOBALS['conn']);
@@ -224,6 +229,12 @@ function ht_norm_key($k) {
     $k = strtoupper(strval($k));
     if ($k === 'BB') return 'Bb';
     return $k;
+}
+/* Jazyk písně: whitelist kódů, default CZ */
+function ht_norm_lang($l) {
+    $valid = array('CZ','SK','UA','PL','GE','HU','RO','SI','EN','FR','SP','PT');
+    $l = strtoupper(trim(strval($l)));
+    return in_array($l, $valid, true) ? $l : 'CZ';
 }
 /* data (píseň): text, sane size limit 200 KB */
 function ht_valid_data($data) {

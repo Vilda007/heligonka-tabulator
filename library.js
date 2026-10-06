@@ -2,6 +2,7 @@
 let SONGS = [];
 let EDITING = null;
 const LIB_STATE = { sortKey: 'title', sortDir: 1, page: 0, perPage: 10 };
+const LANG_FLAGS = { CZ:'🇨🇿', SK:'🇸🇰', UA:'🇺🇦', PL:'🇵🇱', GE:'🇩🇪', HU:'🇭🇺', RO:'🇷🇴', SI:'🇸🇮', EN:'🇬🇧', FR:'🇫🇷', SP:'🇪🇸', PT:'🇵🇹' };
 
 async function loadLibrary() {
     const r = await api('list');
@@ -17,8 +18,10 @@ function normSearch(s) {
 
 function filteredSongs() {
     const q = normSearch($('lib-search').value);
+    const langF = ($('lib-lang-filter') && $('lib-lang-filter').value) || '';
     return SONGS.filter(s =>
-        !q || normSearch(s.title).includes(q) || normSearch(s.author).includes(q) || normSearch(s.the_key).includes(q)
+        (!langF || (s.lang || 'CZ') === langF) &&
+        (!q || normSearch(s.title).includes(q) || normSearch(s.author).includes(q) || normSearch(s.the_key).includes(q))
     );
 }
 
@@ -29,6 +32,7 @@ function renderLibrary() {
     $('lib-thead').innerHTML = sortHeader([
         { key: 'title', label: 'Název' },
         { key: 'the_key', label: 'Tónina' },
+        { key: 'lang', label: 'Jazyk' },
         { key: 'author', label: 'Autor' },
         { key: 'rating_avg', label: 'Hodnocení' },
         { key: 'completeness', label: 'Úplnost' },
@@ -42,6 +46,7 @@ function renderLibrary() {
         return `<tr data-id="${s.id}">
             <td><a href="#" onclick="openSong(${s.id});return false;"><b>${esc(s.title)}</b></a></td>
             <td>${esc(s.the_key)}</td>
+            <td>${LANG_FLAGS[s.lang || 'CZ'] || ''} ${esc(s.lang || 'CZ')}</td>
             <td>${esc(s.author || '')}</td>
             <td>${stars} <small>(${s.rating_count})</small></td>
             <td class="hint" title="II. = druhá řada, I. = první řada, B = basy, M = směr měchu, T = text">${esc(s.completeness || '—')}</td>
@@ -98,7 +103,7 @@ async function saveSong() {
     const user = getUser();
     if (!roleCanEdit(user)) { alert('Ukládat mohou jen editoři. Napiš adminovi, ať ti dá roli Editor.'); return; }
     const title = ($('song-title') && $('song-title').value.trim()) || EDITING.title || 'Bez názvu';
-    const payload = { title, key: $('key') ? $('key').value : EDITING.the_key, data: $('input') ? $('input').value : EDITING.data };
+    const payload = { title, key: $('key') ? $('key').value : EDITING.the_key, data: $('input') ? $('input').value : EDITING.data, lang: ($('song-lang') && $('song-lang').value) || EDITING.lang || 'CZ' };
     let r;
     if (EDITING) { payload.id = EDITING.id; r = await api('update', { method: 'POST', body: payload }); }
     else { r = await api('create', { method: 'POST', body: payload }); }
@@ -141,6 +146,8 @@ window.addEventListener('DOMContentLoaded', () => {
     renderAuth();
     loadLibrary();
     $('lib-search').addEventListener('input', () => { LIB_STATE.page = 0; renderLibrary(); });
+    const lf = $('lib-lang-filter');
+    if (lf) lf.addEventListener('change', () => { LIB_STATE.page = 0; renderLibrary(); });
     wireSortPager($('lib-thead'), $('lib-pager'), LIB_STATE, renderLibrary);
     /* nepřihlášení: žádné akční tlačítka (jen prohlížení) */
     const nw = $('new-song');
