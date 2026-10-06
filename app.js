@@ -345,26 +345,27 @@ window.addEventListener('DOMContentLoaded', async () => {
     const r = await api('get&id=' + id);
     if (r.status !== 'ok') { $('save-status').textContent = 'Píseň nelze načíst: ' + (r.code || '?'); return; }
     const s = r.song;
-    EDITING = s;
+    const isAnon = !getUser();
+    EDITING = isAnon ? null : s;
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
-    $('save-status').textContent = 'Editace: ' + s.title + ' (v' + s.version + ')';
-    if (typeof updateShareLinks === 'function') updateShareLinks(s);
+    $('save-status').textContent = isAnon ? '' : ('Editace: ' + s.title + ' (v' + s.version + ')');
+    if (!isAnon && typeof updateShareLinks === 'function') updateShareLinks(s);
 });
 /* export XLS + uložení (index) */
 window.addEventListener('DOMContentLoaded', () => {
     const ex = $('export-xls');
-    if (ex) ex.addEventListener('click', () => {
+    if (ex) { ex.addEventListener('click', () => {
         const song = parseSong($('input').value);
         const title = EDITING ? EDITING.title : (song.title !== 'Bez názvu' ? song.title : prompt('Název písně pro export:') || 'pisen');
         exportSongToXls(title, $('key').value, $('input').value);
-    });
+    }); if (!getUser()) ex.style.display = 'none'; }
     const em = $('export-midi');
-    if (em) em.addEventListener('click', () => {
+    if (em) { em.addEventListener('click', () => {
         const song = parseSong($('input').value);
         const title = EDITING ? EDITING.title : (song.title !== 'Bez názvu' ? song.title : prompt('Název písně pro export:') || 'pisen');
         exportSongToMidi(title, $('key').value, $('input').value);
-    });
+    }); if (!getUser()) em.style.display = 'none'; }
     const sv = $('save-song');
     if (sv) { sv.addEventListener('click', saveSong); if (!getUser()) sv.style.display = 'none'; }
     const nw = $('new-song');
