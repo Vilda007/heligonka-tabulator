@@ -190,6 +190,19 @@ function renderBeats(song){
   /* předpočítat skupiny směru měchu: dlouhá šipka přes noty stejného směru (vzor) */
   const flatNotes = [];
   song.beats.forEach(b => b.forEach(n => flatNotes.push(n)));
+  /* auto-odvození směru měchu z basu, pokud nota nemá explicitní dir:
+     velké basy (F, C, B…) = Tlak (push), malé (f, c, b…) = Tah (pull) */
+  let autoDir = null;
+  flatNotes.forEach(n => {
+    if (n.dir) { autoDir = n.dir; return; }
+    if (n.bas && n.bas !== '~' && n.bas !== '-') {
+      const isUpper = n.bas === n.bas.toUpperCase();
+      autoDir = isUpper ? 'push' : 'pull';
+    } else if (n.hold && n.bas && n.bas !== '~') {
+      autoDir = n.bas === n.bas.toUpperCase() ? 'push' : 'pull';
+    }
+    if (autoDir) n.dir = autoDir;
+  });
   let gi = -1, lastDir = null;
   flatNotes.forEach((n, i) => {
     const d = n.slide ? null : n.dir;
