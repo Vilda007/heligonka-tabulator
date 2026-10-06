@@ -237,9 +237,14 @@ function currentSongAndKey(){
   const selKey = $('key').value;
   let song = parseSong($('input').value);
   if (song.abc){
-    const beats = abcToBeats(song.abc, song.key.length===1 ? 'C' : song.key);
-    song.beats = beats;
-    song.key = 'C';
+    /* ABC → stupně → reálné knoflíky (KEYMAPS) — dříve značka ABSD, kterou renderer ignoroval */
+    const beats = abcToBeats(song.abc, song.key);
+    song.beats = beats.map(beat => beat.map(n => {
+      if (n.row !== 'ABSD') return n;
+      let deg = n.deg + (n.oct > 0 ? 7 : 0);
+      const btn = degreeToButton(song.key, deg);
+      return { row: btn.r, num: btn.n, bas: '', tie: n.tie, hold: false, glide: '', slide: null };
+    }));
   }
   // transpozice
   if (song.key !== selKey){
