@@ -47,8 +47,8 @@ function renderLibrary() {
             <td class="hint" title="II. = druhá řada, I. = první řada, B = basy, M = směr měchu, T = text">${esc(s.completeness || '—')}</td>
             <td class="hint">${esc(s.updated_at || '')}</td>
             <td class="actions">
-                ${canEdit ? `<button class="mini" onclick="editSong(${s.id})" title="Upravit">✏️</button>
-                <button class="mini" onclick="deleteSong(${s.id})" title="Smazat">🗑️</button>` : ''}
+                ${user ? (canEdit ? `<button class="mini" onclick="editSong(${s.id})" title="Upravit">✏️</button>
+                <button class="mini" onclick="deleteSong(${s.id})" title="Smazat">🗑️</button>` : '') : ''}
                 ${(!mine && roleCanEdit(user)) ? `<button class="mini" title="Kopírovat k sobě" onclick="forkSong(${s.id})">📄</button>` : ''}
             </td>
         </tr>`;
@@ -141,8 +141,9 @@ window.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     $('lib-search').addEventListener('input', () => { LIB_STATE.page = 0; renderLibrary(); });
     wireSortPager($('lib-thead'), $('lib-pager'), LIB_STATE, renderLibrary);
+    /* nepřihlášení: žádné akční tlačítka (jen prohlížení) */
     const nw = $('new-song');
-    if (nw) nw.addEventListener('click', newSong);
+    if (nw) { nw.addEventListener('click', newSong); if (!getUser()) nw.style.display = 'none'; }
     $('library-rows').addEventListener('click', (e) => {
         if (e.target.classList.contains('star')) {
             const tr = e.target.closest('tr');

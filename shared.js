@@ -76,7 +76,7 @@ async function doRegister() {
     $('login-msg').textContent = r.pending ? 'Zaregistrováno — čeká na schválení admina.' : 'Zaregistrováno a přihlášeno (admin).';
     if (r.role === 'admin') { await doLogin(); }
 }
-function doLogout() { api('logout', { method: 'POST' }); clearAuth(); renderMenu(); if (typeof afterAuthChange === 'function') afterAuthChange(); }
+function doLogout() { api('logout', { method: 'POST' }); clearAuth(); renderMenu(); location.reload(); }
 
 /* ---------- obecné stránkování + řazení ----------
    state: { sortKey, sortDir: 1|-1, page: 0, perPage } */

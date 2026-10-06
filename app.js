@@ -366,7 +366,7 @@ window.addEventListener('DOMContentLoaded', () => {
         exportSongToMidi(title, $('key').value, $('input').value);
     });
     const sv = $('save-song');
-    if (sv) sv.addEventListener('click', saveSong);
+    if (sv) { sv.addEventListener('click', saveSong); if (!getUser()) sv.style.display = 'none'; }
     const nw = $('new-song');
     if (nw) nw.addEventListener('click', () => { EDITING = null; $('input').value = ''; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; });
 });
