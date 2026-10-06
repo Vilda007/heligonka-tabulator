@@ -74,16 +74,32 @@ function renderOsnova() {
                 stave.addClef('treble').addTimeSignature('4/4');
                 stave.setContext(context).draw();
                 const batch = notes.slice(r * perRow, (r + 1) * perRow);
-                const vfNotes = batch.map(n => {
-                    if (n.rest) return new VF.StaveNote({ keys: ['b/4'], duration: 'q' });
-                    const st = new VF.StaveNote({ keys: [osnovaMidiToVF(n.midi)], duration: n.glide ? '8' : 'q' });
-                    if (n.glide) {
-                        /* skluzovka: osminová nota, hranu označí legato-datum později */
-                        st.addModifier(new VF.Annotation('»'), 0);
+                const vfNotes = [];
+                const bars = []; /* indexy vfNotes, za kterými patří taktová čára (4/4 = po 4 čtvrtkách) */
+                let beatsInBar = 0;
+                batch.forEach(n => {
+                    if (n.rest) vfNotes.push(new VF.StaveNote({ keys: ['b/4'], duration: 'q' }));
+                    else {
+                        const st = new VF.StaveNote({ keys: [osnovaMidiToVF(n.midi)], duration: n.glide ? '8' : 'q' });
+                        if (n.glide) st.addModifier(new VF.Annotation('»'), 0);
+                        vfNotes.push(st);
                     }
-                    return st;
+                    beatsInBar += n.glide ? 0.5 : 1;
+                    if (beatsInBar >= 4 && vfNotes[vfNotes.length - 1] !== batch[batch.length - 1]) {
+                        if (beatsInBar >= 4) { bars.push(vfNotes.length - 1); beatsInBar = 0; }
+                    }
                 });
-                if (vfNotes.length) VF.Formatter.FormatAndDraw(context, stave, vfNotes);
+                if (vfNotes.length) {
+                    VF.Formatter.FormatAndDraw(context, stave, vfNotes);
+                    /* taktové čáry: svislá linka od horní k dolní lince osnovy za koncovou notou taktu */
+                    for (const bi of bars) {
+                        const note = vfNotes[bi];
+                        const x = note.getAbsoluteX() + note.getWidth() + 6;
+                        const top = stave.getYForLine(0) - 8;
+                        const bottom = stave.getYForLine(4) + 8;
+                        context.fillRect(x, top, 1.5, bottom - top);
+                    }
+                }
                 y += 120;
             }
         } catch (err) {
