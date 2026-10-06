@@ -74,24 +74,6 @@
     <label><span data-i18n="tab.import">Import:</span> <input type="file" id="file" accept=".txt,.abc,.mid,.midi,.xls,.xlsx,text/plain,audio/midi,application/vnd.ms-excel" title="Nahraj soubor: .txt/.abc (textový zápis), .mid/.midi (automatické rozpoznání not) nebo .xls/.xlsx (notovací tabulka — německá notace, Tlak/Tah, basy)"></label>
   </div>
   <div id="keyinfo" class="hint">F dur (klasika, 2řadá C/F — hraje se v F)</div>
-  <details id="tool-layout" class="hint" style="margin:.3rem 0">
-    <summary style="cursor:pointer">🎻 Můj nástroj (layout: řady / knoflíky / ladění)</summary>
-    <div class="controls" style="margin-top:.4rem">
-      <label>Řady: <input type="number" id="layout-rows" min="1" max="3" value="2" style="width:3.5em"></label>
-      <label>Knoflíků na řadu: <input type="number" id="layout-buttons" min="5" max="20" value="11" style="width:3.5em"></label>
-      <label>Ladění: <select id="layout-key">
-        <option value="F">F (klasika C/F)</option>
-        <option value="C">C</option>
-        <option value="G">G</option>
-        <option value="A">A</option>
-        <option value="D">D</option>
-        <option value="Bb">B</option>
-      </select></label>
-      <button id="save-layout" title="Uloží layout nástroje do profilu (přihlášení) nebo prohlížeče">💾 Uložit nástroj</button>
-      <span id="layout-status" class="hint"></span>
-    </div>
-    <p class="hint">Nástroj ovlivňuje klikací hmatník (počty knoflíků) a výchozí tóninu. Přihlášení uživatelé mají uloženo v profilu, jinak v prohlížeči.</p>
-  </details>
   <div class="controls">
     <button id="toggle-hmatnik" title="Zobrazí klikací hmatník — nota se skládá klikáním na knoflíky místo psaním">⌨️ Hmatník</button>
     <span id="hmatnik-box" style="display:none">
