@@ -159,9 +159,7 @@ v1: Mi-luj-ku | mi-luj-ku | mo-je mi-lá`;
 const SAMPLE_ABC = `title: Ukázka z ABC (Melodie v C)
 key: C
 abc: C D E F | G A B c | c B A G | F E D C
-v1: ukáz-ka | mel-o-die | po-ta-ce | z a-b-cé
-
-`;
+v1: Vy-stou-pá-me | až na-ho-ru | pak klesá-me | do-lů zno-vu`;
 
 /* ================= RENDER ================= */
 function renderBeats(song){
