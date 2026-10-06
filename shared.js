@@ -58,18 +58,19 @@ function renderMenu() {
     renderAuthMini();
     renderLangToggle(nav);
 }
-/* přepínač jazyka UI: vlajka cílového jazyka (CZ režim → 🇬🇧, EN režim → 🇨🇿) */
+/* přepínač jazyka UI: obrázková vlajka cílového jazyka (CZ režim → 🇬🇧, EN režim → 🇨🇿) — Twemoji, Windows emoji nezná */
 function renderLangToggle(nav) {
     if (!nav || typeof getUiLang !== 'function') return;
     const cur = getUiLang();
     const target = cur === 'CZ' ? 'EN' : 'CZ';
-    const icon = target === 'EN' ? '🇬🇧' : '🇨🇿';
+    const tw = { EN: '1f1ec-1f1f7', CZ: '1f1e8-1f1ff' };
+    const img = tw[target];
     const title = cur === 'CZ' ? 'Switch to English' : 'Přepnout do češtiny';
     const btn = document.createElement('button');
     btn.className = 'mini lang-toggle';
     btn.title = title;
-    btn.textContent = icon;
-    btn.style.cssText = 'font-size:1rem;padding:.1em .35em;margin-left:.6rem;background:transparent;border:1px solid #b8a878;border-radius:4px;cursor:pointer';
+    btn.innerHTML = '<img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/' + img + '.svg" alt="' + target + '" width="22" height="22" style="vertical-align:-6px">';
+    btn.style.cssText = 'font-size:1rem;padding:.15em .35em;margin-left:.6rem;background:#f5ecd8;border:1px solid #b8a878;border-radius:4px;cursor:pointer;line-height:1';
     btn.addEventListener('click', async () => {
         setUiLang(target);
         const user = getUser();
