@@ -133,17 +133,20 @@ function xlsToSong(ws, sheetName) {
         /* melodie = první notový sloupec (col 1), další sloupce jsou doprovodné hlasy */
         const mcell = (r[1] || '').toString().trim();
         const n = mcell ? parseGermanNote(mcell) : null;
+        /* směr měchu: sloupec „Tlak"/„Tah" (index 8, fallback 7) */
+        const dirRaw = ((r[8] || r[7] || '') + '').trim();
+        const dir = dirRaw === 'Tlak' ? 'push' : dirRaw === 'Tah' ? 'pull' : null;
         /* sken basů ve sloupcích ≥ 10 (za Tlak/Tah) — push X! i pull x, dedup alternativ */
         const appBasses = scanRowBasses(r);
         if (n) {
-            const beat = { text: a, idx: n.idx, bass: appBasses[0] || '' };
+            const beat = { text: a, idx: n.idx, bass: appBasses[0] || '', dir };
             beats.push(beat);
             if (a) lyrics.push(a);
             /* zbylé basy z řádku = samostatné doby (vzácne) */
             for (let bi = 1; bi < appBasses.length; bi++) beats.push({ hold: true, bass: appBasses[bi] });
         } else if (appBasses.length) {
             /* B-řádek = samostatné basové doby (instrumentální fill ve 3/4) */
-            for (const ab of appBasses) beats.push({ hold: true, bass: ab });
+            for (const ab of appBasses) beats.push({ hold: true, bass: ab, dir });
         } else if (a) {
             // text bez noty — přilep k předchozímu beatu
             if (beats.length) beats[beats.length - 1].text += ' ' + a;
@@ -154,7 +157,9 @@ function xlsToSong(ws, sheetName) {
     let line = [];
     for (let i = 0; i < beats.length; i++) {
         const b = beats[i];
-        const tok = b.hold ? ('-;' + b.bass) : ('II:' + (b.idx - tonicIdx + 1) + (b.bass ? ';' + b.bass : ''));
+        const tok = b.hold
+            ? ((b.dir === 'push' ? '>' : b.dir === 'pull' ? '<' : '') + '-;' + b.bass)
+            : ((b.dir === 'push' ? '>' : b.dir === 'pull' ? '<' : '') + 'II:' + (b.idx - tonicIdx + 1) + (b.bass ? ';' + b.bass : ''));
         line.push(tok);
         if (line.length >= 8) { out += line.join(' ') + '\n'; line = []; }
     }

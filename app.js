@@ -91,12 +91,14 @@ function parseSong(text){
   }
   return song;
 }
-/* nota: II:6/5;F~ | I:8;f | -;C | >>;B | << ;~ skluzovka na další notu */
+/* nota: II:6/5;F~ | I:8;f | -;C | >>;B | <;~ skluzovka — a směr měchu: >II:5 = Tlak (→), <II:6 = Tah (←) */
 function parseNote(tok){
-  const n = { row:'II', num:'', glide:'', bas:'', tie:false, hold:false, slide:null };
+  const n = { row:'II', num:'', glide:'', bas:'', tie:false, hold:false, slide:null, dir:null };
   let s = tok;
-  if (s.startsWith('<<')){ n.slide='left'; s=s.slice(2); }
   if (s.startsWith('>>')){ n.slide='right'; s=s.slice(2); }
+  else if (s.startsWith('<<')){ n.slide='left'; s=s.slice(2); }
+  else if (s.startsWith('>')){ n.dir='push'; s=s.slice(1); }
+  else if (s.startsWith('<')){ n.dir='pull'; s=s.slice(1); }
   const semi = s.indexOf(';');
   if (semi >= 0){
     n.bas = s.slice(semi+1);
@@ -221,7 +223,14 @@ function rowDiv(row, note){
   if (row==='II') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
   else if (row==='I') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
   else if (row==='B') d.textContent = note.bas || '';
-  else d.textContent = note.slide==='right'?'→':note.slide==='left'?'←':'';
+  else {
+    /* M řádek: směr měchu (Tlak → / Tah ←), skluzovky mají prioritu */
+    if (note.slide === 'right') d.textContent = '→';
+    else if (note.slide === 'left') d.textContent = '←';
+    else if (note.dir === 'push') d.textContent = '→';
+    else if (note.dir === 'pull') d.textContent = '←';
+    else d.textContent = '';
+  }
   return d;
 }
 /* slabika textu pod dobou — bere postupně z renderBeats._syl */
