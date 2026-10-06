@@ -213,11 +213,9 @@ function renderBeats(song){
   });
   flatNotes.forEach((n, i) => {
     if (n._mGroup == null) return;
-    /* hrot na konci skupiny (push →) / na začátku (pull ←), uvnitř čára */
-    const next = flatNotes[i+1];
-    const prev = flatNotes[i-1];
-    if (n._mDir === 'push') n._mGlyph = (next && next._mGroup === n._mGroup) ? '───' : '→';
-    else n._mDir === 'pull' && (n._mGlyph = (prev && prev._mGroup === n._mGroup) ? '───' : '←');
+    const prev = flatNotes[i-1], next = flatNotes[i+1];
+    n._mStart = !(prev && prev._mGroup === n._mGroup);
+    n._mEnd = !(next && next._mGroup === n._mGroup);
   });
   song.beats.forEach((beat)=>{
     beat.forEach(note=>{
@@ -268,11 +266,15 @@ function rowDiv(row, note){
   else if (row==='I') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
   else if (row==='B') d.textContent = note.bas || '';
   else {
-    /* M řádek: dlouhá šipka směru měchu přes skupinu not (vzor); skluzovky mají prioritu */
+    /* M řádek: souvislá CSS šipka přes skupinu not (kreslí ji CSS čára, ne textový glyf) */
     if (note.slide === 'right') d.textContent = '→';
     else if (note.slide === 'left') d.textContent = '←';
-    else if (note._mGlyph) d.textContent = note._mGlyph;
-    else d.textContent = '';
+    else if (note._mGroup != null) {
+      d.classList.add('m-arrow');
+      d.classList.add(note._mDir === 'push' ? 'm-push' : 'm-pull');
+      if (note._mStart) d.classList.add('m-start');
+      if (note._mEnd) d.classList.add('m-end');
+    }
   }
   return d;
 }

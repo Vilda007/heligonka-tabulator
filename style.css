@@ -102,6 +102,28 @@ button:hover { filter: brightness(1.1); }
 .rB  { font-weight: bold; font-size: 1.25rem; }
 .rM  { font-size: .6rem; color: #444; border-bottom: 2px solid var(--line); }
 .rT  { font-size: .72rem; color: #111; line-height: 1.1; white-space: normal; overflow-wrap: anywhere; }
+/* M řádek — souvislá šipka měchu přes skupinu not (CSS čára, ne text) */
+.m-arrow { position: relative; }
+.m-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  border-top: 2.5px solid #222;
+}
+/* čára nesahá přes kraj skupiny — začátek/konec v 60 % buňky, aby šipky nesplynuly */
+.m-push.m-start::before { left: 12%; }
+.m-pull.m-end::before { right: 12%; }
+/* hrot šipky: push → hrot vpravo na konci skupiny, pull ← hrot vlevo na začátku */
+.m-arrow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+.m-push.m-end::after { right: 4%; border-left: 9px solid #222; }
+.m-pull.m-start::after { left: 4%; border-right: 9px solid #222; }
 /* v5 — horní menu, stránkování, knihovna/admin tabulky */
 .topmenu { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; border-bottom: 2px solid var(--line); padding: .3rem 0 .5rem; margin-bottom: .8rem; }
 .topmenu a { text-decoration: none; color: var(--accent); padding: .15em .6em; border-radius: 4px; font-size: .95rem; }
