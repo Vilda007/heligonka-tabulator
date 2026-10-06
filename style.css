@@ -129,6 +129,7 @@ button:hover { filter: brightness(1.1); }
   content: '';
   position: absolute;
   left: 0; right: 0; top: 50%;
+  transform: translateY(-50%); /* střed čáry přesně na 50 % — zarovnáno s hrotem (margin-top:-5px) */
   border-top: 2.5px solid #222;
 }
 /* čára i hrot končí stejně daleko od rámečku jako začátek (12 % inset) —
