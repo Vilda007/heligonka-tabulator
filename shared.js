@@ -38,9 +38,9 @@ const MENU = [
     { href: 'index.html',    id: 'menu-tab',  label: '🎹 Tabulátor', i18n: 'menu.tab' },
     { href: 'knihovna.html', id: 'menu-lib',  label: '📚 Knihovna', i18n: 'menu.lib' },
     { href: 'uzivatele.html', id: 'menu-usr',  label: '👥 Uživatelé', i18n: 'menu.usr', admin: true },
-    { href: 'ucet.html',     id: 'menu-acc',  label: '👤 Můj účet', i18n: 'menu.acc', auth: true },
     { href: 'akordy.html',   id: 'menu-ak',   label: '🎼 Akordy', i18n: 'menu.ak' },
     { href: 'predloha.html', id: 'menu-print', label: '🖨️ Předloha', i18n: 'menu.pred' },
+    { href: 'ucet.html',     id: 'menu-acc',  label: '👤 Můj účet', i18n: 'menu.acc', auth: true },
     { href: 'napoveda.html', id: 'menu-help', label: '❓ Nápověda', i18n: 'menu.help' }
 ];
 function renderMenu() {
