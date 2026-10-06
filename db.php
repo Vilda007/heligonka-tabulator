@@ -51,8 +51,12 @@ function ensure_tables() {
         pass_hash VARCHAR(255) NOT NULL,
         role VARCHAR(20) NOT NULL DEFAULT 'reader',
         approved INT NOT NULL DEFAULT 0,
+        layout VARCHAR(50) NOT NULL DEFAULT '',
         created_at VARCHAR(30)
     ) TYPE=MyISAM");
+
+    /* Můj nástroj: přidej sloupec, pokud chybí (staré instalace) */
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "users` ADD layout VARCHAR(50) NOT NULL DEFAULT ''", $GLOBALS['conn']);
 
     mysql_query("CREATE TABLE IF NOT EXISTS `" . HT_PREFIX . "sessions` (
         sid VARCHAR(64) PRIMARY KEY,

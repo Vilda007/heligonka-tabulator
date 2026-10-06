@@ -39,6 +39,7 @@ switch ($action) {
     case 'login':           api_login(); break;
     case 'logout':          api_logout(); break;
     case 'me':              api_me($U); break;
+    case 'save_layout':     api_save_layout($U); break;
 
     /* songs — read (public) */
     case 'list':            api_list(); break;

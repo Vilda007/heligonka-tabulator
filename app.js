@@ -21,6 +21,39 @@ const KEYMAPS = {
 const SCALES = ['F','C','G','A','D','Bb'];
 function scaleIndex(k){ const i=SCALES.indexOf(k); return i<0?0:i; }
 
+/* ================= ALTERNATIVY HMATŮ =================
+   Pitch každého knoflíku odvodíme z obou ověřených map (F mapa zakotvená v F=65,
+   C mapa v C=60). Alternativa = knoflík se stejnou výškou tónu (jiná pozice/řada).
+   Orientační — přesné mapy až po ověření na reálném nástroji. */
+const PITCH_BY_BUTTON = {};
+function buildPitchTable(){
+  const scaleSemi=[0,2,4,5,7,9,11];
+  const anchors=[['F',KEYMAPS.F,65],['C',KEYMAPS.C,60]];
+  for (let a=0;a<anchors.length;a++){
+    const map=anchors[a][1], tonic=anchors[a][2];
+    for (const d in map){
+      const deg=+d, btn=map[d];
+      const pc=(deg-1)%7, oct=Math.floor((deg-1)/7);
+      const midi=tonic+scaleSemi[pc]+12*oct;
+      PITCH_BY_BUTTON[btn.r+':'+btn.n]=midi;
+    }
+  }
+}
+buildPitchTable();
+function buttonPitch(row,num){ return PITCH_BY_BUTTON[row+':'+num]; }
+function findAlternatives(row,num){
+  const p=buttonPitch(row,num);
+  if (p==null) return [];
+  const me=row+':'+num, out=[];
+  for (const k in PITCH_BY_BUTTON){
+    if (PITCH_BY_BUTTON[k]===p && k!==me){
+      const parts=k.split(':');
+      out.push({row:parts[0], num:parts[1]});
+    }
+  }
+  return out;
+}
+
 /* transpozice stupně o N stupňů (within scale, oktáva wrap) */
 function transposeDegree(deg, steps){ let d = ((deg-1+steps) % 7) + 1; return d; }
 
@@ -234,6 +267,8 @@ function renderBeats(song){
       const cell=document.createElement('div'); cell.className='cell';
       cell.appendChild(rowDiv('II', note));
       cell.appendChild(rowDiv('I', note));
+      const alt = altLabel(note);
+      if (alt) { const ad=document.createElement('div'); ad.className='alt-hint'; ad.textContent='↷ '+alt; cell.insertBefore(ad, cell.children[2]); }
       cell.appendChild(rowDiv('B', note));
       cell.appendChild(rowDiv('M', note));
       /* slabika pod dobou: basový fill text nekonzumuje; držení i nota konzumují (vzor: -;f má svou slabiku) */
@@ -316,7 +351,16 @@ function currentSongAndKey(){
   }
   return song;
 }
+let SHOW_ALTS = false; // přepínač „Alternativy“ — zobrazit alternativní knoflíky
 function doRender(){ renderBeats(currentSongAndKey()); }
+
+function altLabel(note){
+  if (!SHOW_ALTS || !note || note.hold || !note.num) return '';
+  const alts = findAlternatives(note.row, note.num);
+  if (!alts.length) return '';
+  return alts.map(a => a.r + ':' + a.n).join(' ');
+}
+
 
 /* ================= UI ================= */
 const KEY_INFO = {
@@ -375,6 +419,36 @@ window.addEventListener('DOMContentLoaded', () => {
     }); if (!getUser()) em.style.display = 'none'; }
     const sv = $('save-song');
     if (sv) { sv.addEventListener('click', saveSong); if (!getUser()) sv.style.display = 'none'; }
+    /* Alternativy hmatů — přepínač */
+    const ta = $('toggle-alts');
+    if (ta) ta.addEventListener('click', () => {
+        SHOW_ALTS = !SHOW_ALTS;
+        ta.classList.toggle('on', SHOW_ALTS);
+        doRender();
+    });
+    /* Můj nástroj — načti layout do formuláře a hmatníku, ulož na klik */
+    const slBtn = $('save-layout');
+    if (slBtn) {
+        const stored = getLayout();
+        if (stored) {
+            if ($('layout-rows')) $('layout-rows').value = stored.rows;
+            if ($('layout-buttons')) $('layout-buttons').value = stored.buttons;
+            if ($('layout-key') && stored.key) $('layout-key').value = stored.key;
+        }
+        slBtn.addEventListener('click', async () => {
+            const l = { rows: +$('layout-rows').value || 2, buttons: +$('layout-buttons').value || 11, key: $('layout-key').value || 'F' };
+            setLayout(l);
+            const user = getUser();
+            if (user) {
+                const fmt = l.rows + ';' + l.buttons + ';' + l.key;
+                const r = await api('save_layout', { method: 'POST', body: { layout: fmt } });
+                $('layout-status').textContent = r.status === 'ok' ? 'Uloženo do profilu ✓' : 'Chyba: ' + (r.code || '?');
+            } else {
+                $('layout-status').textContent = 'Uloženo v prohlížeči (přihlas se pro uložení do profilu) ✓';
+            }
+            if (typeof renderHmatnik === 'function') renderHmatnik();
+        });
+    }
     /* nepřihlášení: žádný import souboru */
     const fi = $('file');
     if (fi && !getUser()) { fi.style.display = 'none'; fi.parentElement.style.display = 'none'; }

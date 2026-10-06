@@ -83,7 +83,17 @@ function api_logout() {
 }
 function api_me($U) {
     if (!$U) err('unauthenticated');
-    echo '{"status":"ok","user":' . jt_json(array('username' => $U['username'], 'role' => $U['role'], 'approved' => (bool)(int)$U['approved'])) . '}';
+    echo '{"status":"ok","user":' . jt_json(array('username' => $U['username'], 'role' => $U['role'], 'approved' => (bool)(int)$U['approved'], 'layout' => $U['layout'])) . '}';
+}
+
+/* Můj nástroj: uložení layoutu (počet řad, knoflíků, ladění) — "2;12;F" formát */
+function api_save_layout($U) {
+    if (!$U) err('unauthenticated');
+    $d = body_json();
+    $layout = substr(strval(g($d, 'layout', '')), 0, 50);
+    if (!preg_match('/^[0-9]{1,2};[0-9]{1,2};(F|C|G|A|D|Bb)$/', $layout)) err('invalid_input');
+    mysql_query("UPDATE `" . HT_PREFIX . "users` SET layout = '" . dbq($layout) . "' WHERE id = " . (int)$U['id'], $GLOBALS['conn']);
+    echo '{"status":"ok"}';
 }
 
 /* ---------- songs: public read ---------- */

@@ -102,6 +102,23 @@ button:hover { filter: brightness(1.1); }
 .rB  { font-weight: bold; font-size: 1.25rem; }
 .rM  { font-size: .6rem; color: #444; border-bottom: 2px solid var(--line); }
 .rT  { font-size: .72rem; color: #111; line-height: 1.1; white-space: normal; overflow-wrap: anywhere; }
+/* Alternativy hmatů — náhradní knoflíky pod notou */
+.alt-hint { font-size: .62rem; color: #7a4a1d; border-bottom: 1px dashed var(--line); padding: 0 .1em; }
+#toggle-alts.on { background: #7a4a1d; color: #fff8e6; }
+/* Klikací hmatník */
+#hmatnik-box { display: inline-flex; flex-direction: column; gap: .3rem; vertical-align: top; }
+.hmatnik-grid { display: inline-block; background: #fffdf5; border: 1px solid #b8a878; border-radius: 6px; padding: .5rem; }
+.hm-row { display: flex; align-items: center; gap: .25rem; margin: .2rem 0; }
+.hm-lab { font-weight: bold; width: 2rem; text-align: center; color: #7a4a1d; }
+.hm-btn { min-width: 2.6rem; padding: .25em .3em; font-family: inherit; font-size: .95rem; background: #f5ecd8; border: 1px solid #b8a878; border-radius: 4px; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; line-height: 1.1; }
+.hm-btn:hover { background: #e8d9b5; }
+.hm-btn small { font-size: .6rem; color: #7a4a1d; }
+.hm-btn.hm-bass { min-width: 2rem; background: #efe6f2; border-color: #a88ac0; }
+#toggle-hmatnik.on { background: #7a4a1d; color: #fff8e6; }
+/* Notová osnova */
+#osnova-output { background: #fff; border: 1px solid #b8a878; border-radius: 6px; padding: .5rem; margin-top: .5rem; overflow-x: auto; }
+.osnova-inner { min-width: 100%; }
+#toggle-osnova.on { background: #7a4a1d; color: #fff8e6; }
 /* M řádek — souvislá šipka měchu přes skupinu not (CSS čára, ne text) */
 .m-arrow { position: relative; }
 .m-arrow::before {

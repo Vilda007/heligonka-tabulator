@@ -27,6 +27,12 @@ async function api(action, opts) {
     }
 }
 
+function getLayout() {
+    /* "2;12;F" = řady;knoflíků na řadu;ladění — z profilu uživatele, fallback localStorage */
+    try { return JSON.parse(localStorage.getItem('ht_layout') || 'null'); } catch (e) { return null; }
+}
+function setLayout(l) { localStorage.setItem('ht_layout', JSON.stringify(l)); }
+
 /* ---------- horní menu ---------- */
 const MENU = [
     { href: 'index.html',    id: 'menu-tab',  label: '🎹 Tabulátor' },

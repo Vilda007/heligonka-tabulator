@@ -20,7 +20,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="style.css?v=2026100611">
+<link rel="stylesheet" href="style.css?v=2026100612">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7a4a1d">
 </head>
@@ -48,6 +48,37 @@
     <label>Import: <input type="file" id="file" accept=".txt,.abc,.mid,.midi,.xls,.xlsx,text/plain,audio/midi,application/vnd.ms-excel" title="Nahraj soubor: .txt/.abc (textový zápis), .mid/.midi (automatické rozpoznání not) nebo .xls/.xlsx (notovací tabulka — německá notace, Tlak/Tah, basy)"></label>
   </div>
   <div id="keyinfo" class="hint">F dur (klasika, 2řadá C/F — hraje se v F)</div>
+  <details id="tool-layout" class="hint" style="margin:.3rem 0">
+    <summary style="cursor:pointer">🎻 Můj nástroj (layout: řady / knoflíky / ladění)</summary>
+    <div class="controls" style="margin-top:.4rem">
+      <label>Řady: <input type="number" id="layout-rows" min="1" max="3" value="2" style="width:3.5em"></label>
+      <label>Knoflíků na řadu: <input type="number" id="layout-buttons" min="5" max="20" value="11" style="width:3.5em"></label>
+      <label>Ladění: <select id="layout-key">
+        <option value="F">F (klasika C/F)</option>
+        <option value="C">C</option>
+        <option value="G">G</option>
+        <option value="A">A</option>
+        <option value="D">D</option>
+        <option value="Bb">B</option>
+      </select></label>
+      <button id="save-layout" title="Uloží layout nástroje do profilu (přihlášení) nebo prohlížeče">💾 Uložit nástroj</button>
+      <span id="layout-status" class="hint"></span>
+    </div>
+    <p class="hint">Nástroj ovlivňuje klikací hmatník (počty knoflíků) a výchozí tóninu. Přihlášení uživatelé mají uloženo v profilu, jinak v prohlížeči.</p>
+  </details>
+  <div class="controls">
+    <button id="toggle-hmatnik" title="Zobrazí klikací hmatník — nota se skládá klikáním na knoflíky místo psaním">⌨️ Hmatník</button>
+    <span id="hmatnik-box" style="display:none">
+      <label title="Směr měchu pro nové noty">Měch:
+        <select id="hmatnik-dir">
+          <option value="">(bez značky)</option>
+          <option value="push">Tlak →</option>
+          <option value="pull">Tah ←</option>
+        </select>
+      </label>
+      <div id="hmatnik-grid" class="hmatnik-grid"></div>
+    </span>
+  </div>
   <textarea id="input" spellcheck="false" rows="12" title="Melodie ve textovém formátu: ŘÁDA:tlačítko;BAS — detaily v Nápovědě"></textarea>
   <div class="hint">
     <b>Formát:</b> <code>title:</code>, <code>key:</code>, nebo <code>abc:</code> (jednořádkový ABC zápis → automatický převod).<br>
@@ -60,6 +91,8 @@
     <button id="save-song" title="Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)">💾 Uložit do knihovny</button>
     <button id="export-xls" title="Export písně do .xls (notovací tabulka — německá notace, Tlak/Tah, basy)">📊 Export XLS</button>
     <button id="export-midi" title="Export písně do .mid (melodie + basy, 120 BPM)">🎵 Export MIDI</button>
+    <button id="toggle-alts" title="Zobrazí pod každou notu alternativní knoflíky se stejným tónem (jiná řada/pozice) — orientační">🔀 Alternativy</button>
+    <button id="toggle-osnova" title="Vykreslí melodii v notové osnově (VexFlow) pod tabulaturou">🎼 Osnova</button>
     <span id="save-status" class="hint"></span>
   </div>
   <div id="share-box" class="sharebox"></div>
@@ -68,6 +101,7 @@
 <section id="output-section">
   <h2>2. Tabulatura</h2>
   <div id="output" class="sheet"></div>
+  <div id="osnova-output" style="display:none" class="sheet"></div>
   <div id="print-footer" class="print-footer screen-hidden">🦞 Klepeto & Heligonka - https://klepeto.kuzelovi.cz/heligonka/</div>
   <div class="actions">
     <button onclick="window.print()">🖨️ Tisk / PDF</button>
@@ -81,6 +115,8 @@
 <script src="app.js"></script>
 <script src="midi.js"></script>
 <script src="xls.js"></script>
+<script src="hmatnik.js"></script>
+<script src="osnova.js"></script>
 <script src="library.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
