@@ -31,6 +31,7 @@ function renderLibrary() {
         { key: 'the_key', label: 'Tónina' },
         { key: 'author', label: 'Autor' },
         { key: 'rating_avg', label: 'Hodnocení' },
+        { key: 'completeness', label: 'Úplnost' },
         { key: 'updated_at', label: 'Upraveno' },
         { label: 'Akce' }
     ], LIB_STATE);
@@ -43,6 +44,7 @@ function renderLibrary() {
             <td>${esc(s.the_key)}</td>
             <td>${esc(s.author || '')}</td>
             <td>${stars} <small>(${s.rating_count})</small></td>
+            <td class="hint" title="II. = druhá řada, I. = první řada, B = basy, M = směr měchu, T = text">${esc(s.completeness || '—')}</td>
             <td class="hint">${esc(s.updated_at || '')}</td>
             <td class="actions">
                 ${canEdit ? `<button class="mini" onclick="editSong(${s.id})" title="Upravit">✏️</button>

@@ -11,7 +11,7 @@ if (is_readable('/home/vildadmin/.openclaw/credentials/kuzelovi/kuzelovi.env')) 
 }
 $__host = isset($__conf['DB_HOST']) ? $__conf['DB_HOST'] : 'localhost';
 $__user = isset($__conf['DB_USER']) ? $__conf['DB_USER'] : 'dev_vilda';
-$__pass = isset($__conf['DB_PASS']) ? $__conf['DB_PASS'] : '';
+$__pass = isset($__conf['DB_PASS']) ? $__conf['DB_PASS'] : 'WilDevel';
 $__db   = isset($__conf['DB_NAME']) ? $__conf['DB_NAME'] : 'dev_vilda';
 
 $conn = @mysql_connect($__host, $__user, $__pass);
@@ -24,6 +24,25 @@ define('HT_PREFIX', 'klepeto_ht_');
 function dbq($s) { return mysql_real_escape_string($s, $GLOBALS['conn']); }
 
 function jout($arr) { echo jt_json($arr); }
+
+/* Úplnost písně: které atributy data obsahují — II. (druhá řada), I. (první řada),
+   B (basy), M (směr měchu), T (text). Formát "II./I./B/M/T" = vše.
+   Zjišťuje se při ukládání (create/update/fork) a uloží do DB. */
+function ht_completeness($data) {
+    $d = strval($data);
+    $out = '';
+    if (preg_match('/(^|\s|>)II:/i', $d)) $out .= 'II./';
+    /* I. řada: "I:" na začátku tokenu ("II:" neodpovídá — před I není mezera/>) */
+    if (preg_match('/(^|\s|>)I:/i', $d)) $out .= 'I./';
+    /* bas: cokoliv za středníkem kromě ~ a - */
+    if (preg_match('/;[A-Za-h]/', $d)) $out .= 'B/';
+    /* měch: explicitní > nebo < prefix, nebo skluzovky >>/<< */
+    if (preg_match('/(^|\s)[<>](II:|-;)/', $d) || preg_match('/(^|\s)(>>|<<);/', $d)) $out .= 'M/';
+    /* text: v1: řádek */
+    if (preg_match('/^v\s*\d+\s*:/im', $d)) $out .= 'T/';
+    $out = rtrim($out, '/');
+    return $out;
+}
 
 function ensure_tables() {
     mysql_query("CREATE TABLE IF NOT EXISTS `" . HT_PREFIX . "users` (
@@ -50,9 +69,20 @@ function ensure_tables() {
         forked_from INT DEFAULT NULL,
         version INT NOT NULL DEFAULT 1,
         published INT NOT NULL DEFAULT 0,
+        completeness VARCHAR(20) NOT NULL DEFAULT '',
         created_at VARCHAR(30),
         updated_at VARCHAR(30)
     ) TYPE=MyISAM");
+
+    /* Úplnost: přidej sloupec, pokud chybí (staré instalace), a jednorázově dopočti pro všechny písně */
+    mysql_query("ALTER TABLE `" . HT_PREFIX . "songs` ADD completeness VARCHAR(20) NOT NULL DEFAULT ''", $GLOBALS['conn']);
+    $q = mysql_query("SELECT id, data FROM `" . HT_PREFIX . "songs` WHERE completeness = ''", $GLOBALS['conn']);
+    if ($q) {
+        while ($r = mysql_fetch_assoc($q)) {
+            $c = ht_completeness($r['data']);
+            mysql_query("UPDATE `" . HT_PREFIX . "songs` SET completeness = '" . dbq($c) . "' WHERE id = " . (int)$r['id'], $GLOBALS['conn']);
+        }
+    }
 
     mysql_query("CREATE TABLE IF NOT EXISTS `" . HT_PREFIX . "song_versions` (
         id INT AUTO_INCREMENT PRIMARY KEY,
