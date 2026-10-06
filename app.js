@@ -220,7 +220,7 @@ function renderBeats(song){
   renderBeats._syl = syl;
   const newSystem=()=>{
     sysEl=document.createElement('div'); sysEl.className='system';
-    sysEl.innerHTML=`<div class="labs">${SHOW_ALTS ? '<div class="lab">II.</div><div class="lab">I.</div><div class="lab alt-slot"></div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>' : '<div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>'}</div><div class="cells"></div>`;
+    sysEl.innerHTML=`<div class="labs">${SHOW_ALTS ? '<div class="lab">II.</div><div class="lab">I.</div><div class="lab alt-slot">Alt.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>' : '<div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>'}</div><div class="cells"></div>`;
     sysCells=sysEl.querySelector('.cells'); wrap.appendChild(sysEl);
   };
   newSystem();

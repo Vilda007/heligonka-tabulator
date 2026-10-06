@@ -73,7 +73,11 @@ button:hover { filter: brightness(1.1); }
   font-weight: bold;
   text-align: center;
   padding: .15em .2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.lab.alt-slot { font-weight: normal; color: #7a4a1d; }
 .cells {
   display: grid;
   grid-auto-flow: column;
