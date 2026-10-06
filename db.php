@@ -174,7 +174,13 @@ function ht_valid_password($p) {
     return is_string($p) && strlen($p) >= 6 && strlen($p) <= 200;
 }
 function ht_valid_key($k) {
-    return in_array(strtoupper(strval($k)), array('F','C','G','A','D','BB'), true);
+    return in_array(ht_norm_key($k), array('F','C','G','A','D','Bb'), true);
+}
+/* normalizace tóniny: 'bb'/'BB' → 'Bb', ostatní uppercase */
+function ht_norm_key($k) {
+    $k = strtoupper(strval($k));
+    if ($k === 'BB') return 'Bb';
+    return $k;
 }
 /* data (píseň): text, sane size limit 200 KB */
 function ht_valid_data($data) {

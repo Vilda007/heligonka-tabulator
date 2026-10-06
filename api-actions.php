@@ -153,7 +153,7 @@ function save_version($song) {
 function api_create($U) {
     require_role($U, 'editor');
     $d = body_json();
-    $title = ht_clean_title(g($d, 'title')); $data = g($d, 'data'); $key = strtoupper(g($d, 'key', 'F'));
+    $title = ht_clean_title(g($d, 'title')); $data = g($d, 'data'); $key = ht_norm_key(g($d, 'key', 'F'));
     if (!$title || !ht_valid_data($data) || !ht_valid_key($key)) err('invalid_input');
     mysql_query("INSERT INTO `" . HT_PREFIX . "songs` (title, the_key, data, author_id, published, created_at, updated_at)
                  VALUES ('" . dbq($title) . "', '" . dbq($key) . "', '" . dbq($data) . "', " . (int)$U['id'] . ", 1, '" . now() . "', '" . now() . "')", $GLOBALS['conn']);
@@ -170,7 +170,7 @@ function api_update($U) {
     if (!can_edit_song($U, $s)) err('forbidden');
     $title = ht_clean_title(g($d, 'title', $s['title']));
     $data = g($d, 'data', $s['data']);
-    $key = strtoupper(g($d, 'key', $s['the_key']));
+    $key = ht_norm_key(g($d, 'key', $s['the_key']));
     if (!$title || !ht_valid_data($data) || !ht_valid_key($key)) err('invalid_input');
     save_version($s); // uložit předchozí verzi
     $nv = (int)$s['version'] + 1;
