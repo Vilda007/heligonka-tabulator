@@ -201,7 +201,9 @@ v1: Vy-stou-pá-me | až na-ho-ru | pak klesá-me | do-lů zno-vu`;
 function renderBeats(song){
   const out = $('output');
   out.innerHTML = '';
-  const wrap = document.createElement('div'); wrap.className = 'sheet-inner' + (SHOW_ALTS ? ' alts' : '');
+  /* 6-řádkový layout jen když aspoň jedna nota v písni má alternativu — jinak prázdné řádky nezobrazujeme */
+  const anyAlt = (typeof SHOW_ALTS !== 'undefined') && SHOW_ALTS && flatNotes.some(n => !n.hold && n.num && findAlternatives(n.row, n.num).length > 0);
+  const wrap = document.createElement('div'); wrap.className = 'sheet-inner' + (anyAlt ? ' alts' : '');
   const hdr = document.createElement('h3'); hdr.className='song-title'; hdr.textContent = song.title + ((song.key)?'  ('+song.key+' dur)':'');
   wrap.appendChild(hdr);
 
@@ -220,7 +222,7 @@ function renderBeats(song){
   renderBeats._syl = syl;
   const newSystem=()=>{
     sysEl=document.createElement('div'); sysEl.className='system';
-    sysEl.innerHTML=`<div class="labs">${SHOW_ALTS ? '<div class="lab">II.</div><div class="lab">I.</div><div class="lab alt-slot">Alt.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>' : '<div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>'}</div><div class="cells"></div>`;
+    sysEl.innerHTML=`<div class="labs">${anyAlt ? '<div class="lab">II.</div><div class="lab">I.</div><div class="lab alt-slot">Alt.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>' : '<div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>'}</div><div class="cells"></div>`;
     sysCells=sysEl.querySelector('.cells'); wrap.appendChild(sysEl);
   };
   newSystem();
@@ -268,8 +270,8 @@ function renderBeats(song){
       cell.appendChild(rowDiv('II', note));
       cell.appendChild(rowDiv('I', note));
       const alt = altLabel(note);
-      /* alt řádek VŽDY (i prázdný) — mřížka zůstane rovná, když nejsou alternativy */
-      { const ad=document.createElement('div'); ad.className='alt-hint'; if (alt) ad.textContent='↷ '+alt; cell.insertBefore(ad, cell.children[2]); }
+      /* alt řádek jen u not s alternativou (a jen v alt-režimu s 6-řádkovým layoutem) */
+      { const ad=document.createElement('div'); ad.className='alt-hint'; if (alt) ad.textContent='↷ '+alt; if (anyAlt) cell.insertBefore(ad, cell.children[2]); }
       cell.appendChild(rowDiv('B', note));
       cell.appendChild(rowDiv('M', note));
       /* slabika pod dobou: basový fill text nekonzumuje; držení i nota konzumují (vzor: -;f má svou slabiku) */
@@ -286,7 +288,7 @@ function renderBeats(song){
       const cell=document.createElement('div'); cell.className='cell empty';
       cell.appendChild(rowDiv('II', {}));
       cell.appendChild(rowDiv('I', {}));
-      if (SHOW_ALTS) { const ad=document.createElement('div'); ad.className='alt-hint'; cell.appendChild(ad); }
+      if (anyAlt) { const ad=document.createElement('div'); ad.className='alt-hint'; cell.appendChild(ad); }
       cell.appendChild(rowDiv('B', {}));
       cell.appendChild(rowDiv('M', {}));
       cell.appendChild(syllableDiv(-1));
