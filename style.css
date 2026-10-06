@@ -116,9 +116,11 @@ button:hover { filter: brightness(1.1); }
 .m-pull.m-end::before { right: 12%; }
 .m-push.m-end::before { right: 12%; }
 .m-pull.m-start::before { left: 12%; }
-/* hranice skupin: buňka má hrot konce i začátek — přidej extra odsazení */
+/* hranice skupin: extra odsazení na straně BEZ hrotu, aby sousední šipky nesplynuly
+   (push má hrot vpravo → extra inset vlevo; pull má hrot vlevo → extra inset vpravo,
+   čára začíná u hrotu na 12 %, aby na něj navazovala) */
 .m-push.m-start.m-end::before { left: 22%; }
-.m-pull.m-start.m-end::before { left: 22%; }
+.m-pull.m-start.m-end::before { left: 12%; right: 22%; }
 /* hrot šipky: push → hrot vpravo na konci skupiny, pull ← hrot vlevo na začátku */
 .m-arrow::after {
   content: '';
