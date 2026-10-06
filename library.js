@@ -26,7 +26,10 @@ function normSearch(s) {
 function filteredSongs() {
     const q = normSearch($('lib-search').value);
     const langF = ($('lib-lang-filter') && $('lib-lang-filter').value) || '';
+    const mineF = ($('lib-mine-filter') && $('lib-mine-filter').checked) || location.search.indexOf('mine=1') >= 0;
+    const user = getUser();
     return SONGS.filter(s =>
+        (!mineF || (user && s.author === user.username)) &&
         (!langF || (s.lang || 'CZ') === langF) &&
         (!q || normSearch(s.title).includes(q) || normSearch(s.author).includes(q) || normSearch(s.the_key).includes(q))
     );
@@ -155,6 +158,12 @@ window.addEventListener('DOMContentLoaded', () => {
     $('lib-search').addEventListener('input', () => { LIB_STATE.page = 0; renderLibrary(); });
     const lf = $('lib-lang-filter');
     if (lf) lf.addEventListener('change', () => { LIB_STATE.page = 0; renderLibrary(); });
+    const mf = $('lib-mine-filter');
+    if (mf) {
+        if (location.search.indexOf('mine=1') >= 0) mf.checked = true;
+        mf.addEventListener('change', () => { LIB_STATE.page = 0; renderLibrary(); });
+        if (!getUser()) mf.parentElement.style.display = 'none';
+    }
     wireSortPager($('lib-thead'), $('lib-pager'), LIB_STATE, renderLibrary);
     /* nepřihlášení: žádné akční tlačítka (jen prohlížení) */
     const nw = $('new-song');
