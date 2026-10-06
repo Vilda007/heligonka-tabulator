@@ -202,7 +202,16 @@ function renderBeats(song){
   const out = $('output');
   out.innerHTML = '';
   /* 6-řádkový layout jen když aspoň jedna nota v písni má alternativu — jinak prázdné řádky nezobrazujeme */
-  const anyAlt = (typeof SHOW_ALTS !== 'undefined') && SHOW_ALTS && flatNotes.some(n => !n.hold && n.num && findAlternatives(n.row, n.num).length > 0);
+  let anyAlt = (typeof SHOW_ALTS !== 'undefined') && SHOW_ALTS;
+  if (anyAlt) {
+    let found = false;
+    outer: for (const beat of song.beats) {
+      for (const n of beat) {
+        if (!n.hold && n.num && findAlternatives(n.row, n.num).length > 0) { found = true; break outer; }
+      }
+    }
+    if (!found) anyAlt = false; /* žádná nota nemá alternativu → bez prázdných řádků */
+  }
   const wrap = document.createElement('div'); wrap.className = 'sheet-inner' + (anyAlt ? ' alts' : '');
   const hdr = document.createElement('h3'); hdr.className='song-title'; hdr.textContent = song.title + ((song.key)?'  ('+song.key+' dur)':'');
   wrap.appendChild(hdr);
