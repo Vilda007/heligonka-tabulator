@@ -22,18 +22,18 @@
 </header>
 <main>
 <section id="login-section" style="display:none">
-  <h3>🔑 Přihlášení / registrace</h3>
+  <h3 data-i18n="acc.login">🔑 Přihlášení / registrace</h3>
   <div class="authline">
     <input id="login-user" placeholder="jméno" size="12">
     <input id="login-pass" type="password" placeholder="heslo" size="12">
-    <button class="mini" onclick="doLogin()">Přihlásit</button>
-    <button class="mini" onclick="doRegister()">Registrovat</button>
+    <button class="mini" onclick="doLogin()" data-i18n="acc.loginbtn">Přihlásit</button>
+    <button class="mini" onclick="doRegister()" data-i18n="acc.regbtn">Registrovat</button>
   </div>
   <div id="login-msg" class="hint"></div>
-  <p class="hint">Registrace čeká na schválení adminem. První krok k ukládání písní: role Editor.</p>
+  <p class="hint" data-i18n="acc.reghint">Registrace čeká na schválení adminem. První krok k ukládání písní: role Editor.</p>
 </section>
 <section id="account-section">
-  <h3>📊 Moje statistiky</h3>
+  <h3 data-i18n="acc.stats">📊 Moje statistiky</h3>
   <div id="user-stats" class="hint">Načítám…</div>
   <h3 data-i18n="acc.pass">Změna hesla</h3>
   <div class="controls">

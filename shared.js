@@ -56,6 +56,29 @@ function renderMenu() {
         return `<a href="${m.href}"${active}>${label}</a>`;
     }).join('') + '<span id="auth-mini" style="margin-left:auto;font-size:.85rem;"></span>';
     renderAuthMini();
+    renderLangToggle(nav);
+}
+/* přepínač jazyka UI: vlajka cílového jazyka (CZ režim → 🇬🇧, EN režim → 🇨🇿) */
+function renderLangToggle(nav) {
+    if (!nav || typeof getUiLang !== 'function') return;
+    const cur = getUiLang();
+    const target = cur === 'CZ' ? 'EN' : 'CZ';
+    const icon = target === 'EN' ? '🇬🇧' : '🇨🇿';
+    const title = cur === 'CZ' ? 'Switch to English' : 'Přepnout do češtiny';
+    const btn = document.createElement('button');
+    btn.className = 'mini lang-toggle';
+    btn.title = title;
+    btn.textContent = icon;
+    btn.style.cssText = 'font-size:1rem;padding:.1em .35em;margin-left:.6rem;background:transparent;border:1px solid #b8a878;border-radius:4px;cursor:pointer';
+    btn.addEventListener('click', async () => {
+        setUiLang(target);
+        const user = getUser();
+        if (user) {
+            try { await api('save_profile', { method: 'POST', body: { bio: user.bio || '', ui_lang: target, def_lang: user.def_lang || 'CZ' } }); user.ui_lang = target; localStorage.setItem('ht_user', JSON.stringify(user)); } catch (e) {}
+        }
+        location.reload();
+    });
+    nav.appendChild(btn);
 }
 function renderAuthMini() {
     const el = document.getElementById('auth-mini');

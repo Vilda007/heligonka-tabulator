@@ -32,16 +32,16 @@
 <body>
 <header>
   <nav id="topmenu" class="topmenu"></nav>
-  <h1>🖨️ Prázdná tisková předloha</h1>
-  <p class="lead">Prázdná tabulatura pro ruční zápis hmatů — vytiskni si (nebo ulož jako PDF) a piš na papír jako do notáčku.</p>
+  <h1 data-i18n="pred.title">🖨️ Prázdná tisková předloha</h1>
+  <p class="lead" data-i18n="pred.lead">Prázdná tabulatura pro ruční zápis hmatů — vytiskni si (nebo ulož jako PDF) a piš na papír jako do notáčku.</p>
 </header>
 <main>
 <section>
   <div id="editor-controls" class="predloha-ctrl">
-    <label>Počet řádků (systémů):
+    <label><span data-i18n="pred.rows">Počet řádků (systémů):</span>
       <input type="number" id="rows-count" min="1" max="24" value="8" style="width:4em">
     </label>
-    <label>Sloupců na řádek:
+    <label><span data-i18n="pred.cols">Sloupců na řádek:</span>
       <input type="number" id="cols-count" min="4" max="16" value="8" style="width:4em">
     </label>
     <label>Název písně:
@@ -58,10 +58,10 @@
         <option value="Bb">B dur</option>
       </select>
     </label>
-    <button onclick="buildPredloha()" title="Přegeneruje předlohu dle zadaných hodnot">Vygenerovat</button>
+    <button onclick="buildPredloha()" title="Přegeneruje předlohu dle zadaných hodnot" data-i18n="pred.gen">Vygenerovat</button>
     <button onclick="window.print()" title="Otevře tisk — v dialogu lze zvolit Uložit jako PDF">🖨️ Tisk / PDF</button>
   </div>
-  <div id="print-note">Tip: v tiskovém dialogu zvol „Uložit jako PDF" pro elektronickou verzi. Doporučeno A4 na výšku.</div>
+  <div id="print-note" data-i18n="pred.tip">Tip: v tiskovém dialogu zvol „Uložit jako PDF" pro elektronickou verzi. Doporučeno A4 na výšku.</div>
   <div id="output" class="sheet"></div>
 </section>
 </main>

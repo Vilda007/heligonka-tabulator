@@ -17,16 +17,16 @@
 <body>
 <header>
   <nav id="topmenu" class="topmenu"></nav>
-  <h1>👥 Správa uživatelů</h1>
-  <p class="lead">Pouze pro adminy. Schvalování registrací, role, blokování, reset hesel.</p>
+  <h1 data-i18n="usr.title">👥 Správa uživatelů</h1>
+  <p class="lead" data-i18n="usr.lead">Pouze pro adminy. Schvalování registrací, role, blokování, reset hesel.</p>
 </header>
 <main>
 <section>
-  <h3>Čeká na schválení</h3>
+  <h3 data-i18n="usr.pending">Čeká na schválení</h3>
   <div id="pending-box" class="hint">Načítám…</div>
 </section>
 <section>
-  <h3>Všichni uživatelé</h3>
+  <h3 data-i18n="usr.all">Všichni uživatelé</h3>
   <table class="admintable">
     <thead id="users-thead"></thead>
     <tbody id="users-rows"></tbody>
@@ -55,19 +55,19 @@ async function loadUsers() {
 
 function renderPending(users) {
     const box = $('pending-box');
-    if (!users.length) { box.textContent = 'Nikdo nečeká.'; return; }
+    if (!users.length) { box.textContent = t('usr.none'); return; }
     box.className = '';
     box.innerHTML = users.map(u => `<div class="authline">👤 <b>${esc(u.username)}</b> <span class="hint">od ${esc(u.created_at || '?')}</span>
-        <button class="mini" onclick="approveUser(${u.id}, 'reader')">✓ Čtenář</button>
-        <button class="mini" onclick="approveUser(${u.id}, 'editor')">✓ Editor</button>
+        <button class="mini" onclick="approveUser(${u.id}, 'reader')">${t('usr.reader')}</button>
+        <button class="mini" onclick="approveUser(${u.id}, 'editor')">${t('usr.editor')}</button>
     </div>`).join('');
 }
 
 function renderUsers(users) {
     $('users-thead').innerHTML = sortHeader([
-        { key: 'username', label: 'Jméno' },
-        { key: 'role', label: 'Role' },
-        { key: 'approved', label: 'Stav' },
+        { key: 'username', label: t('usr.name') },
+        { key: 'role', label: t('usr.role') },
+        { key: 'approved', label: t('usr.state') },
         { key: 'created_at', label: 'Registrován' },
         { label: 'Akce' }
     ], USERS_STATE);
@@ -78,7 +78,7 @@ function renderUsers(users) {
         <td><select onchange="setRole(${u.id}, this.value)" title="Změna role">
             ${['reader','editor','admin'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}
         </select></td>
-        <td>${(+u.approved) ? '✓ schválen' : '⏳ čeká'}</td>
+        <td>${(+u.approved) ? t('usr.approved') : t('usr.waiting')}</td>
         <td class="hint">${esc(u.created_at || '')}</td>
         <td class="nowrap">
             ${(+u.approved) ? `<button class="mini" onclick="disapproveUser(${u.id})" title="Zablokovat">⛔</button>` : ''}
