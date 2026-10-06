@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knihovna písní — Heligonka Tabulator</title>
+<link rel="icon" type="image/png" href="favicon-32.png">
+<link rel="stylesheet" href="style.css?v=2026100602">
+</head>
+<body>
+<header>
+  <nav id="topmenu" class="topmenu"></nav>
+  <h1>📚 Knihovna písní</h1>
+  <p class="lead">Všechny písně všech uživatelů. Klikni na název pro otevření v tabulátoru, seřaď kliknutím na záhlaví.</p>
+</header>
+<main>
+<section>
+  <div id="auth-box"></div>
+  <input id="lib-search" title="Hledá ve všech písních (název / autor / tónina)" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
+  <div id="library-error" class="hint" style="color:#a33;"></div>
+  <table class="libtable">
+    <thead id="lib-thead"></thead>
+    <tbody id="library-rows"></tbody>
+  </table>
+  <div id="lib-pager"></div>
+  <div class="hint">Hodnocení: klikni na hvězdičky v detailu písně (přihlášení uživatelé). Kopírování k sobě (📄) může editor.</div>
+</section>
+</main>
+<footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
+<script src="shared.js"></script>
+<script src="library.js"></script>
+</body>
+</html>

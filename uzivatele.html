@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Správa uživatelů — Heligonka Tabulator</title>
+<link rel="icon" type="image/png" href="favicon-32.png">
+<link rel="stylesheet" href="style.css?v=2026100602">
+</head>
+<body>
+<header>
+  <nav id="topmenu" class="topmenu"></nav>
+  <h1>👥 Správa uživatelů</h1>
+  <p class="lead">Pouze pro adminy. Schvalování registrací, role, blokování, reset hesel.</p>
+</header>
+<main>
+<section>
+  <h3>Čeká na schválení</h3>
+  <div id="pending-box" class="hint">Načítám…</div>
+</section>
+<section>
+  <h3>Všichni uživatelé</h3>
+  <table class="admintable">
+    <thead id="users-thead"></thead>
+    <tbody id="users-rows"></tbody>
+  </table>
+  <div id="users-pager"></div>
+</section>
+</main>
+<footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
+<script src="shared.js"></script>
+<script>
+const USERS_STATE = { sortKey: 'username', sortDir: 1, page: 0, perPage: 10 };
+const PENDING_STATE = { sortKey: 'username', sortDir: 1, page: 0, perPage: 10 };
+
+async function loadUsers() {
+    const user = getUser();
+    if (!user || user.role !== 'admin') {
+        document.querySelector('main').innerHTML = '<p class="hint">Tato sekce je jen pro administrátory. <a href="knihovna.html">Přihlásit se</a></p>';
+        return;
+    }
+    const pend = await api('admin_pending');
+    const all = await api('admin_users_all');
+    renderPending(pend.users || []);
+    renderUsers(all.users || []);
+}
+
+function renderPending(users) {
+    const box = $('pending-box');
+    if (!users.length) { box.textContent = 'Nikdo nečeká.'; return; }
+    box.className = '';
+    box.innerHTML = users.map(u => `<div class="authline">👤 <b>${esc(u.username)}</b> <span class="hint">od ${esc(u.created_at || '?')}</span>
+        <button class="mini" onclick="approveUser(${u.id}, 'reader')">✓ Čtenář</button>
+        <button class="mini" onclick="approveUser(${u.id}, 'editor')">✓ Editor</button>
+    </div>`).join('');
+}
+
+function renderUsers(users) {
+    $('users-thead').innerHTML = sortHeader([
+        { key: 'username', label: 'Jméno' },
+        { key: 'role', label: 'Role' },
+        { key: 'approved', label: 'Stav' },
+        { key: 'created_at', label: 'Registrován' },
+        { label: 'Akce' }
+    ], USERS_STATE);
+    const me = getUser();
+    const rows = sortPage(users, USERS_STATE);
+    $('users-rows').innerHTML = rows.map(u => `<tr>
+        <td><b>${esc(u.username)}</b>${+u.id === +me.id ? ' <span class="hint">(ty)</span>' : ''}</td>
+        <td><select onchange="setRole(${u.id}, this.value)" title="Změna role">
+            ${['reader','editor','admin'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select></td>
+        <td>${(+u.approved) ? '✓ schválen' : '⏳ čeká'}</td>
+        <td class="hint">${esc(u.created_at || '')}</td>
+        <td class="nowrap">
+            ${(+u.approved) ? `<button class="mini" onclick="disapproveUser(${u.id})" title="Zablokovat">⛔</button>` : ''}
+            <button class="mini" onclick="resetUserPassword(${u.id})" title="Nové heslo">🔑</button>
+            ${+u.id !== +me.id ? `<button class="mini" onclick="deleteUser(${u.id}, '${esc(u.username)}')" title="Smazat">🗑️</button>` : ''}
+        </td>
+    </tr>`).join('');
+    $('users-pager').innerHTML = pagerHtml(users.length, USERS_STATE);
+}
+
+async function approveUser(id, role) {
+    const r = await api('admin_approve', { method: 'POST', body: { id, role } });
+    if (r.status !== 'ok') { alert('Schválení selhalo: ' + (r.code || '?')); return; }
+    loadUsers();
+}
+async function setRole(id, role) {
+    const r = await api('admin_set_role', { method: 'POST', body: { id, role } });
+    if (r.status !== 'ok') { alert('Změna role selhala: ' + (r.code || '?')); }
+}
+async function disapproveUser(id) {
+    if (!confirm('Zablokovat uživatele?')) return;
+    const r = await api('admin_disapprove', { method: 'POST', body: { id } });
+    if (r.status !== 'ok') { alert('Selhalo: ' + (r.code || '?')); return; }
+    loadUsers();
+}
+async function resetUserPassword(id) {
+    const np = prompt('Nové heslo pro uživatele (min. 6 znaků):');
+    if (!np || np.length < 6) return;
+    const r = await api('admin_reset_password', { method: 'POST', body: { id, password: np } });
+    alert(r.status === 'ok' ? 'Heslo změněno.' : 'Selhalo: ' + (r.code || '?'));
+}
+async function deleteUser(id, name) {
+    if (!confirm('SMAZAT uživatele ' + name + '? Jeho písně zůstanou (autor se zanuluje).')) return;
+    const r = await api('admin_delete_user', { method: 'POST', body: { id } });
+    if (r.status !== 'ok') { alert('Mazání selhalo: ' + (r.code || '?')); return; }
+    loadUsers();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (!$('users-rows')) return;
+    loadUsers();
+    wireSortPager($('users-thead'), $('users-pager'), USERS_STATE, loadUsers);
+});
+</script>
+</body>
+</html>

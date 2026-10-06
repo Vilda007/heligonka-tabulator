@@ -1,12 +1,15 @@
 /* Heligonka Tabulator — service worker (offline PWA)
    Cache-first pro statické soubory, network-first pro API (knihovna potřebuje síť). */
-const CACHE = 'heligonka-v1';
+const CACHE = 'heligonka-v2';
 const ASSETS = [
   './',
   './index.html',
-  './napoveda.html',
+  './knihovna.html',
+  './uzivatele.html',
   './akordy.html',
-  './style.css?v=2026100601',
+  './napoveda.html',
+  './style.css?v=2026100602',
+  './shared.js',
   './app.js',
   './library.js',
   './midi.js',

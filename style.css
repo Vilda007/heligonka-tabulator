@@ -100,6 +100,17 @@ button:hover { filter: brightness(1.1); }
 .rB  { font-weight: bold; font-size: 1.25rem; }
 .rM  { font-size: .6rem; color: #444; border-bottom: 2px solid var(--line); }
 .rT  { font-size: .72rem; color: #111; line-height: 1.1; white-space: normal; overflow-wrap: anywhere; }
+/* v5 — horní menu, stránkování, knihovna/admin tabulky */
+.topmenu { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; border-bottom: 2px solid var(--line); padding: .3rem 0 .5rem; margin-bottom: .8rem; }
+.topmenu a { text-decoration: none; color: var(--accent); padding: .15em .6em; border-radius: 4px; font-size: .95rem; }
+.topmenu a:hover { background: #efe8d8; }
+.topmenu a.active { background: var(--accent); color: #fff8e6; }
+.pager { margin: .5rem 0; }
+.pager a { color: var(--accent); text-decoration: none; }
+.libtable { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.libtable th, .libtable td { border-bottom: 1px solid #ddd; text-align: left; padding: .35em .5em; }
+.libtable th { font-size: .8rem; text-transform: uppercase; color: #777; }
+.libtable td.actions { white-space: nowrap; }
 .cell.tie .rII::after, .cell.tie .rI::after { content: '⌒'; position: absolute; }
 .slide-right .rM::after { content: '→'; font-size: .9rem; }
 .slide-left  .rM::after { content: '←'; font-size: .9rem; }

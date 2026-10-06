@@ -1,8 +1,6 @@
 /* Heligonka Tabulator v2 — app.js
    Parser textového formátu, tóninový selektor s transpozicí, ukázková píseň,
-  ABC import (základ). */
-
-const $ = (id) => document.getElementById(id);
+  ABC import (základ). $ helper je v shared.js. */
 
 /* ================= TÓNINY A TRANSPOZICE =================
    Heligonka 2řadá: hraje se v tónině dle ladění (klasika C/F).
@@ -288,3 +286,30 @@ $('copy-html').addEventListener('click', ()=>{
 // init
 $('input').value = SAMPLE_NA_PANKRACI;
 doRender();
+
+/* deep-link ?pisen= — načti píseň z knihovny do editoru */
+window.addEventListener('DOMContentLoaded', async () => {
+    const m = location.search.match(/pisen=(\d+)/);
+    if (!m) return;
+    const r = await api('get&id=' + m[1]);
+    if (r.status !== 'ok') { $('save-status').textContent = 'Píseň nelze načíst: ' + (r.code || '?'); return; }
+    const s = r.song;
+    EDITING = s;
+    $('input').value = s.data || '';
+    if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
+    $('save-status').textContent = 'Editace: ' + s.title + ' (v' + s.version + ')';
+    if (typeof updateShareLinks === 'function') updateShareLinks(s);
+});
+/* export XLS + uložení (index) */
+window.addEventListener('DOMContentLoaded', () => {
+    const ex = $('export-xls');
+    if (ex) ex.addEventListener('click', () => {
+        const song = parseSong($('input').value);
+        const title = EDITING ? EDITING.title : (song.title !== 'Bez názvu' ? song.title : prompt('Název písně pro export:') || 'pisen');
+        exportSongToXls(title, $('key').value, $('input').value);
+    });
+    const sv = $('save-song');
+    if (sv) sv.addEventListener('click', saveSong);
+    const nw = $('new-song');
+    if (nw) nw.addEventListener('click', () => { EDITING = null; $('input').value = ''; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; });
+});

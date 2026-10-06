@@ -163,6 +163,83 @@ function xlsToSong(ws, sheetName) {
     return { text: out, key, title: '' };
 }
 
+/* ---- EXPORT: píseň → XLS (BIFF8, notace tabulek) ---- */
+/* stupně 1..7 (a 8..14 vyšší oktáva) → německé názvy not dle tóniny */
+const KEY_DEGREE_NAMES = {
+    Bb: ['b','c','d','es','f','g','as'],
+    F:  ['f','g','a','b','c','d','e'],
+    C:  ['c','d','e','f','g','a','h'],
+    G:  ['g','a','h','c','d','e','fis'],
+    A:  ['a','h','cis','d','e','fis','gis'],
+    D:  ['d','e','fis','g','a','h','cis']
+};
+function degToGermanNote(deg, key) {
+    const names = KEY_DEGREE_NAMES[key] || KEY_DEGREE_NAMES.F;
+    const d = ((deg - 1) % 7 + 7) % 7;
+    const oct = Math.floor((deg - 1) / 7);
+    return names[d] + (oct > 0 ? String(oct) : '');
+}
+/* bas apky → německý zápis (velké = "X!", malé = "x,") */
+function appBassToGerman(b) {
+    const big = { B:'B', G:'G', C:'C', F:'F', D:'D', A:'A', E:'Es', H:'H' };
+    const small = { b:'es', g:'g', c:'c', f:'f', d:'d', a:'as', e:'es', h:'h' };
+    if (big[b]) return big[b] + '!';
+    if (small[b]) return small[b] + ',';
+    return '';
+}
+/* export textového formátu → XLS (aoa), stáhne .xls */
+function exportSongToXls(title, key, text) {
+    loadXlsxLib(() => {
+        try {
+            const rows = [];
+            const syl = [];
+            let v1line = null;
+            for (const raw of (text || '').split(/\r?\n/)) {
+                const line = raw.trim();
+                if (!line || /^(title|key|abc)\s*:/i.test(line)) continue;
+                const m = line.match(/^v\s*1\s*:\s*(.+)$/i);
+                if (m) { v1line = m[1]; continue; }
+                for (const tok of line.split(/\s+/)) {
+                    if (!tok) continue;
+                    rows.push(tok);
+                }
+            }
+            if (v1line) v1line.split(/\s*[|]\s*|\s+/).filter(Boolean).forEach(s => syl.push(s));
+            const aoa = [];
+            let si = 0;
+            for (const tok of rows) {
+                const semi = tok.indexOf(';');
+                const head = semi >= 0 ? tok.slice(0, semi) : tok;
+                const bass = semi >= 0 ? tok.slice(semi + 1) : '';
+                const dir = bass ? (bass === bass.toUpperCase() ? 'Tlak' : 'Tah') : '';
+                if (head === '-' || head === '' || /^>>|<</.test(head)) {
+                    /* basová doba (fill) */
+                    aoa.push(['B', '', '', '', '', '', '', '', dir, '', '', '', bass ? appBassToGerman(bass) : '']);
+                } else {
+                    const mdeg = head.match(/^(?:II|I):(\d+)(?:\/(\d+))?$/);
+                    const deg = mdeg ? parseInt(mdeg[1], 10) : 1;
+                    const glide = mdeg && mdeg[2] ? degToGermanNote(parseInt(mdeg[2], 10), key) + ',' : '';
+                    const note = degToGermanNote(deg, key) + ',';
+                    const syll = si < syl.length ? syl[si++] : '';
+                    const r = [syll, note, glide, '', '', '', '', '', dir, '', '', '', bass ? appBassToGerman(bass) : ''];
+                    aoa.push(r);
+                }
+            }
+            const sheetName = key === 'Bb' ? 'B-Es-As' : (key + ' dur-C dur-F dur');
+            const ws = XLSX.utils.aoa_to_sheet(aoa);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0, 31));
+            const buf = XLSX.write(wb, { bookType: 'biff8', type: 'array' });
+            const blob = new Blob([buf], { type: 'application/vnd.ms-excel' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = (title || 'pisen').replace(/[\\/:*?"<>|]/g, '_') + '.xls';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        } catch (err) { alert('XLS export selhal: ' + err.message); }
+    });
+}
+
 /* ---- upload wiring ---- */
 function wireXls() {
     const inp = document.getElementById('file');

@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nápověda — Heligonka Tabulator</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=2026100601">
+<link rel="stylesheet" href="style.css?v=2026100602">
 </head>
 <body>
-<header><h1>❓ Nápověda — Heligonka Tabulator</h1>
+<header><nav id="topmenu" class="topmenu"></nav>
+<h1>❓ Nápověda — Heligonka Tabulator</h1>
 <p class="lead">Krátký návod k použití na jedné stránce.</p>
 <p><a href="index.html">← Zpět do aplikace</a></p></header>
 <main>
@@ -20,6 +21,7 @@
 <li><b>Napiš/přepiš text</b> do pole (formát níže).</li>
 <li><b>Nahraj soubor</b>: .txt / .abc (text), .mid / .midi (MIDI — noty se rozpoznají a vloží do pole; doladit ručně) nebo .xls / .xlsx (notovací tabulka „deutsche Heligonka-Tabulatur“: slabiky, německá notace b/es/as, sloupec Tlak/Tah, B-řádky s basy; tónina podle názvu listu, např. „B-Es-As“ = B dur).</li>
 </ul>
+<p><b>Akordy:</b> hmaty akordů (C, Cm, F…) najdeš v <a href="akordy.html">Akordové tabulce</a>.</p>
 </section>
 
 <section>
@@ -52,19 +54,33 @@
 </section>
 
 <section>
-<h2>5. Knihovna písní</h2>
+<h2>5. Struktura aplikace (horní menu)</h2>
 <ul>
-<li><b>Hledat</b> — textové pole nad tabulkou (název / autor / tónina). Hledá ve VŠECH písních všech uživatelů.</li>
-<li><b>Otevřít píseň</b> — kliknutím na název se načte do editoru.</li>
-<li><b>Hodnotit</b> — klikni na hvězdičky v řádku (1–5 ★, přepisuje se; jen přihlášení).</li>
-<li><b>📄 Kopírovat</b> — vytvoří vlastní kopii cizí písně k úpravám.</li>
-<li><b>Ukládat/exportovat</b> mohou jen <b>Editoři</b>; Admin spravuje vše.</li>
-<li><b>Odkaz na píseň</b> — po otevření se URL změní na <code>?pisen=N</code>; řada share tlačítek (FB/BS/X/WA/E-mail) pod tabulaturou.</li>
+<li><b>🎹 Tabulátor</b> (index) — zadání melodie, importy (MIDI/XLS/text), generování tabulatury, export XLS, tisk/PDF, uložení do knihovny.</li>
+<li><b>📚 Knihovna</b> — všechny písně: hledání, řazení kliknutím na záhlaví, stránkování, hodnocení, kopírování k sobě, přihlášení/registrace.</li>
+<li><b>👥 Uživatelé</b> — správa uživatelů (jen admin): schvalování registrací, role, blokování, reset hesel; řazení a stránkování.</li>
+<li><b>🎼 Akordy</b> — akordová tabulka (hmaty).</li>
+<li><b>❓ Nápověda</b> — tato stránka.</li>
 </ul>
 </section>
 
 <section>
-<h2>6. Účty a role</h2>
+<h2>6. Knihovna písní</h2>
+<ul>
+<li><b>Hledat</b> — textové pole nad tabulkou (název / autor / tónina). Hledá ve VŠECH písních všech uživatelů.</li>
+<li><b>Řadit</b> — klikni na záhlaví sloupce (Název / Tónina / Autor / Hodnocení / Upraveno); opakované kliknutí = sestupně.</li>
+<li><b>Stránkování</b> — 10 písní na stránku.</li>
+<li><b>Otevřít píseň</b> — kliknutím na název se načte do tabulátoru.</li>
+<li><b>Hodnotit</b> — 1–5 ★ (přepisuje se; jen přihlášení).</li>
+<li><b>📄 Kopírovat</b> — vytvoří vlastní kopii cizí písně k úpravám.</li>
+<li><b>📊 Export XLS</b> — v tabulátoru vyexportuje píseň jako notovací tabulku (.xls).</li>
+<li><b>Ukládat/exportovat</b> mohou jen <b>Editoři</b>; Admin spravuje vše.</li>
+<li><b>Odkaz na píseň</b> — po otevření se URL změní na <code>?pisen=N</code>; share tlačítka (FB/BS/X/WA/E-mail) pod tabulaturou.</li>
+</ul>
+</section>
+
+<section>
+<h2>7. Účty a role</h2>
 <table class="hinttable">
 <tr><th>Role</th><th>Může</th></tr>
 <tr><td>Čtenář</td><td>číst, hledat, hodnotit ★</td></tr>
@@ -85,5 +101,6 @@
 </section>
 </main>
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
+<script src="shared.js"></script>
 </body>
 </html>
