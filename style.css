@@ -118,3 +118,19 @@ footer a { color: var(--accent); }
 .controls label { font-size: .9rem; }
 .controls select, .controls input[type=file] { font-family: inherit; font-size: .9rem; padding: .25em; }
 .labs { display: grid; grid-template-rows: 2.4em 2.4em 2.4em 1.2em; border-right: 2px solid var(--line); }
+
+/* v3 — knihovna + auth */
+#library table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+#library th, #library td { border-bottom: 1px solid #ddd; text-align: left; padding: .35em .5em; }
+#library th { font-size: .8rem; text-transform: uppercase; color: #777; }
+#library td.actions { white-space: nowrap; }
+button.mini { padding: .15em .5em; font-size: .8rem; background: #555; }
+.star { cursor: pointer; font-size: .9rem; }
+.authline { display: flex; gap: .4rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }
+.authline input { font-family: inherit; padding: .25em; }
+#admin-box h3 { margin: 1rem 0 0; font-size: 1rem; }
+.admintable { width:100%; border-collapse:collapse; font-size:.85rem; margin:.3rem 0; }
+.admintable th, .admintable td { border-bottom:1px solid #ddd; padding:.3em .4em; text-align:left; }
+.nowrap { white-space:nowrap; }
+#admin-box h3 { margin-top:1.2rem; }
+#admin-box h4 { margin:.8rem 0 .2rem; font-size:.9rem; }

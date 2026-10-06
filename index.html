@@ -46,6 +46,24 @@
   <button id="render">Vygenerovat tabulaturu</button>
 </section>
 
+<section id="library">
+  <h2>📚 Knihovna písní</h2>
+  <div id="auth-box"></div>
+  <input id="lib-search" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
+  <div id="library-error" class="hint" style="color:#a33;"></div>
+  <table id="library">
+    <thead><tr><th>Název</th><th>Tónina</th><th>Autor</th><th>Hodnocení</th><th>Akce</th></tr></thead>
+    <tbody id="library-rows"></tbody>
+  </table>
+  <div class="controls" style="margin-top:.6rem;">
+    <input id="song-title" placeholder="Název nové písně" size="20">
+    <button id="new-song">➕ Nová</button>
+    <button id="save-song">💾 Uložit</button>
+    <span id="save-status" class="hint"></span>
+  </div>
+  <div id="admin-box"></div>
+</section>
+
 <section id="output-section">
   <h2>2. Tabulatura</h2>
   <div id="output" class="sheet"></div>
@@ -58,5 +76,6 @@
 
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a> · chyby hlaste jako <a href="https://github.com/Vilda007/heligonka-tabulator/issues">issue</a>.</footer>
 <script src="app.js"></script>
+<script src="library.js"></script>
 </body>
 </html>
