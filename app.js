@@ -151,10 +151,10 @@ key: F
 II:5;F II:6;f II:5;c II:4/5~;F -;f II:5;f II:5;f II:5;F II:7/6;f II:6;f II:6;C I:9/8;B I:8;b -;b II:5;F II:6;f II:5;c
 v1: Na Pank-krá-ci | na ma-lém ko-peč-ku | sto-jí pěk-né | stra-mo-řa-dí | měl jsem ho-`;
 
-const SAMPLE_MILUJKU = `title:Milujku
+const SAMPLE_MILUJKU = `title:Miluj mě
 key: C
 I:1;C I:2;f I:3;C I:4;f I:5;C I:4;f I:3;C I:2;f
-v1: Mi-luj-ku | mi-luj-ku | mo-je mi-lá`;
+v1: Mi-luj mě | mi-luj mě | mo-je mi-lá`;
 
 const SAMPLE_ABC = `title: Ukázka z ABC (Melodie v C)
 key: C
