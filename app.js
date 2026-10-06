@@ -368,6 +368,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }); if (!getUser()) em.style.display = 'none'; }
     const sv = $('save-song');
     if (sv) { sv.addEventListener('click', saveSong); if (!getUser()) sv.style.display = 'none'; }
+    /* nepřihlášení: žádný import souboru */
+    const fi = $('file');
+    if (fi && !getUser()) { fi.style.display = 'none'; fi.parentElement.style.display = 'none'; }
     const nw = $('new-song');
     if (nw) nw.addEventListener('click', () => { EDITING = null; $('input').value = ''; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; });
 });
