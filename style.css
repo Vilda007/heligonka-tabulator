@@ -82,7 +82,7 @@ button:hover { filter: brightness(1.1); }
 .cell {
   border-right: 1px solid var(--line);
   display: grid;
-  grid-template-rows: 2.4em 2.4em 2.4em 1.2em;
+  grid-template-rows: 2.4em 2.4em 2.4em 1.2em 1.6em;
 }
 .cell:last-child { border-right: 0; }
 .cell > div {
@@ -99,6 +99,7 @@ button:hover { filter: brightness(1.1); }
 .rI  { font-style: normal; }
 .rB  { font-weight: bold; font-size: 1.25rem; }
 .rM  { font-size: .6rem; color: #444; border-bottom: 2px solid var(--line); }
+.rT  { font-size: .72rem; color: #111; line-height: 1.1; white-space: normal; overflow-wrap: anywhere; }
 .cell.tie .rII::after, .cell.tie .rI::after { content: '⌒'; position: absolute; }
 .slide-right .rM::after { content: '→'; font-size: .9rem; }
 .slide-left  .rM::after { content: '←'; font-size: .9rem; }
@@ -117,7 +118,7 @@ footer a { color: var(--accent); }
 .controls { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: .5rem; align-items: center; }
 .controls label { font-size: .9rem; }
 .controls select, .controls input[type=file] { font-family: inherit; font-size: .9rem; padding: .25em; }
-.labs { display: grid; grid-template-rows: 2.4em 2.4em 2.4em 1.2em; border-right: 2px solid var(--line); }
+.labs { display: grid; grid-template-rows: 2.4em 2.4em 2.4em 1.2em 1.6em; border-right: 2px solid var(--line); }
 
 /* v3 — knihovna + auth */
 #library table { width: 100%; border-collapse: collapse; font-size: .9rem; }

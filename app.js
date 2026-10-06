@@ -174,6 +174,12 @@ function renderBeats(song){
   wrap.appendChild(hdr);
 
   let sysEl=null, sysCells=null; const MAX_COLS=8;
+  /* slabiky textu: sloky 1..N spoj, rozděl na slova (slabiky) — přiřazují se postupně notám */
+  const verses = {};
+  song.lyrics.forEach(v=>{ (verses[v.verse] = verses[v.verse] || []).push(...v.text); });
+  const syl = [];
+  Object.keys(verses).sort().forEach(vn=>{ verses[vn].forEach(ph => ph.split(/\s+/).filter(Boolean).forEach(w => syl.push(w))); });
+  renderBeats._syl = syl;
   const newSystem=()=>{
     sysEl=document.createElement('div'); sysEl.className='system';
     sysEl.innerHTML=`<div class="labs"><div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div></div><div class="cells"></div>`;
@@ -182,6 +188,7 @@ function renderBeats(song){
   newSystem();
 
   let prevBas='';
+  let noteCount = 0; // pozn. index pro přiřazení slabik textu
   song.beats.forEach((beat)=>{
     beat.forEach(note=>{
       if (sysCells.children.length >= MAX_COLS) newSystem();
@@ -194,15 +201,18 @@ function renderBeats(song){
       cell.appendChild(rowDiv('I', note));
       cell.appendChild(rowDiv('B', note));
       cell.appendChild(rowDiv('M', note));
+      /* slabika pod dobou — jen u melodických not; basové filly text nesou */
+      if (note.hold) cell.appendChild(syllableDiv(-1));
+      else { cell.appendChild(syllableDiv(noteCount)); noteCount++; }
       if (note.tie) cell.classList.add('tie');
       if (note.slide) cell.classList.add('slide-'+note.slide);
       sysCells.appendChild(cell);
     });
   });
 
-  const verses = {};
-  song.lyrics.forEach(v=>{ (verses[v.verse] = verses[v.verse] || []).push(...v.text); });
+  /* sloka 1 = slabiky pod notami (výše); sloky 2+ zůstávají pod tabulaturou v závorce */
   Object.keys(verses).sort().forEach(vn=>{
+    if (+vn <= 1) return;
     const p=document.createElement('p'); p.className='verse';
     p.textContent = `[${verses[vn].join(' ')}]`;
     wrap.appendChild(p);
@@ -216,6 +226,13 @@ function rowDiv(row, note){
   else if (row==='I') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
   else if (row==='B') d.textContent = note.bas || '';
   else d.textContent = note.slide==='right'?'→':note.slide==='left'?'←':'';
+  return d;
+}
+/* slabika textu pod dobou — bere postupně z renderBeats._syl */
+function syllableDiv(i){
+  const d=document.createElement('div'); d.className='rT';
+  const syl = renderBeats._syl;
+  if (syl && i < syl.length) d.textContent = syl[i];
   return d;
 }
 

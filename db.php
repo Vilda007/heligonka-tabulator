@@ -146,12 +146,21 @@ function jt_json_decode($raw) {
     return count($out) ? $out : null;
 }
 function stripslashes_safe_pairs($s) { return $s; }
+/* \uXXXX → UTF-8 (JSON unicode escape) */
+function jt_utf8_from_hex($m) {
+    $cp = hexdec($m[1]);
+    if ($cp < 0x80) return chr($cp);
+    if ($cp < 0x800) return chr(0xC0 | ($cp >> 6)) . chr(0x80 | ($cp & 0x3F));
+    if ($cp < 0x10000) return chr(0xE0 | ($cp >> 12)) . chr(0x80 | (($cp >> 6) & 0x3F)) . chr(0x80 | ($cp & 0x3F));
+    return chr(0xF0 | ($cp >> 18)) . chr(0x80 | (($cp >> 12) & 0x3F)) . chr(0x80 | (($cp >> 6) & 0x3F)) . chr(0x80 | ($cp & 0x3F));
+}
 function jt_unescape($s) {
     $s = str_replace('\\\\', "\x01", $s);
     $s = str_replace('\\"', '"', $s);
     $s = str_replace('\\n', "\n", $s);
     $s = str_replace('\\r', "\r", $s);
     $s = str_replace('\\t', "\t", $s);
+    $s = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', 'jt_utf8_from_hex', $s);
     $s = str_replace("\x01", '\\', $s);
     return $s;
 }
