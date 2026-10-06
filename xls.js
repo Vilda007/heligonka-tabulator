@@ -36,11 +36,15 @@ const DEGREE_BY_KEYFLAT = {
     0: { 'c': 1, 'd': 2, 'e': 3, 'f': 4, 'g': 5, 'a': 6, 'h': 7 }    // C dur
 };
 
-/* key signature names → počet béček / křížků dur */
+/* key signature z názvu listu → tónina apky */
 function keyFromSheetName(name) {
-    const flats = (name.match(/Es|As|B(?![a-z])/g) || []).length; // "B-Es-As" → 3
+    if (/^A dur|^A\s*dur/.test(name)) return 'A';
+    if (/^G dur|^G\s*dur/.test(name)) return 'G';
+    if (/^F dur|^F\s*dur/.test(name)) return 'F';
+    if (/^C dur|^C\s*dur/.test(name)) return 'C';
+    if (/B-Es-As|B\s*-\s*Es\s*-\s*As/.test(name)) return 'Bb';
+    const flats = (name.match(/Es|As|B(?![a-z])/g) || []).length;
     if (flats === 3) return 'Bb';
-    if (flats === 2) return 'Bb'; // B-Es = Bb dur (orientačně)
     if (flats === 1) return 'F';
     return null;
 }
@@ -68,28 +72,60 @@ function parseGermanNote(cell) {
 }
 
 /* německé basy → slovník apky (BASS_ORDER: F,b,c,C,f,B,g,G,a,A,d,D).
-   Es (Eb) v Bb-písně odpovídá IV — app KEY_BASS Bb používá 'E'; G/C/D existují přímo;
-   As (Ab) nemá ekvivalent — nejbližší tlačítko 'A' (orientačně). */
-const GERMAN_BASS_TO_APP = { B:'B', G:'G', C:'C', Es:'E', F:'F', D:'D', A:'A', As:'A', H:'H' };
+   Velké = Tlak (push), malé = Tah (pull). Es (Eb) = IV v Bb → 'E';
+   As (Ab) nemá ekvivalent — nejbližší 'A' (orientačně). */
+const BASS_PUSH = { 'B':'B','G':'G','C':'C','F':'F','D':'D','A':'A','Es':'E','As':'A' };
+const BASS_PULL = { 'b':'b','g':'g','c':'c','f':'f','d':'d','a':'a','es':'e','as':'a' };
+function germanBassToApp(name) {
+    if (name in BASS_PUSH) return BASS_PUSH[name];
+    if (name in BASS_PULL) return BASS_PULL[name];
+    return null;
+}
 
-/* bas: "Es!", "B!", "G!", "C!", "As!" → náš formát */
-function parseBassNote(cell) {
-    if (!cell) return '';
-    const s = String(cell).trim().replace(/,+$/, '');
-    const m = s.match(/^([A-Za-z]+)!$/);
-    if (!m) return '';
-    return m[1]; // Es, B, G, C, As
+/* parse basové buňky: "Es!", "C!" = push (vykřičník/velké), "c," "es," = pull (bez !, malé). */
+function parseBassCell(cell) {
+    if (!cell) return null;
+    const s = String(cell).trim().replace(/[,.;]+$/, '');
+    if (!s) return null;
+    const m = s.match(/^([A-Za-z]+)(!)?$/);
+    if (!m) return null;
+    const name = m[1];
+    if (!(name in BASS_PUSH) && !(name in BASS_PULL)) return null;
+    const push = !!m[2] || (name in BASS_PUSH);
+    return { name, push };
+}
+
+/* sken basů v řádku — sloupce ≥ 10 (za Tlak/Tah a melodickými hlasy);
+   pull-varianta (malé) téhož písmene, které už máme push, se ignoruje (alternativa). */
+function scanRowBasses(r) {
+    const found = [];
+    const seen = {};
+    for (let ci = 10; ci < r.length; ci++) {
+        const v = (r[ci] || '').toString().trim();
+        if (!v) continue;
+        const b = parseBassCell(v);
+        if (!b) continue;
+        const letter = b.name.toLowerCase();
+        if (seen[letter] && !b.push) continue;
+        const app = germanBassToApp(b.name);
+        if (!app) continue;
+        seen[letter] = true;
+        found.push(app);
+    }
+    return found;
 }
 
 /* ---- hlavní převod: worksheet → textový formát ----
-   Očekává se: řádky, kde A = slabika + B..E noty + sloupec "Tlak"/"Tah";
-   řádky "B" (A prázdné, noty prázdné) nesou v posledním sloupci bas "X!". */
+   Řádky: A = slabika, B.. = hlasy v německé notaci (col B = melodie),
+   sloupec "Tlak"/"Tah" = směr měchu, basy "X!" kdekoliv v řádku.
+   Řádek bez noty, ale s basem („B“-řádek) = samostatná basová doba;
+   bas na melodickém řádku se přilepí k dané notě. */
 function xlsToSong(ws, sheetName) {
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
     const key = keyFromSheetName(sheetName) || 'Bb';
     const tonicName = KEY_TONIC_NAME[key] || 'c';
     const tonicIdx = GERMAN_STEPS[tonicName] || 0;
-    const beats = [];   // { text, idx } = melodická doba; { hold:true, bass } = basová doba (B-řádek)
+    const beats = [];   // { text, idx, bass? } = melodická doba; { hold:true, bass } = samostatná basová doba
     const lyrics = [];
     for (let ri = 0; ri < rows.length; ri++) {
         const r = rows[ri] || [];
@@ -97,16 +133,17 @@ function xlsToSong(ws, sheetName) {
         /* melodie = první notový sloupec (col 1), další sloupce jsou doprovodné hlasy */
         const mcell = (r[1] || '').toString().trim();
         const n = mcell ? parseGermanNote(mcell) : null;
-        const last = (r[r.length - 1] || '').toString().trim();
-        const bassRaw = parseBassNote(last);
+        /* sken basů ve sloupcích ≥ 10 (za Tlak/Tah) — push X! i pull x, dedup alternativ */
+        const appBasses = scanRowBasses(r);
         if (n) {
-            beats.push({ text: a, idx: n.idx });
+            const beat = { text: a, idx: n.idx, bass: appBasses[0] || '' };
+            beats.push(beat);
             if (a) lyrics.push(a);
-        } else if (bassRaw) {
-            /* B-řádek = samostatná basová doba (instrumentální fill ve 3/4) */
-            const mapped = GERMAN_BASS_TO_APP[bassRaw];
-            if (mapped) beats.push({ hold: true, bass: mapped });
-            else console.warn('XLS: bas "' + bassRaw + '" nemá ekvivalent — doba vynechána.');
+            /* zbylé basy z řádku = samostatné doby (vzácne) */
+            for (let bi = 1; bi < appBasses.length; bi++) beats.push({ hold: true, bass: appBasses[bi] });
+        } else if (appBasses.length) {
+            /* B-řádek = samostatné basové doby (instrumentální fill ve 3/4) */
+            for (const ab of appBasses) beats.push({ hold: true, bass: ab });
         } else if (a) {
             // text bez noty — přilep k předchozímu beatu
             if (beats.length) beats[beats.length - 1].text += ' ' + a;
@@ -117,7 +154,7 @@ function xlsToSong(ws, sheetName) {
     let line = [];
     for (let i = 0; i < beats.length; i++) {
         const b = beats[i];
-        const tok = b.hold ? ('-;' + b.bass) : ('II:' + (b.idx - tonicIdx + 1));
+        const tok = b.hold ? ('-;' + b.bass) : ('II:' + (b.idx - tonicIdx + 1) + (b.bass ? ';' + b.bass : ''));
         line.push(tok);
         if (line.length >= 8) { out += line.join(' ') + '\n'; line = []; }
     }
