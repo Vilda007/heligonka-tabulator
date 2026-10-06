@@ -10,10 +10,15 @@ async function loadLibrary() {
     renderLibrary();
 }
 
+/* normalize pro vyhledávání: bez diakritiky, bez velikosti písmen (Věč = vEC) */
+function normSearch(s) {
+    return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function filteredSongs() {
-    const q = ($('lib-search').value || '').toLowerCase();
+    const q = normSearch($('lib-search').value);
     return SONGS.filter(s =>
-        !q || s.title.toLowerCase().includes(q) || (s.author || '').toLowerCase().includes(q) || (s.the_key || '').toLowerCase().includes(q)
+        !q || normSearch(s.title).includes(q) || normSearch(s.author).includes(q) || normSearch(s.the_key).includes(q)
     );
 }
 
