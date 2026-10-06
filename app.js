@@ -308,6 +308,12 @@ window.addEventListener('DOMContentLoaded', () => {
         const title = EDITING ? EDITING.title : (song.title !== 'Bez názvu' ? song.title : prompt('Název písně pro export:') || 'pisen');
         exportSongToXls(title, $('key').value, $('input').value);
     });
+    const em = $('export-midi');
+    if (em) em.addEventListener('click', () => {
+        const song = parseSong($('input').value);
+        const title = EDITING ? EDITING.title : (song.title !== 'Bez názvu' ? song.title : prompt('Název písně pro export:') || 'pisen');
+        exportSongToMidi(title, $('key').value, $('input').value);
+    });
     const sv = $('save-song');
     if (sv) sv.addEventListener('click', saveSong);
     const nw = $('new-song');

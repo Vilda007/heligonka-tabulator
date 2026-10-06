@@ -86,6 +86,83 @@ function normalizeKeyName(k) {
     return k;
 }
 
+/* ---- EXPORT: píseň (textový formát) → MIDI (.mid) ----
+   Melodie (stupeň → MIDI not dle tóniny) + basy (basový pás, oktáva níž).
+   Rytmus: 1 nota = 1 doba (quarter), skluz/glide = kratší, oblouček ~ = legato spoj. */
+const KEY_TONIC_PC = { C:0, F:5, G:7, A:9, D:2, Bb:10 };
+const KEY_SCALE_PC = {
+    C: [0,2,4,5,7,9,11], F: [5,7,9,10,12,14,16], G: [7,9,11,12,14,16,18],
+    A: [9,11,13,14,16,18,20], D: [2,4,6,7,9,11,13], Bb: [10,12,14,15,17,19,21]
+};
+const APP_BASS_PC = { F:41, B:46, C:48, G:43, D:38, A:45, E:40, H:47,
+                     f:29, b:34, c:36, g:31, d:26, a:33, e:28, h:35 };
+
+function degToMidiNote(deg, key) {
+    const scale = KEY_SCALE_PC[key] || KEY_SCALE_PC.F;
+    const d = ((deg - 1) % 7 + 7) % 7;
+    const oct = Math.floor((deg - 1) / 7);
+    /* 48 + PC stupně (scale[d] = absolutní pitch class) + 12 na oktávu;
+       tónika (deg1, oct0) pro Bb = 48+10 = 58 (Bb3) */
+    return 48 + scale[d] + 12 * oct;
+}
+
+function exportSongToMidi(title, key, text) {
+    loadMidiLib(() => {
+        try {
+            const song = new Midi();
+            song.header.setTempo(120);
+            const track = song.addTrack();
+            const bassTrack = song.addTrack();
+            const BEAT = 0.5; // quarter = 0.5 s při 120 BPM
+            let t = 0;
+            for (const raw of (text || '').split(/\r?\n/)) {
+                const line = raw.trim();
+                if (!line || /^(title|key|abc|v\s*\d+)\s*:/i.test(line)) continue;
+                for (const tok of line.split(/\s+/)) {
+                    if (!tok) continue;
+                    const semi = tok.indexOf(';');
+                    const head = semi >= 0 ? tok.slice(0, semi) : tok;
+                    const bass = semi >= 0 ? tok.slice(semi + 1) : '';
+                    const tie = head.endsWith('~');
+                    const h = head.replace(/~$/, '');
+                    if (h === '-' || h === '') { /* držení — bas se ale zapíše! */
+                        if (bass && APP_BASS_PC[bass] != null) {
+                            bassTrack.addNote({ midi: APP_BASS_PC[bass], time: t, duration: BEAT, velocity: 80 });
+                        }
+                        t += BEAT;
+                        continue;
+                    }
+                    const m = h.match(/^(?:II|I):(\d+)(?:\/(\d+))?$/);
+                    if (m) {
+                        const note = degToMidiNote(parseInt(m[1], 10), key);
+                        const glideTo = m[2] ? degToMidiNote(parseInt(m[2], 10), key) : null;
+                        if (glideTo) {
+                            /* skluzovka: rychlá dvojnota v rámci doby */
+                            track.addNote({ midi: note, time: t, duration: BEAT * 0.4, velocity: 100 });
+                            track.addNote({ midi: glideTo, time: t + BEAT * 0.5, duration: BEAT * 0.5, velocity: 100 });
+                        } else {
+                            track.addNote({ midi: note, time: t, duration: BEAT * (tie ? 1.4 : 1), velocity: 100 });
+                        }
+                        t += BEAT;
+                    } else {
+                        t += BEAT;
+                    }
+                    if (bass && APP_BASS_PC[bass] != null) {
+                        bassTrack.addNote({ midi: APP_BASS_PC[bass], time: t - BEAT, duration: BEAT, velocity: 80 });
+                    }
+                }
+            }
+            const buf = song.toArray();
+            const blob = new Blob([buf], { type: 'audio/midi' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = (title || 'pisen').replace(/[\\/:*?"<>|]/g, '_') + '.mid';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        } catch (err) { alert('MIDI export selhal: ' + err.message); }
+    });
+}
+
 /* upload wiring: přidá MIDI volbu do file inputu + obsluhu */
 function wireMidi() {
     const inp = document.getElementById('file');
