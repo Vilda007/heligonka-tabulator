@@ -50,6 +50,7 @@ function renderLibrary() {
                 ${user ? (canEdit ? `<button class="mini" onclick="editSong(${s.id})" title="Upravit">✏️</button>
                 <button class="mini" onclick="deleteSong(${s.id})" title="Smazat">🗑️</button>` : '') : ''}
                 ${(!mine && roleCanEdit(user)) ? `<button class="mini" title="Kopírovat k sobě" onclick="forkSong(${s.id})">📄</button>` : ''}
+                ${(user && !canEdit && !(!mine && roleCanEdit(user))) ? '&nbsp;' : ''}
             </td>
         </tr>`;
     }).join('');
