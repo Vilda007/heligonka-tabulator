@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heligonka Tabulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🎵 Heligonka Tabulator</h1>
+  <p class="lead">Tabulatura pro heligonku ve stylu zpěvníkových tabulek (II. / I. / B / M sloupce, skluzovky, přesahy). Vstup: jednoduchý textový formát — ukázka „Na Pankráci" předvyplněná.</p>
+</header>
+
+<main>
+<section id="editor">
+  <h2>1. Melodie</h2>
+  <textarea id="input" spellcheck="false" rows="14"></textarea>
+  <div class="hint">
+    <b>Formát:</b> <code>title:</code>, <code>key:</code>; takt = noty oddělené mezerou, takty oddělené <code>|</code>, řádek začíná <code>=</code> nový systém.<br>
+    Nota: <code>II:6/5;F</code> (číslo na řadě II, skluz 5 pod 6, bas F) · <code>I:8;f</code> · <code>II:5;~</code> na konci = oblouček (skluzovka) na další notu · <code>-;C</code> = pauza/hold · <code>&gt;&gt;</code> = skluz doprava, <code>&lt;&lt;</code> doleva.<br>
+    Sloky: <code>v1:</code> … text (svislítko <code>|</code> = nová věta).
+  </div>
+  <button id="render">Vygenerovat tabulaturu</button>
+</section>
+
+<section id="output-section">
+  <h2>2. Tabulatura</h2>
+  <div id="output" class="sheet"></div>
+  <div class="actions">
+    <button onclick="window.print()">🖨️ Tisk / PDF</button>
+    <button id="copy-html">📋 Kopírovat HTML</button>
+  </div>
+</section>
+</main>
+
+<footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a> · chyby hlaste jako <a href="https://github.com/Vilda007/heligonka-tabulator/issues">issue</a>.</footer>
+<script src="app.js"></script>
+</body>
+</html>

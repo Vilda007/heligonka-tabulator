@@ -1,0 +1,115 @@
+/* Heligonka Tabulator — style.css */
+:root {
+  --ink: #1a1a1a;
+  --paper: #fdfdf8;
+  --line: #333;
+  --accent: #8a3324;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: #f4f1e8;
+  color: var(--ink);
+  margin: 0;
+  padding: 1.2rem;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+header h1 { margin: 0 0 .2em; font-size: 1.6rem; }
+header .lead { color: #555; margin-top: 0; }
+main { display: grid; gap: 1.2rem; }
+section {
+  background: var(--paper);
+  border: 1px solid #d8d2c0;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+section h2 { margin-top: 0; font-size: 1.15rem; }
+textarea {
+  width: 100%;
+  font-family: 'Cascadia Code', Consolas, monospace;
+  font-size: .85rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: .6rem;
+  background: #fffef9;
+}
+.hint { font-size: .78rem; color: #666; margin: .5rem 0; line-height: 1.5; }
+button {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: .5em 1.1em;
+  font-size: .95rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+button:hover { filter: brightness(1.1); }
+.actions { margin-top: .8rem; display: flex; gap: .5rem; }
+
+/* ---- Tabulatura (zpěvníkový styl) ---- */
+.sheet { overflow-x: auto; padding: .5rem 0; }
+.sheet-inner {
+  background: #fffdf5;
+  border: 1px solid #999;
+  padding: 1rem;
+  min-width: 700px;
+}
+.song-title { text-align: center; font-size: 1.4rem; margin: 0 0 .8em; }
+.system {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  border: 2px solid var(--line);
+  margin-bottom: 1rem;
+  break-inside: avoid;
+}
+.grid {
+  display: grid;
+  grid-template-rows: repeat(4, auto);
+}
+.rowlab, .lab {
+  border-right: 1px solid var(--line);
+  font-weight: bold;
+  text-align: center;
+  padding: .15em .2em;
+}
+.cells {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+.cell {
+  border-right: 1px solid var(--line);
+  display: grid;
+  grid-template-rows: 2.4em 2.4em 2.4em 1.2em;
+}
+.cell:last-child { border-right: 0; }
+.cell > div {
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  line-height: 1.05;
+  white-space: pre;
+  text-align: center;
+}
+.rII { font-weight: bold; }
+.rI  { font-style: normal; }
+.rB  { font-weight: bold; font-size: 1.25rem; }
+.rM  { font-size: .6rem; color: #444; border-bottom: 2px solid var(--line); }
+.cell.tie .rII::after, .cell.tie .rI::after { content: '⌒'; position: absolute; }
+.slide-right .rM::after { content: '→'; font-size: .9rem; }
+.slide-left  .rM::after { content: '←'; font-size: .9rem; }
+.verse { font-size: .95rem; margin: .2em 0; }
+
+footer { margin-top: 1.4rem; font-size: .8rem; color: #777; text-align: center; }
+footer a { color: var(--accent); }
+
+@media print {
+  body { background: #fff; padding: 0; }
+  #editor, header, footer, .actions { display: none; }
+  section { border: 0; padding: 0; }
+  .sheet-inner { border: 0; min-width: 0; }
+}
