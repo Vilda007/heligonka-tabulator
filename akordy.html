@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akordová tabulka — Heligonka Tabulator</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css?v=2026100601">
+</head>
+<body>
+<header>
+  <h1>🎼 Akordová tabulka <a href="index.html" title="Zpět do aplikace">←</a></h1>
+  <p class="lead">Hmaty akordů na heligonce (zdroj: Akordy.xls, notace německá — es=Eb, as=Ab, b=B; číslice = oktáva). „Tlak" = tlačený měch, „Tah" = tahnutý.</p>
+</header>
+<main>
+<section>
+<table class="hinttable" id="chords-table">
+<thead><tr><th>Akord</th><th>Noty (knoflíky)</th><th>Směr měchu</th></tr></thead>
+<tbody id="chord-rows"></tbody>
+</table>
+<p class="hint">Označení: <code>c1</code> = tón c v jednolinkové oktávě, <code>es</code> = Eb, <code>as</code> = Ab, <code>b</code> = B/H, <code>gis</code> = G#. Notace odpovídá Helíkově německé konvenci.</p>
+</section>
+</main>
+<footer>Heligonka Tabulator — <a href="index.html">Zpět do aplikace</a> · <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
+<script>
+/* Akordy z Akordy.xls (Vildova referenční tabulka, 6.10.2026) */
+const CHORDS = [
+ {name:"C1", notes:["c1","e1","g1"], dir:"Tah"},
+ {name:"Cm1", notes:["c1","dis1","g1"], dir:"Tah"},
+ {name:"C71", notes:["c1","e1","g1","b1"], dir:"Tah"},
+ {name:"C2", notes:["c2","e2","g2"], dir:"Tlak"},
+ {name:"Cm2", notes:["c2","dis2","g2"], dir:"Tlak"},
+ {name:"C72", notes:["c2","e2","g2","b2"], dir:"Tlak"},
+ {name:"C0", notes:["c1","dis1","fis1"], dir:"Tah"},
+ {name:"C5#", notes:["a1","gis1","c1","e1"], dir:"Tah"},
+ {name:"C6", notes:["c1","e1","g1","a1"], dir:"Tlak"},
+ {name:"C maj7", notes:["c1","e1","g1","h1"], dir:"Tlak"},
+ {name:"Hor tlak", notes:["cis1","fis1","dis2"], dir:"Tlak"},
+ {name:"Hor tah", notes:["dis1","gis1","cis2"], dir:"Tah"},
+ {name:"F", notes:["f1","a1","c1"], dir:"Tah"},
+ {name:"Fm", notes:["f1","as1","c2"], dir:"Tah"},
+ {name:"F7", notes:["f1","a1","c1","b1"], dir:""},
+ {name:"Vlad.", notes:["c1","gis1","as1"], dir:"Tah"},
+ {name:"Vlad.II", notes:["c1","gis1","as1","c2"], dir:"Tah"},
+ {name:"as", notes:["as1","as2"], dir:""},
+ {name:"gis", notes:["gis1","gis2"], dir:"Tah"},
+ {name:"es", notes:["dis2"], dir:"Tlak"},
+ {name:"ges", notes:["fis1"], dir:"Tlak"}
+];
+(function(){
+  const tb = document.getElementById('chord-rows');
+  for (const ch of CHORDS) {
+    const tr = document.createElement('tr');
+    const tdN = document.createElement('td'); tdN.textContent = ch.name;
+    const tdNotes = document.createElement('td');
+    tdNotes.innerHTML = ch.notes.map(n => '<code>' + n + '</code>').join(' ');
+    const tdDir = document.createElement('td'); tdDir.textContent = ch.dir || '—';
+    tr.appendChild(tdN); tr.appendChild(tdNotes); tr.appendChild(tdDir);
+    tb.appendChild(tr);
+  }
+})();
+</script>
+</body>
+</html>
