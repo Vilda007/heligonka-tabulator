@@ -15,14 +15,15 @@
   .predloha-ctrl { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin: .6rem 0; }
   .predloha-ctrl label { font-size: .9rem; }
   #print-note { color: #7a4a1d; font-size: .85rem; margin: .3rem 0 1rem; }
-  .sheet-inner.predloha { min-width: 0; }
+  .sheet-inner.predloha { min-width: 0; width: 210mm; min-height: 297mm; padding: 15mm 12mm; margin: 0 auto; background: #fffdf5; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
+  @page { size: A4 portrait; margin: 0; }
   .predloha-title { text-align: center; font-size: 1.3rem; margin: 0 0 .6em; }
   .predloha-head-fields { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; font-size: .95rem; }
   .predloha-head-fields span { border-bottom: 1.5px solid #999; min-width: 9em; display: inline-block; padding: 0 .4em; }
   @media print {
     #editor-controls, header, footer, .topmenu, .predloha-ctrl, #print-note { display: none !important; }
     body { background: #fff; padding: 0; }
-    .sheet-inner.predloha { border: 0; padding: 0; background: #fff; }
+    .sheet-inner.predloha { border: 0; box-shadow: none; background: #fff; width: 210mm; min-height: 296mm; padding: 15mm 12mm; }
     .system { break-inside: avoid; }
   }
 </style>
