@@ -263,6 +263,8 @@ function syllableDiv(i){
 function currentSongAndKey(){
   const selKey = $('key').value;
   let song = parseSong($('input').value);
+  /* piseň z knihovny: pokud data nemají title:, použij název z knihovny */
+  if (typeof EDITING !== 'undefined' && EDITING && song.title === 'Bez názvu') song.title = EDITING.title;
   if (song.abc){
     /* ABC → stupně → reálné knoflíky (KEYMAPS) — dříve značka ABSD, kterou renderer ignoroval */
     const beats = abcToBeats(song.abc, song.key);
