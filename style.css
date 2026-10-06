@@ -80,11 +80,13 @@ button:hover { filter: brightness(1.1); }
   grid-auto-columns: 1fr;
 }
 .cell {
-  border-right: 1px solid var(--line);
   display: grid;
   grid-template-rows: 2.4em 2.4em 2.4em 1.2em 1.6em;
 }
-.cell:last-child { border-right: 0; }
+/* svislé dělící čáry jen u hudevních řádků — text (rT) je bez nich (jen vnější rám) */
+.cell > div { border-right: 1px solid var(--line); }
+.cell:last-child > div { border-right: 0; }
+.cell > div.rT { border-right: 0; }
 .cell > div {
   border-bottom: 1px solid var(--line);
   display: flex;

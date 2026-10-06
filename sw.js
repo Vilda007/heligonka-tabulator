@@ -8,7 +8,7 @@ const ASSETS = [
   './uzivatele.html',
   './akordy.html',
   './napoveda.html',
-  './style.css?v=2026100602',
+  './style.css?v=2026100603',
   './shared.js',
   './app.js',
   './library.js',
