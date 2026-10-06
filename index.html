@@ -38,7 +38,7 @@
   <h2 data-i18n="tab.melody">1. Melodie</h2>
   <div class="controls">
     <span id="title-edit-wrap" style="display:none">
-      <label>Název:
+      <label><span data-i18n="tab.name">Název:</span>
         <input type="text" id="song-title" placeholder="Název písně" size="16" style="padding:.25em" title="Název písně — použije se při ukládání">
       </label>
     </span>
@@ -77,7 +77,7 @@
   </div>
   <div id="keyinfo" class="hint">F dur (klasika, 2řadá C/F — hraje se v F)</div>
   <div class="controls">
-    <button id="toggle-hmatnik" title="Zobrazí klikací hmatník — nota se skládá klikáním na knoflíky místo psaním">⌨️ Hmatník</button>
+    <button id="toggle-hmatnik" title="Zobrazí klikací hmatník — nota se skládá klikáním na knoflíky místo psaním" data-i18n="tab.hmatnik">⌨️ Hmatník</button>
     <span id="hmatnik-box" style="display:none">
       <label title="Směr měchu pro nové noty">Měch:
         <select id="hmatnik-dir">
@@ -100,9 +100,9 @@
     <button id="render" title="Vykreslí tabulaturu z aktuálního textu" data-i18n="tab.render">Vygenerovat tabulaturu</button>
     <button id="save-song" title="Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)" data-i18n="tab.save">💾 Uložit do knihovny</button>
     <button id="export-xls" title="Export písně do .xls (notovací tabulka — německá notace, Tlak/Tah, basy)" data-i18n="tab.xls">📊 Export XLS</button>
-    <button id="export-midi" title="Export písně do .mid (melodie + basy, 120 BPM)">🎵 Export MIDI</button>
-    <button id="toggle-alts" title="Zobrazí pod každou notu alternativní knoflíky se stejným tónem (jiná řada/pozice) — orientační">🔀 Alternativy</button>
-    <button id="toggle-osnova" title="Vykreslí melodii v notové osnově (VexFlow) pod tabulaturou">🎼 Osnova</button>
+    <button id="export-midi" title="Export písně do .mid (melodie + basy, 120 BPM)" data-i18n="tab.midi">🎵 Export MIDI</button>
+    <button id="toggle-alts" title="Zobrazí pod každou notu alternativní knoflíky se stejným tónem (jiná řada/pozice) — orientační" data-i18n="tab.alts">🔀 Alternativy</button>
+    <button id="toggle-osnova" title="Vykreslí melodii v notové osnově (VexFlow) pod tabulaturou" data-i18n="tab.osnova">🎼 Osnova</button>
     <span id="save-status" class="hint"></span>
   </div>
   <div id="share-box" class="sharebox"></div>
@@ -114,8 +114,8 @@
   <div id="osnova-output" style="display:none" class="sheet"></div>
   <div id="print-footer" class="print-footer screen-hidden">🦞 Klepeto & Heligonka - https://klepeto.kuzelovi.cz/heligonka/</div>
   <div class="actions">
-    <button onclick="window.print()">🖨️ Tisk / PDF</button>
-    <button id="copy-html">📋 Kopírovat HTML</button>
+    <button onclick="window.print()" data-i18n="tab.print">🖨️ Tisk / PDF</button>
+    <button id="copy-html" data-i18n="tab.copy">📋 Kopírovat HTML</button>
   </div>
 </section>
 </main>

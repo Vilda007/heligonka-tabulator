@@ -103,7 +103,18 @@ const I18N = {
   'ak.lead':    { CZ: 'Hmaty akordů na heligonce (zdroj: Akordy.xls, notace německá — es=Eb, as=Ab, b=B; číslice = oktáva). „Tlak“ = tlačený měch, „Tah“ = tahnutý.', EN: 'Chord shapes for the heligonka (German note naming — es=Eb, as=Ab, b=B; digit = octave). “Tlak” = bellows push, “Tah” = bellows pull.' },
   'ak.chord':   { CZ: 'Akord', EN: 'Chord' },
   'ak.notes':   { CZ: 'Noty (knoflíky)', EN: 'Notes (buttons)' },
-  'ak.dir':     { CZ: 'Směr měchu', EN: 'Bellows direction' }
+  'ak.dir':     { CZ: 'Směr měchu', EN: 'Bellows direction' },
+  /* tóniny — popisek pod volbou */
+  'keyinfo.F':  { CZ: 'F dur (klasika, 2řadá C/F — hraje se v F)', EN: 'F major (classic 2-row C/F — played in F)' },
+  'keyinfo.C':  { CZ: 'C dur (kontra, hraje se v C)', EN: 'C major (kontra, played in C)' },
+  'keyinfo.G':  { CZ: 'G dur (transpozice — tóniny mimo C/F vyžadují jiný lad na heligonce, mapy jsou orientační)', EN: 'G major (transposition — keys beyond C/F need a different tuning, maps are approximate)' },
+  'keyinfo.A':  { CZ: 'A dur (orientační mapa)', EN: 'A major (approximate map)' },
+  'keyinfo.D':  { CZ: 'D dur (orientační mapa)', EN: 'D major (approximate map)' },
+  'keyinfo.Bb': { CZ: 'B dur (orientační mapa)', EN: 'B♭ major (approximate map)' },
+  /* hlášky */
+  'msg.editing': { CZ: 'Editace: ', EN: 'Editing: ' },
+  'msg.link':   { CZ: '🔗 Odkaz na píseň: ', EN: '🔗 Song link: ' },
+  'msg.copied': { CZ: 'Odkaz zkopírován', EN: 'Link copied' }
 };
 
 /* aktivní jazyk UI */

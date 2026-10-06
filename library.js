@@ -144,9 +144,11 @@ function updateShareLinks(s) {
         wa: 'https://wa.me/?text=' + et + '%20' + enc,
         mail: 'mailto:?subject=' + et + '&body=' + url
     };
-    box.innerHTML = '<span class="hint">🔗 Odkaz na píseň: <code id="song-url">' + esc(url) + '</code></span> ' +
+    const linkLbl = (typeof t === 'function') ? t('msg.link') : '🔗 Odkaz na píseň: ';
+    const copiedLbl = (typeof t === 'function') ? t('msg.copied') : 'Odkaz zkopírován';
+    box.innerHTML = '<span class="hint">' + linkLbl + '<code id="song-url">' + esc(url) + '</code></span> ' +
         Object.keys(links).map(k => '<a class="sharebtn" target="_blank" rel="noopener" href="' + links[k] + '">' + {fb:'Facebook',bs:'Bluesky',x:'X',wa:'WhatsApp',mail:'E-mail'}[k] + '</a>').join(' ') +
-        ' <button class="mini" onclick="navigator.clipboard.writeText(document.getElementById(\'song-url\').textContent);alert(\'Odkaz zkopírován\')">📋</button>';
+        ' <button class="mini" onclick="navigator.clipboard.writeText(document.getElementById(\'song-url\').textContent);alert(\'' + copiedLbl + '\')">📋</button>';
     box.style.display = 'block';
 }
 

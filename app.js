@@ -386,7 +386,8 @@ const KEY_INFO = {
   Bb:'B dur (orientační mapa)',
 };
 $('key').addEventListener('change', ()=>{
-  $('keyinfo').textContent = KEY_INFO[$('key').value] || '';
+  const ki = (typeof t === 'function' && typeof I18N !== 'undefined') ? t('keyinfo.' + $('key').value) : KEY_INFO[$('key').value];
+  $('keyinfo').textContent = ki || KEY_INFO[$('key').value] || '';
   doRender();
 });
 $('render').addEventListener('click', doRender);
@@ -423,7 +424,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
-    $('save-status').textContent = isAnon ? '' : ('Editace: ' + s.title + ' (v' + s.version + ')');
+    $('save-status').textContent = isAnon ? '' : ((typeof t === 'function' ? t('msg.editing') : 'Editace: ') + s.title + ' (v' + s.version + ')');
     if (!isAnon && typeof updateShareLinks === 'function') updateShareLinks(s);
 });
 /* export XLS + uložení (index) */
