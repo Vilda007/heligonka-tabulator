@@ -322,13 +322,6 @@ $('key').addEventListener('change', ()=>{
   $('keyinfo').textContent = KEY_INFO[$('key').value] || '';
   doRender();
 });
-$('sample-select').addEventListener('change', (e)=>{
-  const v = e.target.value;
-  if (v==='pankraci') $('input').value = SAMPLE_NA_PANKRACI;
-  else if (v==='milujku') $('input').value = SAMPLE_MILUJKU;
-  else if (v==='abc') $('input').value = SAMPLE_ABC;
-  doRender();
-});
 $('render').addEventListener('click', doRender);
 $('file').addEventListener('change', (e)=>{
   const f = e.target.files[0]; if (!f) return;
@@ -340,15 +333,14 @@ $('copy-html').addEventListener('click', ()=>{
   navigator.clipboard.writeText($('output').innerHTML).then(()=>alert('HTML tabulatury zkopírováno.'));
 });
 
-// init
-$('input').value = SAMPLE_NA_PANKRACI;
+// init — na první načtení (bez ?pisen=) otevři píseň #1 z knihovny
 doRender();
 
-/* deep-link ?pisen= — načti píseň z knihovny do editoru */
+/* deep-link ?pisen= (nebo píseň #1 při prvním načtení) — načti z knihovny do editoru */
 window.addEventListener('DOMContentLoaded', async () => {
     const m = location.search.match(/pisen=(\d+)/);
-    if (!m) return;
-    const r = await api('get&id=' + m[1]);
+    const id = m ? +m[1] : 1;
+    const r = await api('get&id=' + id);
     if (r.status !== 'ok') { $('save-status').textContent = 'Píseň nelze načíst: ' + (r.code || '?'); return; }
     const s = r.song;
     EDITING = s;
