@@ -87,25 +87,31 @@
 <section>
 <h2>7. Struktura aplikace (horní menu)</h2>
 <ul>
-<li><b>🎹 Tabulátor</b> (index) — zadání melodie, importy (MIDI/XLS/text), generování tabulatury, export XLS, tisk/PDF, uložení do knihovny.</li>
-<li><b>📚 Knihovna</b> — všechny písně: hledání, řazení kliknutím na záhlaví, stránkování, hodnocení, kopírování k sobě, přihlášení/registrace.</li>
+<li><b>🎹 Tabulátor</b> (index) — zadání melodie (i klikacím hmatníkem), importy (MIDI/XLS/text), generování tabulatury, alternativy hmatů, notová osnova, export XLS/MIDI, tisk/PDF, uložení do knihovny.</li>
+<li><b>📚 Knihovna</b> — všechny písně: hledání, filtr jazyka, řazení kliknutím na záhlaví, stránkování, hodnocení, kopírování k sobě, „Jen moje“.</li>
 <li><b>👥 Uživatelé</b> — správa uživatelů (jen admin): schvalování registrací, role, blokování, reset hesel; řazení a stránkování.</li>
 <li><b>🎼 Akordy</b> — akordová tabulka (hmaty).</li>
-<li><b>🖨️ Předloha</b> — prázdná tisková předloha tabulatury pro ruční zápis (volitelný počet řádků a sloupců, tisk/PDF).</li>
+<li><b>🖨️ Předloha</b> — prázdná tisková předloha A4 (volitelný počet řádků/sloupců, předvyplnitelný název a tónina, tisk/PDF).</li>
+<li><b>👤 Můj účet</b> — přihlášení/registrace (nepřihlášení) nebo nastavení: heslo, nástroj, jazyky, bio, statistiky, smazání účtu.</li>
 <li><b>❓ Nápověda</b> — tato stránka.</li>
 </ul>
+<p>Menu je k dispozici v češtině i angličtině — jazyk UI přepneš v <b>Mém účtu</b>.</p>
 </section>
 
 <section>
 <h2>8. Knihovna písní</h2>
 <ul>
-<li><b>Hledat</b> — textové pole nad tabulkou (název / autor / tónina). Hledá ve VŠECH písních všech uživatelů.</li>
-<li><b>Řadit</b> — klikni na záhlaví sloupce (Název / Tónina / Autor / Hodnocení / Upraveno); opakované kliknutí = sestupně.</li>
-<li><b>Stránkování</b> — 10 písní na stránku.</li>
-<li><b>Otevřít píseň</b> — kliknutím na název se načte do tabulátoru.</li>
+<li><b>Hledat</b> — textové pole nad tabulkou (název / autor / tónina); funguje bez diakritiky a bez ohledu na velikost písmen („věč“ najde „Včera“).</li>
+<li><b>Filtr jazyka</b> — rozbalovák (Všechny / 🇨🇿 CZ / 🇸🇰 SK / …) se kombinuje s hledáním.</li>
+<li><b>Jen moje</b> — zaškrtnutím zobrazíš jen vlastní písně (jen přihlášení).</li>
+<li><b>Řadit</b> — klikni na záhlaví sloupce (Název / Tónina / Jazyk / Autor / Hodnocení / Úplnost / Upraveno); opakované kliknutí = sestupně.</li>
+<li><b>Stránkování</b> — 20 písní na stránku.</li>
+<li><b>Sloupec Úplnost</b> — říká, co píseň obsahuje: II. (druhá řada), I. (první řada), B (basy), M (směr měchu), T (text); „II./B/M/T“ = vše kromě řady I.</li>
+<li><b>Otevřít píseň</b> — kliknutím na název se načte do tabulátoru (název lze pak upravit v poli Název).</li>
 <li><b>Hodnotit</b> — 1–5 ★ (přepisuje se; jen přihlášení).</li>
-<li><b>📄 Kopírovat</b> — vytvoří vlastní kopii cizí písně k úpravám.</li>
-<li><b>📊 Export XLS</b> — v tabulátoru vyexportuje píseň jako notovací tabulku (.xls).</li>
+<li><b>📄 Kopírovat</b> — vytvoří vlastní kopii cizí písně k úpravám (jen Editor).</li>
+<li><b>➕ Nová píseň</b> — založí píseň s dotazem na název a otevře ji k editaci (Editor/Admin).</li>
+<li><b>📊 Export XLS / 🎵 Export MIDI</b> — v tabulátoru vyexportuje píseň jako notovací tabulku (.xls) nebo MIDI soubor (.mid).</li>
 <li><b>Ukládat/exportovat</b> mohou jen <b>Editoři</b>; Admin spravuje vše.</li>
 <li><b>Odkaz na píseň</b> — po otevření se URL změní na <code>?pisen=N</code>; share tlačítka (FB/BS/X/WA/E-mail) pod tabulaturou.</li>
 </ul>
@@ -125,8 +131,19 @@
 <tr><td>Zakládat / upravovat / mazat VLASTNÍ písně</td><td>—</td><td>—</td><td>✅</td><td>✅</td></tr>
 <tr><td>Kopírovat cizí píseň k sobě (📄)</td><td>—</td><td>—</td><td>✅</td><td>✅</td></tr>
 <tr><td>Mazat libovolnou píseň</td><td>—</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>Můj účet (nástroj, jazyky, bio, statistiky, smazání účtu)</td><td>—</td><td>✅</td><td>✅</td><td>✅</td></tr>
 <tr><td>Správa uživatelů (schvalování, role, reset hesla)</td><td>—</td><td>—</td><td>—</td><td>✅</td></tr>
 </table>
+<p><b>👤 Můj účet</b> — přihlášení/registrace i všechna nastavení na jednom místě:</p>
+<ul>
+<li><b>📊 Statistiky</b> — počet tvých písní a nejlépe hodnocená píseň; odkaz na <b>Moje knihovnu</b>.</li>
+<li><b>🔐 Změna hesla</b> — staré + nové (nové min. 6 znaků).</li>
+<li><b>🎻 Můj nástroj</b> — počet řad, knoflíků na řadu a ladění tvé heligonky; ovlivňuje klikací hmatník.</li>
+<li><b>Výchozí jazyk nových písní</b> — 16 jazyků s vlaječkami (CZ, SK, UA, PL, GE, HU, RO, SI, EN, FR, SP, PT, NO, SE, FI, IT).</li>
+<li><b>🌐 Jazyk rozhraní</b> — CZ / EN (přeloží celé UI).</li>
+<li><b>📝 Bio</b> — krátký text o tobě (bez HTML, max 500 znaků).</li>
+<li><b>🗑️ Smazání účtu</b> — dvojité potvrzení; písně zůstávají v knihovně (bez autora).</li>
+</ul>
 <p><b>Role:</b></p>
 <table class="hinttable">
 <tr><th>Role</th><th>Může</th></tr>
