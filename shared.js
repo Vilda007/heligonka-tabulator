@@ -40,7 +40,7 @@ const MENU = [
     { href: 'uzivatele.html', id: 'menu-usr',  label: '👥 Uživatelé', i18n: 'menu.usr', admin: true },
     { href: 'akordy.html',   id: 'menu-ak',   label: '🎼 Akordy', i18n: 'menu.ak' },
     { href: 'predloha.html', id: 'menu-print', label: '🖨️ Předloha', i18n: 'menu.pred' },
-    { href: 'ucet.html',     id: 'menu-acc',  label: '👤 Můj účet', i18n: 'menu.acc', auth: true },
+    { href: 'ucet.html',     id: 'menu-acc',  label: '👤 Můj účet', i18n: 'menu.acc' },
     { href: 'napoveda.html', id: 'menu-help', label: '❓ Nápověda', i18n: 'menu.help' }
 ];
 function renderMenu() {
@@ -65,7 +65,7 @@ function renderAuthMini() {
     const loginLbl = (typeof t === 'function') ? t('menu.login') : 'Přihlásit / registrovat';
     el.innerHTML = user
         ? `👤 <b>${esc(user.username)}</b> <span class="hint">(${esc(user.role)})</span> <button class="mini" onclick="doLogout()">${logoutLbl}</button>`
-        : `<a href="knihovna.html">${loginLbl}</a>`;
+        : `<a href="ucet.html">${loginLbl}</a>`;
 }
 
 /* ---------- přihlášení (formulář na knihovně i uživatelích) ---------- */

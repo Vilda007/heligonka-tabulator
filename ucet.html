@@ -19,7 +19,18 @@
   <p class="lead" data-i18n="acc.lead">Nastavení tvého účtu: heslo, nástroj, jazyky, bio.</p>
 </header>
 <main>
-<section>
+<section id="login-section" style="display:none">
+  <h3>🔑 Přihlášení / registrace</h3>
+  <div class="authline">
+    <input id="login-user" placeholder="jméno" size="12">
+    <input id="login-pass" type="password" placeholder="heslo" size="12">
+    <button class="mini" onclick="doLogin()">Přihlásit</button>
+    <button class="mini" onclick="doRegister()">Registrovat</button>
+  </div>
+  <div id="login-msg" class="hint"></div>
+  <p class="hint">Registrace čeká na schválení adminem. První krok k ukládání písní: role Editor.</p>
+</section>
+<section id="account-section">
   <h3 data-i18n="acc.pass">Změna hesla</h3>
   <div class="controls">
     <label><span data-i18n="acc.oldpass">Staré heslo:</span> <input type="password" id="old-pass" size="12"></label>
@@ -94,6 +105,7 @@
   <p class="hint" data-i18n="acc.delhint">Smazání účtu je nevratné. Tvoje písně zůstávají v knihovně (bez autora).</p>
   <button id="del-account" data-i18n="acc.delbtn" style="background:#a33;color:#fff">Smazat účet</button>
 </section>
+</section>
 </main>
 
 <footer>Heligonka Tabulator — <a href="index.html">Zpět do aplikace</a></footer>
@@ -104,10 +116,16 @@ function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').repla
 
 async function loadProfile() {
     const user = getUser();
+    const loginSec = document.getElementById('login-section');
+    const accSec = document.getElementById('account-section');
     if (!user) {
-        document.querySelector('main').innerHTML = '<p class="hint">' + esc(t('acc.lead')) + ' <a href="knihovna.html">' + esc(t('menu.login')) + '</a></p>';
+        /* anonym: jen přihlášení/registrace */
+        if (loginSec) loginSec.style.display = 'block';
+        if (accSec) accSec.style.display = 'none';
         return;
     }
+    if (loginSec) loginSec.style.display = 'none';
+    if (accSec) accSec.style.display = 'block';
     const r = await api('me');
     if (r.status !== 'ok') return;
     const me = r.user;
