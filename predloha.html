@@ -43,6 +43,20 @@
     <label>Sloupců na řádek:
       <input type="number" id="cols-count" min="4" max="16" value="8" style="width:4em">
     </label>
+    <label>Název písně:
+      <input type="text" id="song-name" placeholder="(prázdné)" style="width:14em">
+    </label>
+    <label>Tónina:
+      <select id="song-key">
+        <option value="">(prázdné)</option>
+        <option value="F">F dur</option>
+        <option value="C">C dur</option>
+        <option value="G">G dur</option>
+        <option value="A">A dur</option>
+        <option value="D">D dur</option>
+        <option value="Bb">B dur</option>
+      </select>
+    </label>
     <button onclick="buildPredloha()" title="Přegeneruje předlohu dle zadaných hodnot">Vygenerovat</button>
     <button onclick="window.print()" title="Otevře tisk — v dialogu lze zvolit Uložit jako PDF">🖨️ Tisk / PDF</button>
   </div>
@@ -60,8 +74,12 @@ function buildPredloha() {
   out.innerHTML = '';
   const wrap = document.createElement('div'); wrap.className = 'sheet-inner predloha';
   const head = document.createElement('div');
-  head.innerHTML = '<div class="predloha-title">Název písně</div>' +
-    '<div class="predloha-head-fields"><span>&nbsp;</span><span style="min-width:5em">Tónina</span></div>';
+  const nm = (document.getElementById('song-name').value || '').trim();
+  const ky = (document.getElementById('song-key').value || '').trim();
+  const nmHtml = nm ? esc(nm) : '&nbsp;';
+  const kyHtml = ky ? esc(ky + ' dur') : '&nbsp;';
+  head.innerHTML = '<div class="predloha-title">' + nmHtml + '</div>' +
+    '<div class="predloha-head-fields"><span class="hf-name">' + nmHtml + '</span><span class="hf-key" style="min-width:5em">' + kyHtml + '</span></div>';
   wrap.appendChild(head);
   for (let r = 0; r < rows; r++) {
     const sys = document.createElement('div'); sys.className = 'system';
