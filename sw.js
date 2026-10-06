@@ -7,6 +7,7 @@ const ASSETS = [
   './knihovna.html',
   './uzivatele.html',
   './akordy.html',
+  './predloha.html',
   './napoveda.html',
   './style.css?v=2026100606',
   './shared.js',

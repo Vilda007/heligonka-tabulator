@@ -33,6 +33,7 @@ const MENU = [
     { href: 'knihovna.html', id: 'menu-lib',  label: '📚 Knihovna' },
     { href: 'uzivatele.html', id: 'menu-usr',  label: '👥 Uživatelé', admin: true },
     { href: 'akordy.html',   id: 'menu-ak',   label: '🎼 Akordy' },
+    { href: 'predloha.html', id: 'menu-print', label: '🖨️ Předloha' },
     { href: 'napoveda.html', id: 'menu-help', label: '❓ Nápověda' }
 ];
 function renderMenu() {

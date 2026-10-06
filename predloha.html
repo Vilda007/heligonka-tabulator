@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prázdná tisková předloha — Heligonka Tabulator</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Prázdná tisková předloha tabulatury pro heligonku — vytiskni si prázdné řádky (II./I./B/M/text) pro ruční zápis hmatů.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#7a4a1d">
+<link rel="stylesheet" href="style.css?v=2026100606">
+<style>
+  .predloha-ctrl { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin: .6rem 0; }
+  .predloha-ctrl label { font-size: .9rem; }
+  #print-note { color: #7a4a1d; font-size: .85rem; margin: .3rem 0 1rem; }
+  .sheet-inner.predloha { min-width: 0; }
+  .predloha-title { text-align: center; font-size: 1.3rem; margin: 0 0 .6em; }
+  .predloha-head-fields { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; font-size: .95rem; }
+  .predloha-head-fields span { border-bottom: 1.5px solid #999; min-width: 9em; display: inline-block; padding: 0 .4em; }
+  @media print {
+    #editor-controls, header, footer, .topmenu, .predloha-ctrl, #print-note { display: none !important; }
+    body { background: #fff; padding: 0; }
+    .sheet-inner.predloha { border: 0; padding: 0; background: #fff; }
+    .system { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <nav id="topmenu" class="topmenu"></nav>
+  <h1>🖨️ Prázdná tisková předloha</h1>
+  <p class="lead">Prázdná tabulatura pro ruční zápis hmatů — vytiskni si (nebo ulož jako PDF) a piš na papír jako do notáčku.</p>
+</header>
+<main>
+<section>
+  <div id="editor-controls" class="predloha-ctrl">
+    <label>Počet řádků (systémů):
+      <input type="number" id="rows-count" min="1" max="24" value="8" style="width:4em">
+    </label>
+    <label>Sloupců na řádek:
+      <input type="number" id="cols-count" min="4" max="16" value="8" style="width:4em">
+    </label>
+    <button onclick="buildPredloha()" title="Přegeneruje předlohu dle zadaných hodnot">Vygenerovat</button>
+    <button onclick="window.print()" title="Otevře tisk — v dialogu lze zvolit Uložit jako PDF">🖨️ Tisk / PDF</button>
+  </div>
+  <div id="print-note">Tip: v tiskovém dialogu zvol „Uložit jako PDF" pro elektronickou verzi. Doporučeno A4 na výšku.</div>
+  <div id="output" class="sheet"></div>
+</section>
+</main>
+<footer>Heligonka Tabulator — <a href="index.html">Zpět do aplikace</a></footer>
+<script src="shared.js"></script>
+<script>
+function buildPredloha() {
+  const rows = Math.max(1, Math.min(24, +document.getElementById('rows-count').value || 8));
+  const cols = Math.max(4, Math.min(16, +document.getElementById('cols-count').value || 8));
+  const out = document.getElementById('output');
+  out.innerHTML = '';
+  const wrap = document.createElement('div'); wrap.className = 'sheet-inner predloha';
+  const head = document.createElement('div');
+  head.innerHTML = '<div class="predloha-title">Název písně</div>' +
+    '<div class="predloha-head-fields"><span>&nbsp;</span><span style="min-width:5em">Tónina</span></div>';
+  wrap.appendChild(head);
+  for (let r = 0; r < rows; r++) {
+    const sys = document.createElement('div'); sys.className = 'system';
+    const labs = document.createElement('div'); labs.className = 'labs';
+    labs.innerHTML = '<div class="lab">II.</div><div class="lab">I.</div><div class="lab">B</div><div class="lab">M</div><div class="lab"></div>';
+    sys.appendChild(labs);
+    const cells = document.createElement('div'); cells.className = 'cells';
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div'); cell.className = 'cell';
+      for (let i = 0; i < 5; i++) cell.appendChild(document.createElement('div'));
+      cells.appendChild(cell);
+    }
+    sys.appendChild(cells);
+    wrap.appendChild(sys);
+  }
+  out.appendChild(wrap);
+}
+window.addEventListener('DOMContentLoaded', buildPredloha);
+</script>
+</body>
+</html>
