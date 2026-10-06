@@ -78,7 +78,7 @@ async function openSong(id) {
     const s = r.song;
     EDITING = s;
     localStorage.setItem('ht_edit_song', JSON.stringify({ id: s.id, title: s.title, key: s.the_key, data: s.data, version: s.version }));
-    location.href = 'index.html?pisen=' + s.id;
+    location.href = 'index.html?pisen=' + s.id + '&ts=' + Date.now();
 }
 async function editSong(id) { openSong(id); }
 

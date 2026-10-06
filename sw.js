@@ -1,6 +1,6 @@
 /* Heligonka Tabulator — service worker (offline PWA)
    Cache-first pro statické soubory, network-first pro API (knihovna potřebuje síť). */
-const CACHE = 'heligonka-v2';
+const CACHE = 'heligonka-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -51,14 +51,15 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
-  /* vlastní soubory: cache-first, fallback na síť a update cache */
+  /* vlastní soubory: NETWORK-FIRST — cache jen jako offline fallback.
+     Důvod: cache-first držel staré app.js/i18n.js i po deployi ("zlobí cachování"). */
   e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    fetch(e.request).then(res => {
       if (res.ok && url.origin === location.origin) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));
       }
       return res;
-    }).catch(() => caches.match('./index.html')))
+    }).catch(() => caches.match(e.request).then(hit => hit || caches.match('./index.html')))
   );
 });

@@ -34,7 +34,7 @@
 </section>
 <section id="account-section">
   <h3 data-i18n="acc.stats">📊 Moje statistiky</h3>
-  <div id="user-stats" class="hint">Načítám…</div>
+  <div id="user-stats" class="hint" data-i18n="stats.loading">Načítám…</div>
   <h3 data-i18n="acc.pass">Změna hesla</h3>
   <div class="controls">
     <label><span data-i18n="acc.oldpass">Staré heslo:</span> <input type="password" id="old-pass" size="12"></label>
@@ -157,15 +157,17 @@ async function loadStats() {
     for (const s of mine) {
         if (s.rating_avg !== null && (!best || (s.rating_avg || 0) > (best.rating_avg || 0))) best = s;
     }
+    const TT = (typeof t === 'function') ? t : (k => k);
     let html = '';
-    html += ' 🎵 <b>' + mine.length + '</b> ' + (mine.length === 1 ? 'píseň' : (mine.length < 5 ? 'písně' : 'písní')) + ' · ';
+    const songsWord = mine.length === 1 ? TT('stats.songs') : (mine.length < 5 ? TT('stats.songs2') : TT('stats.songs5'));
+    html += ' 🎵 <b>' + mine.length + '</b> ' + songsWord + ' · ';
     if (best) {
         const stars = '★'.repeat(Math.round(best.rating_avg)) + '☆'.repeat(5 - Math.round(best.rating_avg));
-        html += ' 🏆 nejlépe hodnocená: <b>' + esc(best.title) + '</b> ' + stars + ' (' + (best.rating_avg || 0) + '/5, ' + (best.rating_count || 0) + '×)';
+        html += ' ' + TT('stats.best') + ' <b>' + esc(best.title) + '</b> ' + stars + ' (' + (best.rating_avg || 0) + '/5, ' + (best.rating_count || 0) + '×)';
     } else {
-        html += ' 🏆 zatím žádná hodnocená píseň';
+        html += ' ' + TT('stats.nobest');
     }
-    html += ' · <a href="knihovna.html?mine=1">📚 Moje knihovna →</a>';
+    html += ' · <a href="knihovna.html?mine=1">' + TT('stats.mysongs') + '</a>';
     box.innerHTML = html;
 }
 

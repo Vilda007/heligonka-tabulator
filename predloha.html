@@ -44,12 +44,12 @@
     <label><span data-i18n="pred.cols">Sloupců na řádek:</span>
       <input type="number" id="cols-count" min="4" max="16" value="8" style="width:4em">
     </label>
-    <label>Název písně:
-      <input type="text" id="song-name" placeholder="(prázdné)" style="width:14em">
+    <label><span data-i18n="pred.songname">Název písně:</span>
+      <input type="text" id="song-name" data-i18n-placeholder="pred.empty" placeholder="(prázdné)" style="width:14em">
     </label>
-    <label>Tónina:
+    <label><span data-i18n="tab.key">Tónina:</span>
       <select id="song-key">
-        <option value="">(prázdné)</option>
+        <option value="" data-i18n="pred.empty">(prázdné)</option>
         <option value="F">F dur</option>
         <option value="C">C dur</option>
         <option value="G">G dur</option>
@@ -59,7 +59,7 @@
       </select>
     </label>
     <button onclick="buildPredloha()" title="Přegeneruje předlohu dle zadaných hodnot" data-i18n="pred.gen">Vygenerovat</button>
-    <button onclick="window.print()" title="Otevře tisk — v dialogu lze zvolit Uložit jako PDF">🖨️ Tisk / PDF</button>
+    <button onclick="window.print()" title="Otevře tisk — v dialogu lze zvolit Uložit jako PDF" data-i18n="pred.printbtn">🖨️ Tisk / PDF</button>
   </div>
   <div id="print-note" data-i18n="pred.tip">Tip: v tiskovém dialogu zvol „Uložit jako PDF" pro elektronickou verzi. Doporučeno A4 na výšku.</div>
   <div id="output" class="sheet"></div>

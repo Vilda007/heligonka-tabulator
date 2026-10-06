@@ -148,7 +148,7 @@ function pagerHtml(total, state) {
             ? `<b style="padding:.1em .5em">${i + 1}</b> `
             : `<a href="#" data-page="${i}" style="padding:.1em .5em">${i + 1}</a> `;
     }
-    return `<div class="pager hint">Strana ${state.page + 1}/${pages}: ${btns}</div>`;
+    return `<div class="pager hint">${(typeof t === 'function') ? t('lib.page') : 'Strana'} ${state.page + 1}/${pages}: ${btns}</div>`;
 }
 function wireSortPager(theadEl, containerEl, state, rerender) {
     theadEl.addEventListener('click', e => {

@@ -36,7 +36,7 @@
 <thead><tr><th data-i18n="ak.chord">Akord</th><th data-i18n="ak.notes">Noty (knoflíky)</th><th data-i18n="ak.dir">Směr měchu</th></tr></thead>
 <tbody id="chord-rows"></tbody>
 </table>
-<p class="hint">Označení: <code>c1</code> = tón c v jednolinkové oktávě, <code>es</code> = Eb, <code>as</code> = Ab, <code>b</code> = B/H, <code>gis</code> = G#. Německá notová konvence.</p>
+<p class="hint" data-i18n-html="ak.notation">Označení: <code>c1</code> = tón c v jednolinkové oktávě, <code>es</code> = Eb, <code>as</code> = Ab, <code>b</code> = B/H, <code>gis</code> = G#. Německá notová konvence.</p>
 </section>
 </main>
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
@@ -74,7 +74,7 @@ const CHORDS = [
     const tdN = document.createElement('td'); tdN.textContent = ch.name;
     const tdNotes = document.createElement('td');
     tdNotes.innerHTML = ch.notes.map(n => '<code>' + n + '</code>').join(' ');
-    const tdDir = document.createElement('td'); tdDir.textContent = ch.dir || '—';
+    const tdDir = document.createElement('td'); tdDir.textContent = !ch.dir || ch.dir === '—' ? '—' : ((typeof t === 'function') ? t(ch.dir === 'Tlak' ? 'ak.push' : 'ak.pull') : ch.dir);
     tr.appendChild(tdN); tr.appendChild(tdNotes); tr.appendChild(tdDir);
     tb.appendChild(tr);
   }

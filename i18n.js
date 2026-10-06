@@ -115,8 +115,54 @@ const I18N = {
   'msg.editing': { CZ: 'Editace: ', EN: 'Editing: ' },
   'msg.link':   { CZ: '🔗 Odkaz na píseň: ', EN: '🔗 Song link: ' },
   'msg.copied': { CZ: 'Odkaz zkopírován', EN: 'Link copied' },
-  'foot.bugs': { CZ: 'chyby hlaste jako', EN: 'report bugs as' }
+  'foot.bugs': { CZ: 'chyby hlaste jako', EN: 'report bugs as' },
+  /* formát vstupu hint */
+  'hint.format': { CZ: 'Formát: title:, key:, nebo abc: (jednořádkový ABC zápis → automatický převod).', EN: 'Format: title:, key:, or abc: (single-line ABC notation → automatic conversion).' },
+  'hint.note':  { CZ: 'Nota: II:5;F (řáda II, tlačítko 5, bas F stlačený) · II:6/5;f (skluz 6→5) · I:8;f~ (oblouček na další notu) · -;C (drž/pauza) · >>;B (skluz doprava).', EN: 'Note: II:5;F (row II, button 5, bass F on push) · II:6/5;f (glide 6→5) · I:8;f~ (slur to next note) · -;C (hold/rest) · >>;B (slide right).' },
+  'hint.verses': { CZ: 'Sloky: v1: text, svislítko | odděluje fráze', EN: 'Verses: v1: text, pipe | separates phrases' },
+  'hint.bass':  { CZ: 'Basy se doplní automaticky dle tóniny, pokud je nezadáš.', EN: 'Basses are auto-filled per key if you don\'t enter them.' },
+  /* pager + knihovna hinty */
+  'lib.page':   { CZ: 'Strana', EN: 'Page' },
+  'lib.ratehint': { CZ: 'Hodnocení: klikni na hvězdičky v detailu písně (přihlášení uživatelé). Kopírování k sobě (📄) může editor.', EN: 'Rating: click the stars in the song detail (logged-in users). Copying to yourself (📄) is for editors.' },
+  /* akordy */
+  'ak.notation': { CZ: 'Označení: c1 = tón c v jednolinkové oktávě, es = Eb, as = Ab, b = B/H, gis = G#. Německá notová konvence.', EN: 'Notation: c1 = note c in the one-line octave, es = Eb, as = Ab, b = B/H, gis = G#. German note convention.' },
+  'ak.push':   { CZ: 'Tlak', EN: 'Push' },
+  'ak.pull':   { CZ: 'Tah', EN: 'Pull' },
+  'ak.both':   { CZ: '—', EN: '—' },
+  /* předloha */
+  'pred.songname': { CZ: 'Název písně', EN: 'Song title' },
+  'pred.key2':  { CZ: 'Tónina', EN: 'Key' },
+  'pred.printbtn': { CZ: '🖨️ Tisk / PDF', EN: '🖨️ Print / PDF' },
+  /* účet statistiky */
+  'stats.songs': { CZ: 'píseň', EN: 'song' },
+  'stats.songs2': { CZ: 'písně', EN: 'songs' },
+  'stats.songs5': { CZ: 'písní', EN: 'songs' },
+  'stats.best': { CZ: '🏆 nejlépe hodnocená:', EN: '🏆 best rated:' },
+  'stats.nobest': { CZ: '🏆 zatím žádná hodnocená píseň', EN: '🏆 no rated song yet' },
+  'stats.mysongs': { CZ: '📚 Moje knihovna →', EN: '📚 My library →' },
+  'stats.loading': { CZ: 'Načítám…', EN: 'Loading…' },
+  'help.czechonly': { CZ: '', EN: 'ℹ️ This help page is currently available in Czech only.' },
+  /* hinty s HTML značkami (data-i18n-html) */
+  'hint.format.html': { CZ: '<b>Formát:</b> <code>title:</code>, <code>key:</code>, nebo <code>abc:</code> (jednořádkový ABC zápis → automatický převod).<br>Nota: <code>II:5;F</code> (řáda II, tlačítko 5, bas F stlačený) · <code>II:6/5;f</code> (skluz 6→5) · <code>I:8;f~</code> (oblouček na další notu) · <code>-;C</code> (drž/pauza) · <code>&gt;&gt;;B</code> (skluz doprava).<br>Sloky: <code>v1:</code> text, svislítko <code>|</code> odděluje fráze<br>Basy se doplní automaticky dle tóniny, pokud je nezadáš.',
+    EN: '<b>Format:</b> <code>title:</code>, <code>key:</code>, or <code>abc:</code> (single-line ABC → automatic conversion).<br>Note: <code>II:5;F</code> (row II, button 5, bass F on push) · <code>II:6/5;f</code> (glide 6→5) · <code>I:8;f~</code> (slur to next note) · <code>-;C</code> (hold/rest) · <code>&gt;&gt;;B</code> (slide right).<br>Verses: <code>v1:</code> text, pipe <code>|</code> separates phrases<br>Basses are auto-filled per key if you don\'t enter them.' },
+  /* tooltipy hlavních ovládacích prvků (aplikují se programově) */
+  'tt.render':  { CZ: 'Vykreslí tabulaturu z aktuálního textu', EN: 'Render the tablature from the current text' },
+  'tt.save':   { CZ: 'Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)', EN: 'Save the song to the library (Editor/Admin only; each edit = a new version)' },
+  'tt.xls':    { CZ: 'Export písně do .xls (notovací tabulka — německá notace, Tlak/Tah, basy)', EN: 'Export the song to .xls (notation table — German naming, push/pull, basses)' },
+  'tt.midi':   { CZ: 'Export písně do .mid (melodie + basy, 120 BPM)', EN: 'Export the song to .mid (melody + basses, 120 BPM)' },
+  'tt.alts':   { CZ: 'Zobrazí pod každou notu alternativní knoflíky se stejným tónem (jiná řada/pozice) — orientační', EN: 'Show alternate buttons with the same tone under each note (other row/position) — approximate' },
+  'tt.osnova': { CZ: 'Vykreslí melodii v notové osnově (VexFlow) pod tabulaturou', EN: 'Render the melody on a music staff (VexFlow) under the tablature' },
+  'tt.hmatnik': { CZ: 'Zobrazí klikací hmatník — nota se skládá klikáním na knoflíky místo psaním', EN: 'Show the clickable button board — build notes by clicking buttons instead of typing' },
+  'tt.key':    { CZ: 'Tónina heligonky — změna přetransponuje celou tabulaturu (čísla tlačítek i basy)', EN: 'Heligonka key — changing re-transposes the whole tablature (button numbers and basses)' },
+  'tt.file':   { CZ: 'Nahraj soubor: .txt/.abc (text), .mid/.midi (MIDI) nebo .xls/.xlsx (notovací tabulka)', EN: 'Upload a file: .txt/.abc (text), .mid/.midi (MIDI) or .xls/.xlsx (notation table)' },
+  'tt.title':  { CZ: 'Název písně — použije se při ukládání', EN: 'Song title — used when saving' },
+  'tt.search': { CZ: 'Hledá ve všech písních (název / autor / tónina)', EN: 'Searches all songs (title / author / key)' },
+  'tt.langf':  { CZ: 'Filtr písní podle jazyka', EN: 'Filter songs by language' },
+  'tt.new':    { CZ: 'Založí novou píseň (dotaz na název) a otevře ji v Tabulátoru', EN: 'Create a new song (asks for a title) and open it in the Tabulator' },
+  'tt.textarea': { CZ: 'Melodie v textovém formátu: ŘÁDA:tlačítko;BAS — detaily v Nápovědě', EN: 'Melody in text format: ROW:button;BASS — details in Help' }
 };
+/* aplikace tooltipů na známé ID prvku */
+const I18N_TOOLTIPS = { render: 'tt.render', 'save-song': 'tt.save', 'export-xls': 'tt.xls', 'export-midi': 'tt.midi', 'toggle-alts': 'tt.alts', 'toggle-osnova': 'tt.osnova', 'toggle-hmatnik': 'tt.hmatnik', key: 'tt.key', file: 'tt.file', 'song-title': 'tt.title', 'lib-search': 'tt.search', 'lib-lang-filter': 'tt.langf', 'new-song': 'tt.new', input: 'tt.textarea' };
 
 /* aktivní jazyk UI */
 function getUiLang() {
@@ -140,10 +186,22 @@ function applyI18n() {
         const val = t(key);
         if (val && val !== key) el.textContent = val;
     });
+    /* HTML varianty (hinty s <code> značkami) */
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        const e = I18N[key];
+        const val = e ? (e[getUiLang()] || e.CZ) : null;
+        if (val && val !== key && typeof val === 'string' && val !== '') el.innerHTML = val;
+    });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         el.setAttribute('placeholder', t(el.getAttribute('data-i18n-placeholder')));
     });
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
         el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
     });
+    /* tooltipy přes mapu ID (I18N_TOOLTIPS) */
+    for (const id in I18N_TOOLTIPS) {
+        const el = (typeof $ !== 'undefined') ? $(id) : document.getElementById(id);
+        if (el) el.setAttribute('title', t(I18N_TOOLTIPS[id]));
+    }
 }
