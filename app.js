@@ -419,6 +419,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       tw.style.display = getUser() ? 'inline' : 'none';
       if ($('song-title')) $('song-title').value = s.title || '';
       if ($('song-lang')) $('song-lang').value = s.lang || 'CZ';
+      if ($('song-lang') && typeof flagImg === 'function') { $('lang-flag-box').innerHTML = flagImg($('song-lang').value); }
     }
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
@@ -448,7 +449,10 @@ window.addEventListener('DOMContentLoaded', () => {
         ta.classList.toggle('on', SHOW_ALTS);
         doRender();
     });
-    /* Můj nástroj — načti layout do formuláře a hmatníku, ulož na klik */
+    const langSel = $('song-lang');
+    if (langSel && typeof flagImg === 'function') {
+        langSel.addEventListener('change', () => { $('lang-flag-box').innerHTML = flagImg(langSel.value); });
+    }
     const slBtn = $('save-layout');
     if (slBtn) {
         const stored = getLayout();
