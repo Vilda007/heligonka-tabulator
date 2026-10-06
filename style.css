@@ -110,9 +110,9 @@ button:hover { filter: brightness(1.1); }
   left: 0; right: 0; top: 50%;
   border-top: 2.5px solid #222;
 }
-/* čára nesahá přes kraj skupiny — začátek/konec v 60 % buňky, aby šipky nesplynuly */
-.m-push.m-start::before { left: 12%; }
-.m-pull.m-end::before { right: 12%; }
+/* čára i hrot končí stejně daleko od rámečku jako začátek (12 % inset) */
+.m-push.m-end::before { right: 12%; }
+.m-pull.m-start::before { left: 12%; }
 /* hrot šipky: push → hrot vpravo na konci skupiny, pull ← hrot vlevo na začátku */
 .m-arrow::after {
   content: '';
@@ -122,8 +122,8 @@ button:hover { filter: brightness(1.1); }
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
 }
-.m-push.m-end::after { right: 4%; border-left: 9px solid #222; }
-.m-pull.m-start::after { left: 4%; border-right: 9px solid #222; }
+.m-push.m-end::after { right: calc(12% - 9px); border-left: 9px solid #222; }
+.m-pull.m-start::after { left: calc(12% - 9px); border-right: 9px solid #222; }
 /* v5 — horní menu, stránkování, knihovna/admin tabulky */
 .topmenu { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; border-bottom: 2px solid var(--line); padding: .3rem 0 .5rem; margin-bottom: .8rem; }
 .topmenu a { text-decoration: none; color: var(--accent); padding: .15em .6em; border-radius: 4px; font-size: .95rem; }
