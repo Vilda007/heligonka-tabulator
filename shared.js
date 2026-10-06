@@ -63,7 +63,7 @@ function renderLangToggle(nav) {
     if (!nav || typeof getUiLang !== 'function') return;
     const cur = getUiLang();
     const target = cur === 'CZ' ? 'EN' : 'CZ';
-    const tw = { EN: '1f1ec-1f1f7', CZ: '1f1e8-1f1ff' };
+    const tw = { EN: '1f1ec-1f1e7', CZ: '1f1e8-1f1ff' };
     const img = tw[target];
     const title = cur === 'CZ' ? 'Switch to English' : 'Přepnout do češtiny';
     const btn = document.createElement('button');
