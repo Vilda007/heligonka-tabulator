@@ -329,11 +329,12 @@ function syllableDiv(i){
 }
 
 /* ================= PIPELINE ================= */
+let OPENED_TITLE = ''; // název naposledy otevřené písně (i pro anonyma)
 function currentSongAndKey(){
   const selKey = $('key').value;
   let song = parseSong($('input').value);
   /* piseň z knihovny: pokud data nemají title:, použij název z knihovny */
-  if (typeof EDITING !== 'undefined' && EDITING && song.title === 'Bez názvu') song.title = EDITING.title;
+  if (song.title === 'Bez názvu') song.title = (typeof EDITING !== 'undefined' && EDITING && EDITING.title) || OPENED_TITLE || 'Bez názvu';
   if (song.abc){
     /* ABC → stupně → reálné knoflíky (KEYMAPS) — dříve značka ABSD, kterou renderer ignoroval */
     const beats = abcToBeats(song.abc, song.key);
@@ -398,6 +399,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const s = r.song;
     const isAnon = !getUser();
     EDITING = isAnon ? null : s;
+    OPENED_TITLE = s.title || '';
     $('input').value = s.data || '';
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
     $('save-status').textContent = isAnon ? '' : ('Editace: ' + s.title + ' (v' + s.version + ')');
