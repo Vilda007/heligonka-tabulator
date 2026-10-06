@@ -65,7 +65,8 @@ async function doLogin() {
     if (r.status !== 'ok') { $('login-msg').textContent = 'Přihlášení selhalo: ' + (r.code || '?'); return; }
     if (r.pending) { $('login-msg').textContent = 'Registrace čeká na schválení adminem.'; return; }
     setAuth(r.sid, r.user);
-    $('login-msg').textContent = '';
+    const lm = $('login-msg');
+    if (lm) lm.textContent = '';
     location.reload();
 }
 async function doRegister() {
