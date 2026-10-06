@@ -114,7 +114,8 @@ const I18N = {
   /* hlášky */
   'msg.editing': { CZ: 'Editace: ', EN: 'Editing: ' },
   'msg.link':   { CZ: '🔗 Odkaz na píseň: ', EN: '🔗 Song link: ' },
-  'msg.copied': { CZ: 'Odkaz zkopírován', EN: 'Link copied' }
+  'msg.copied': { CZ: 'Odkaz zkopírován', EN: 'Link copied' },
+  'foot.bugs': { CZ: 'chyby hlaste jako', EN: 'report bugs as' }
 };
 
 /* aktivní jazyk UI */
