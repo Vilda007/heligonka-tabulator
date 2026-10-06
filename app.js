@@ -99,6 +99,7 @@ function parseNote(tok){
   else if (s.startsWith('<<')){ n.slide='left'; s=s.slice(2); }
   else if (s.startsWith('>')){ n.dir='push'; s=s.slice(1); }
   else if (s.startsWith('<')){ n.dir='pull'; s=s.slice(1); }
+  if (s.startsWith('!')){ n.fill = true; s = s.slice(1); } /* basový fill — drží, ale text nekonzumuje */
   const semi = s.indexOf(';');
   if (semi >= 0){
     n.bas = s.slice(semi+1);
@@ -176,7 +177,13 @@ function renderBeats(song){
   const verses = {};
   song.lyrics.forEach(v=>{ (verses[v.verse] = verses[v.verse] || []).push(...v.text); });
   const syl = [];
-  Object.keys(verses).sort().forEach(vn=>{ verses[vn].forEach(ph => ph.split(/\s+/).filter(Boolean).forEach(w => syl.push(w))); });
+  Object.keys(verses).sort().forEach(vn=>{ verses[vn].forEach(ph => ph.split(/\s+/).filter(Boolean).forEach(w => {
+    /* slabiky rozděl i po spojníku: 'Pank-krá-ci' = 3 slabiky */
+    const parts = w.split(/-/).filter(Boolean);
+    if (parts.length > 1) {
+      parts.forEach((p, i) => syl.push(i < parts.length - 1 ? p + '-' : p));
+    } else syl.push(w);
+  })); });
   renderBeats._syl = syl;
   const newSystem=()=>{
     sysEl=document.createElement('div'); sysEl.className='system';
@@ -229,8 +236,8 @@ function renderBeats(song){
       cell.appendChild(rowDiv('I', note));
       cell.appendChild(rowDiv('B', note));
       cell.appendChild(rowDiv('M', note));
-      /* slabika pod dobou — jen u melodických not; basové filly text nesou */
-      if (note.hold) cell.appendChild(syllableDiv(-1));
+      /* slabika pod dobou: basový fill text nekonzumuje; držení i nota konzumují (vzor: -;f má svou slabiku) */
+      if (note.fill) cell.appendChild(syllableDiv(-1));
       else { cell.appendChild(syllableDiv(noteCount)); noteCount++; }
       if (note.tie) cell.classList.add('tie');
       if (note.slide) cell.classList.add('slide-'+note.slide);

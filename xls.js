@@ -158,7 +158,7 @@ function xlsToSong(ws, sheetName) {
     for (let i = 0; i < beats.length; i++) {
         const b = beats[i];
         const tok = b.hold
-            ? ((b.dir === 'push' ? '>' : b.dir === 'pull' ? '<' : '') + '-;' + b.bass)
+            ? ((b.dir === 'push' ? '>' : b.dir === 'pull' ? '<' : '') + '!-;' + b.bass)
             : ((b.dir === 'push' ? '>' : b.dir === 'pull' ? '<' : '') + 'II:' + (b.idx - tonicIdx + 1) + (b.bass ? ';' + b.bass : ''));
         line.push(tok);
         if (line.length >= 8) { out += line.join(' ') + '\n'; line = []; }
