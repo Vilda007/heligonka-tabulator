@@ -9,7 +9,7 @@ const ASSETS = [
   './akordy.html',
   './predloha.html',
   './napoveda.html',
-  './style.css?v=2026100610',
+  './style.css?v=2026100611',
   './shared.js',
   './app.js',
   './library.js',
