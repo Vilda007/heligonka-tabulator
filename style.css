@@ -69,11 +69,13 @@ button:hover { filter: brightness(1.1); }
   grid-template-rows: repeat(4, auto);
 }
 .rowlab, .lab {
-  border-right: 1px solid var(--line);
+  /* border-right drží celé .labs kontejner — jednotlivé buňky nemají vlastní, aby byla linka stejně silná po celé výšce */
   font-weight: bold;
   text-align: center;
   padding: .15em .2em;
+  border-bottom: 1px solid var(--line);
 }
+.lab:last-child { border-bottom: 0; }
 .cells {
   display: grid;
   grid-auto-flow: column;
