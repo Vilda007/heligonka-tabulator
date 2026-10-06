@@ -359,7 +359,7 @@ function altLabel(note){
   if (!SHOW_ALTS || !note || note.hold || !note.num) return '';
   const alts = findAlternatives(note.row, note.num);
   if (!alts.length) return '';
-  return alts.map(a => a.r + ':' + a.n).join(' ');
+  return alts.map(a => a.row + ':' + a.num).join(' ');
 }
 
 
