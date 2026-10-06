@@ -1,0 +1,7 @@
+# Heligonka Tabulator — PWA (mime pro manifest, service worker)
+<Files "manifest.json">
+ForceType application/manifest+json
+</Files>
+<Files "sw.js">
+ForceType application/javascript
+</Files>

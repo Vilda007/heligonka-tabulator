@@ -19,10 +19,13 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="style.css?v=2026100601">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7a4a1d">
+<link rel="icon" href="favicon-32.png" type="image/png">
 </head>
 <body>
 <header>
-  <h1>🎵 Heligonka Tabulator <a href="napoveda.html" title="Nápověda — návod k použití">❓</a></h1>
+  <h1>🎵 Heligonka Tabulator <a href="napoveda.html" title="Nápověda — návod k použití">❓</a> <a href="akordy.html" title="Akordová tabulka — hmaty akordů na heligonce">🎼</a></h1>
   <p class="lead">Tabulatura pro heligonku ve stylu zpěvníkových tabulek (sloupce II. / I. / B / M, skluzovky, přesahy). Zadej melodii, vyber tóninu — aplikace transponuje a vykreslí.</p>
 </header>
 
@@ -93,5 +96,12 @@
 <script src="library.js"></script>
 <script src="midi.js"></script>
 <script src="xls.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>
