@@ -239,6 +239,18 @@ function renderBeats(song){
       sysCells.appendChild(cell);
     });
   });
+  /* poslední řádek tabulatury doplnit prázdnými sloupci na plný počet (vzor) */
+  if (sysCells.children.length && sysCells.children.length < MAX_COLS) {
+    while (sysCells.children.length < MAX_COLS) {
+      const cell=document.createElement('div'); cell.className='cell empty';
+      cell.appendChild(rowDiv('II', {}));
+      cell.appendChild(rowDiv('I', {}));
+      cell.appendChild(rowDiv('B', {}));
+      cell.appendChild(rowDiv('M', {}));
+      cell.appendChild(syllableDiv(-1));
+      sysCells.appendChild(cell);
+    }
+  }
 
   /* sloka 1 = slabiky pod notami (výše); sloky 2+ zůstávají pod tabulaturou v závorce */
   Object.keys(verses).sort().forEach(vn=>{
