@@ -30,6 +30,13 @@ function api_register() {
     $appr = $n === 0 ? 1 : 0;
     mysql_query("INSERT INTO `" . HT_PREFIX . "users` (username, pass_hash, role, approved, created_at)
                  VALUES ('" . dbq($u) . "', '" . dbq(password_hash_compat($p)) . "', '$role', $appr, '" . now() . "')", $GLOBALS['conn']);
+    // e-mailová notifikace adminovi (Vilda) — jen pro čekající registrace (admin se rodí právě u prvního)
+    if (!$appr) {
+        $ip = isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP']
+            : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim(array_shift(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']))) : '');
+        if (!$ip) $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'neznámá';
+        ht_notify_admin_new_user($u, substr($ip, 0, 64));
+    }
     echo '{"status":"ok","pending":' . ($appr ? 'false' : 'true') . ',"role":"' . $role . '"}';
 }
 function password_hash_compat($p) {
@@ -305,4 +312,23 @@ function api_admin_delete_song($U) {
     mysql_query("DELETE FROM `" . HT_PREFIX . "songs` WHERE id = $id", $GLOBALS['conn']);
     mysql_query("DELETE FROM `" . HT_PREFIX . "ratings` WHERE song_id = $id", $GLOBALS['conn']);
     echo '{"status":"ok"}';
+}
+
+/* ---------- email notify on new registration (Vilda 6.10.2026 09:19) ---------- */
+function ht_notify_admin_new_user($username, $ip) {
+    $to = 'vilem@kuzelovi.cz';
+    $subject = '=?UTF-8?B?' . base64_encode('Heligonka: nová registrace — ' . $username) . '?=';
+    $body =
+        "\nNová registrace v Heligonka Tabulator:\n\n" .
+        "  Uživatel:  " . $username . "\n" .
+        "  Čas:       " . date('j.n.Y H:i') . "\n" .
+        "  IP:        " . $ip . "\n\n" .
+        "Schválit: https://klepeto.kuzelovi.cz/heligonka/ (Admin panel)\n\n" .
+        "-- \nKlepeto (Heligonka Tabulator)";
+    $headers =
+        "From: Klepeto <sprostaveverka@seznam.cz>\r\n" .
+        "Content-Type: text/plain; charset=UTF-8\r\n" .
+        "Reply-To: sprostaveverka@seznam.cz\r\n";
+    // nečekáme na SMTP dlouho; @ — selhání nesmí rozbít registraci
+    return @mail($to, $subject, $body, $headers, '-fsprostaveverka@seznam.cz');
 }

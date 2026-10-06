@@ -4,11 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Heligonka Tabulator</title>
+<link rel="help" href="napoveda.html">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Tabulatura pro heligonku z not: generátor ve stylu zpěníkových tabulek (II./I./B sloupce, skluzovky), tóniny s transpozicí, knihovna písní.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Heligonka Tabulator">
+<meta property="og:title" content="Heligonka Tabulator">
+<meta property="og:description" content="Generátor heligonkových tabulatur: tóniny s transpozicí, knihovna písní, tisk/PDF.">
+<meta property="og:url" content="https://klepeto.kuzelovi.cz/heligonka/">
+<meta property="og:image" content="https://klepeto.kuzelovi.cz/heligonka/og-banner.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <h1>🎵 Heligonka Tabulator</h1>
+  <h1>🎵 Heligonka Tabulator <a href="napoveda.html" title="Nápověda — návod k použití">❓</a></h1>
   <p class="lead">Tabulatura pro heligonku ve stylu zpěvníkových tabulek (sloupce II. / I. / B / M, skluzovky, přesahy). Zadej melodii, vyber tóninu — aplikace transponuje a vykreslí.</p>
 </header>
 
@@ -17,14 +31,14 @@
   <h2>1. Melodie</h2>
   <div class="controls">
     <label>Ukázka:
-      <select id="sample-select">
+      <select id="sample-select" title="Vyber předpřipravenou ukázku — načte se do pole a vykreslí">
         <option value="pankraci">Na Pankráci</option>
         <option value="milujku">Milujku (C dur)</option>
         <option value="abc">ABC import (ukázka)</option>
       </select>
     </label>
     <label>Tónina:
-      <select id="key">
+      <select id="key" title="Tónina heligonky — změna přetransponuje celou tabulaturu (čísla tlačítek i basy)">
         <option value="F" selected>F dur (klasika C/F)</option>
         <option value="C">C dur</option>
         <option value="G">G dur</option>
@@ -33,32 +47,32 @@
         <option value="Bb">B dur</option>
       </select>
     </label>
-    <label>Soubor: <input type="file" id="file" accept=".txt,.abc,text/plain"></label>
+    <label>Soubor: <input type="file" id="file" accept=".txt,.abc,.mid,.midi,.xls,.xlsx,text/plain,audio/midi,application/vnd.ms-excel" title="Nahraj soubor: .txt/.abc (textový zápis), .mid/.midi (automatické rozpoznání not) nebo .xls/.xlsx (notovací tabulka — německá notace, Tlak/Tah, basy)"></label>
   </div>
   <div id="keyinfo" class="hint">F dur (klasika, 2řadá C/F — hraje se v F)</div>
-  <textarea id="input" spellcheck="false" rows="12"></textarea>
+  <textarea id="input" spellcheck="false" rows="12" title="Melodie ve textovém formátu: ŘÁDA:tlačítko;BAS — detaily v Nápovědě (❓vpravo nahoře)"></textarea>
   <div class="hint">
     <b>Formát:</b> <code>title:</code>, <code>key:</code>, nebo <code>abc:</code> (jednořádkový ABC zápis → automatický převod).<br>
     Nota: <code>II:5;F</code> (řáda II, tlačítko 5, bas F stlačený) · <code>II:6/5;f</code> (skluz 6→5) · <code>I:8;f~</code> (oblouček na další notu) · <code>-;C</code> (drž/pauza) · <code>&gt;&gt;;B</code> (skluz doprava).<br>
     Sloky: <code>v1:</code> text, svislítko <code>|</code> odděluje fráze <br>
     Basy se doplní automaticky dle tóniny, pokud je nezadáš.
   </div>
-  <button id="render">Vygenerovat tabulaturu</button>
+  <button id="render" title="Vykreslí tabulaturu z aktuálního textu">Vygenerovat tabulaturu</button>
 </section>
 
 <section id="library">
   <h2>📚 Knihovna písní</h2>
   <div id="auth-box"></div>
-  <input id="lib-search" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
+  <input id="lib-search" title="Hledá ve všech písních všech uživatelů (název / autor / tónina)" placeholder="🔍 Hledat (název / autor / tónina)" style="width:100%;padding:.4em;margin:.5rem 0;">
   <div id="library-error" class="hint" style="color:#a33;"></div>
   <table id="library">
     <thead><tr><th>Název</th><th>Tónina</th><th>Autor</th><th>Hodnocení</th><th>Akce</th></tr></thead>
     <tbody id="library-rows"></tbody>
   </table>
   <div class="controls" style="margin-top:.6rem;">
-    <input id="song-title" placeholder="Název nové písně" size="20">
-    <button id="new-song">➕ Nová</button>
-    <button id="save-song">💾 Uložit</button>
+    <input id="song-title" title="Název pro Novou píseň: použije se při uložení" placeholder="Název nové písně" size="20">
+    <button id="new-song" title="Zahodí editaci a začne novou píseň (prázdné pole)">➕ Nová</button>
+    <button id="save-song" title="Uloží píseň do knihovny (jen Editor/Admin; každá editace = nová verze)">💾 Uložit</button>
     <span id="save-status" class="hint"></span>
   </div>
   <div id="admin-box"></div>
@@ -77,5 +91,7 @@
 <footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a> · chyby hlaste jako <a href="https://github.com/Vilda007/heligonka-tabulator/issues">issue</a>.</footer>
 <script src="app.js"></script>
 <script src="library.js"></script>
+<script src="midi.js"></script>
+<script src="xls.js"></script>
 </body>
 </html>

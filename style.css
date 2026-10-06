@@ -134,3 +134,13 @@ button.mini { padding: .15em .5em; font-size: .8rem; background: #555; }
 .nowrap { white-space:nowrap; }
 #admin-box h3 { margin-top:1.2rem; }
 #admin-box h4 { margin:.8rem 0 .2rem; font-size:.9rem; }
+.sharebox { margin-top:.4rem; display:none; }
+.sharebtn { display:inline-block; background:#5a4a8a; color:#fff; padding:.15em .6em; border-radius:4px; font-size:.8rem; text-decoration:none; margin-right:.3rem; }
+.sharebtn:hover { filter:brightness(1.15); }
+#song-url { background:#f2eeda; padding:.05em .3em; border-radius:3px; }
+/* nápověda */
+.hinttable { width:100%; border-collapse:collapse; font-size:.88rem; margin:.4rem 0; }
+.hinttable th, .hinttable td { border-bottom:1px solid #ddd; padding:.3em .5em; text-align:left; vertical-align:top; }
+.hinttable th { font-size:.78rem; text-transform:uppercase; color:#777; }
+section ul { margin:.3rem 0 .6rem 1.2rem; }
+section li { margin:.15rem 0; line-height:1.45; }

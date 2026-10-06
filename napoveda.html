@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nápověda — Heligonka Tabulator</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>❓ Nápověda — Heligonka Tabulator</h1>
+<p class="lead">Krátký návod k použití na jedné stránce.</p>
+<p><a href="index.html">← Zpět do aplikace</a></p></header>
+<main>
+<section>
+<h2>1. Zadání melodie</h2>
+<p><b>Tři způsoby:</b></p>
+<ul>
+<li><b>Vyber ukázku</b> (rozbalovací seznam "Ukázka") — „Na Pankráci", „Milujku" nebo ukázka ABC.</li>
+<li><b>Napiš/přepiš text</b> do pole (formát níže).</li>
+<li><b>Nahraj soubor</b>: .txt / .abc (text), .mid / .midi (MIDI — noty se rozpoznají a vloží do pole; doladit ručně) nebo .xls / .xlsx (notovací tabulka „deutsche Heligonka-Tabulatur“: slabiky, německá notace b/es/as, sloupec Tlak/Tah, B-řádky s basy; tónina podle názvu listu, např. „B-Es-As“ = B dur).</li>
+</ul>
+</section>
+
+<section>
+<h2>2. Tónina a transpozice</h2>
+<p>Vyber tóninu v rozbalovacím seznamu — celá tabulatura se přepočítá do dané tóniny (čísla tlačítek i basy). F a C jsou hlavní heligonkové tóniny (2řadá C/F), ostatní jsou orientační.</p>
+</section>
+
+<section>
+<h2>3. Generování a export</h2>
+<p><b>Vygenerovat tabulaturu</b> — vykreslí sloupce z aktuálního vstupu.<br>
+<b>Tisk / PDF</b> — otevře tisk (doporučené: formát A4 na výšku).<br>
+<b>Kopírovat HTML</b> — zkopíruje HTML tabulatury do schránky (pro vložení na web).</p>
+</section>
+
+<section>
+<h2>4. Formát vstupu (stručně)</h2>
+<table class="hinttable">
+<tr><th>Zápis</th><th>Význam</th></tr>
+<tr><td><code>title: Na Pankráci</code></td><td>název písně</td></tr>
+<tr><td><code>key: F</code></td><td>tónina (F default; F, C, G, A, D, B)</td></tr>
+<tr><td><code>abc: C D E F | G A B c</code></td><td>melodie v ABC (místo taktove řady)</td></tr>
+<tr><td><code>II:5;F</code></td><td>řada II, tlačítko 5, bas F (tlačící = velké, tažný = malé: F/f, B/b, C/c...)</td></tr>
+<tr><td><code>II:6/5;f</code></td><td>tl. 6 se skluzem na 5 (číslo/skluz u lomítko)</td></tr>
+<tr><td><code>I:8;f~</code></td><td>oblouček (skluzovka) na další notu (vlnovka na konci)</td></tr>
+<tr><td><code>-;C</code></td><td>drž/pauza v melodii, bas C zní</td></tr>
+<tr><td><code>&gt;&gt;;B</code> / <code>&lt;&lt;;B</code></td><td>skluz doprava / doleva (přes vlnovku do dalšího sloupce)</td></tr>
+<tr><td><code>v1: Na Pankráci | na malém...</code></td><td>sloha — <code>|</code> odděluje fráze</td></tr>
+</table>
+<p>Pokud basu nezadáte, doplní se automaticky dle tóniny (pravidla I/IV/V).</p>
+</section>
+
+<section>
+<h2>5. Knihovna písní</h2>
+<ul>
+<li><b>Hledat</b> — textové pole nad tabulkou (název / autor / tónina). Hledá ve VŠECH písních všech uživatelů.</li>
+<li><b>Otevřít píseň</b> — kliknutím na název se načte do editoru.</li>
+<li><b>Hodnotit</b> — klikni na hvězdičky v řádku (1–5 ★, přepisuje se; jen přihlášení).</li>
+<li><b>📄 Kopírovat</b> — vytvoří vlastní kopii cizí písně k úpravám.</li>
+<li><b>Ukládat/exportovat</b> mohou jen <b>Editoři</b>; Admin spravuje vše.</li>
+<li><b>Odkaz na píseň</b> — po otevření se URL změní na <code>?pisen=N</code>; řada share tlačítek (FB/BS/X/WA/E-mail) pod tabulaturou.</li>
+</ul>
+</section>
+
+<section>
+<h2>6. Účty a role</h2>
+<table class="hinttable">
+<tr><th>Role</th><th>Může</th></tr>
+<tr><td>Čtenář</td><td>číst, hledat, hodnotit ★</td></tr>
+<tr><td>Editor</td><td>+ zakládat, editovat a mazat VLASTNÍ písně (každá editace = nová verze, historie se ukládá)</td></tr>
+<tr><td>Admin</td><td>+ správa uživatelů (schvalování registrací, role, blokování, reset hesla), mazání libovolné písně</td></tr>
+</table>
+<p>Registrace: jméno + heslo → čeká na schválení admina. Admin: Vilda.</p>
+</section>
+
+<section>
+<h2>Tipy</h2>
+<ul>
+<li>Skluzovky (obloučky) a přesahy se kreslí i v tisku — PDF vypadá jako předloha z zpěvníku.</li>
+<li>Pro přehlednější tisk zvětší zoom prohlížeče (Ctrl+/-) před printem — velikost se přenese.</li>
+<li>Nemáš heligonku C/F? Napiš adminovi (Vilda) — mapy tlačítek se doplní dle tvého ladění.</li>
+<li>Chyby hlaste v <a href="https://github.com/Vilda007/heligonka-tabulator/issues">issues GitHub repa</a>.</li>
+</ul>
+</section>
+</main>
+<footer>Heligonka Tabulator — <a href="https://github.com/Vilda007/heligonka-tabulator">GitHub</a></footer>
+</body>
+</html>

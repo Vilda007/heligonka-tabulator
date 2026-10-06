@@ -74,6 +74,32 @@ async function openSong(id) {
     document.getElementById('editor').scrollIntoView({ behavior: 'smooth' });
     EDITING = s;
     $('save-status').textContent = 'Editace: ' + s.title + ' (v' + s.version + ')';
+    try { history.pushState({ song: s.id }, '', '?pisen=' + s.id); } catch (e) {}
+    updateShareLinks(s);
+}
+/* share links for a song */
+function updateShareLinks(s) {
+    const base = 'https://klepeto.kuzelovi.cz/heligonka/';
+    const url = base + '?pisen=' + s.id;
+    const title = 'Heligonka tabulatura: ' + s.title;
+    const enc = encodeURIComponent(url);
+    const et = encodeURIComponent(title);
+    const links = {
+        fb: 'https://www.facebook.com/sharer/sharer.php?u=' + enc,
+        bs: 'https://bsky.app/intent/compose?text=' + et + '%20' + enc,
+        x: 'https://twitter.com/intent/tweet?text=' + et + '&url=' + enc,
+        wa: 'https://wa.me/?text=' + et + '%20' + enc,
+        mail: 'mailto:?subject=' + et + '&body=' + url
+    };
+    $('#share-box').innerHTML = '<span class="hint">🔗 Odkaz na píseň: <code id="song-url">' + esc(url) + '</code></span> ' +
+        Object.keys(links).map(k => '<a class="sharebtn" target="_blank" rel="noopener" href="' + links[k] + '">' + {fb:'Facebook',bs:'Bluesky',x:'X',wa:'WhatsApp',mail:'E-mail'}[k] + '</a>').join(' ') +
+        ' <button class="mini" onclick="navigator.clipboard.writeText(document.getElementById(\'song-url\').textContent);alert(\'Odkaz zkopírován\')">📋</button>';
+    $('#share-box').style.display = 'block';
+}
+// auto-open song from URL on load
+function openFromUrl() {
+    const m = location.search.match(/pisen=(\d+)/);
+    if (m) openSong(+m[1]);
 }
 
 async function editSong(id) { openSong(id); }
@@ -226,6 +252,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderAuth();
     loadLibrary().then(renderAdmin);
     $('lib-search').addEventListener('input', renderLibrary);
+    openFromUrl();
     $('save-song').addEventListener('click', saveSong);
     $('new-song').addEventListener('click', () => { EDITING = null; $('input').value = ''; $('song-title').value = ''; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; });
     // rating stars per row (event delegation)
