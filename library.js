@@ -47,7 +47,7 @@ function renderLibrary() {
             <td class="actions">
                 ${canEdit ? `<button class="mini" onclick="editSong(${s.id})" title="Upravit">✏️</button>
                 <button class="mini" onclick="deleteSong(${s.id})" title="Smazat">🗑️</button>` : ''}
-                <button class="mini" title="Kopírovat k sobě" onclick="forkSong(${s.id})">📄</button>
+                ${(!mine && roleCanEdit(user)) ? `<button class="mini" title="Kopírovat k sobě" onclick="forkSong(${s.id})">📄</button>` : ''}
             </td>
         </tr>`;
     }).join('');
@@ -75,6 +75,18 @@ async function forkSong(id) {
     if (!roleCanEdit(getUser())) { alert('Kopírovat k sobě může jen editor.'); return; }
     const r = await api('fork', { method: 'POST', body: { id } });
     if (r.status !== 'ok') { alert('Kopírování selhalo: ' + (r.code || '?')); return; }
+    await loadLibrary();
+    openSong(r.id);
+}
+
+/* Nová píseň — dotaz na název, vytvoří prázdnou píseň a otevře ji v Tabulátoru */
+async function newSong() {
+    const user = getUser();
+    if (!roleCanEdit(user)) { alert('Zakládat písně může jen editor. Napiš adminovi, ať ti dá roli Editor.'); return; }
+    const title = prompt('Název nové písně:');
+    if (!title || !title.trim()) return;
+    const r = await api('create', { method: 'POST', body: { title: title.trim(), key: 'F', data: 'II:1;F', published: 1 } });
+    if (r.status !== 'ok') { alert('Vytvoření selhalo: ' + (r.code || '?')); return; }
     await loadLibrary();
     openSong(r.id);
 }
@@ -127,6 +139,8 @@ window.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     $('lib-search').addEventListener('input', () => { LIB_STATE.page = 0; renderLibrary(); });
     wireSortPager($('lib-thead'), $('lib-pager'), LIB_STATE, renderLibrary);
+    const nw = $('new-song');
+    if (nw) nw.addEventListener('click', newSong);
     $('library-rows').addEventListener('click', (e) => {
         if (e.target.classList.contains('star')) {
             const tr = e.target.closest('tr');
