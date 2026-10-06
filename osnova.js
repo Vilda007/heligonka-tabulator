@@ -80,14 +80,13 @@ function renderOsnova() {
                 batch.forEach(n => {
                     if (n.rest) vfNotes.push(new VF.StaveNote({ keys: ['b/4'], duration: 'q' }));
                     else {
-                        const st = new VF.StaveNote({ keys: [osnovaMidiToVF(n.midi)], duration: n.glide ? '8' : 'q' });
-                        if (n.glide) st.addModifier(new VF.Annotation('»'), 0);
+                        /* skluzovka = celá doba (hraniční tóny v rámci jedné doby): čtvrtka s » */
+                        const st = new VF.StaveNote({ keys: [osnovaMidiToVF(n.midi)], duration: 'q' });
+                        if (n.glide) st.addModifier(new VF.Annotation('»' + osnovaMidiToVF(n.glide).split('/')[0]), 0);
                         vfNotes.push(st);
                     }
-                    beatsInBar += n.glide ? 0.5 : 1;
-                    if (beatsInBar >= 4 && vfNotes[vfNotes.length - 1] !== batch[batch.length - 1]) {
-                        if (beatsInBar >= 4) { bars.push(vfNotes.length - 1); beatsInBar = 0; }
-                    }
+                    beatsInBar += 1;
+                    if (beatsInBar >= 4 && vfNotes.length < batch.length) { bars.push(vfNotes.length - 1); beatsInBar = 0; }
                 });
                 if (vfNotes.length) {
                     VF.Formatter.FormatAndDraw(context, stave, vfNotes);
