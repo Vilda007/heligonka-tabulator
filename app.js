@@ -149,7 +149,7 @@ function abcToBeats(abcStr, key){
 const SAMPLE_NA_PANKRACI = `title: Na Pankráci
 key: F
 II:5;F II:6;f II:5;c II:4/5~;F -;f II:5;f II:5;f II:5;F II:7/6;f II:6;f II:6;C I:9/8;B I:8;b -;b II:5;F II:6;f II:5;c
-v1: Na Pank-krá-ci | na ma-lém ko-pec-ku | sto-jí pék-né | stra-mo-fa-dí | mé-li sem ho-`;
+v1: Na Pank-krá-ci | na ma-lém ko-peč-ku | sto-jí pěk-né | stra-mo-řa-dí | měl jsem ho-`;
 
 const SAMPLE_MILUJKU = `title:Milujku
 key: C
