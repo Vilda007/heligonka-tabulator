@@ -387,8 +387,8 @@ function renderBeats(song){
       if (song.grid && note.barAfter) {
         cell.classList.add(note.barAfter === '|:' ? 'bar-rstart' : note.barAfter === ':|' ? 'bar-rend' : 'bar-single');
       }
-      /* Grid-Text: volta značka před dobou */
-      if (note.voltaBefore) { const v=document.createElement('div'); v.className='volta-mark'; v.textContent=note.voltaBefore; cell.appendChild(v); }
+      /* Grid-Text: volta značka před dobou — jen číslo (1/2) s linkou, ne [1] s závorkami */
+      if (note.voltaBefore) { const v=document.createElement('div'); v.className='volta-mark'; v.textContent=note.voltaBefore.replace(/\[|\]/g,''); cell.appendChild(v); }
       sysCells.appendChild(cell);
     });
   });

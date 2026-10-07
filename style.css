@@ -124,6 +124,20 @@ button:hover { filter: brightness(1.1); }
 .osnova-inner { min-width: 100%; }
 #toggle-osnova.on { background: #7a4a1d; color: #fff8e6; }
 /* M řádek — souvislá šipka měchu přes skupinu not (CSS čára, ne text) */
+/* oblouček (legato/tie): dlouhé mělké údolí — CSS kreslené, vpravo od čísla,
+   přesahuje k další notě (jako notová ligatura); NE znak ∪ uprostřed (zakrýval čísla) */
+.cell.tie .rII::after, .cell.tie .rI::after {
+  content: '';
+  position: absolute;
+  left: 38%;
+  width: 90%;
+  top: 18%;
+  height: 34%;
+  border-bottom: 2.5px solid #222;
+  border-radius: 0 0 100% 100% / 0 0 230% 230%;
+  pointer-events: none;
+  z-index: 1;
+}
 /* Grid-Text: taktové čáry — PRAVÝ okraj buňky (grid potomek by rozbil 1fr šířky);
    repetice |: :| = tlustá linka + tenká tečka/dvojlinka */
 .cell.bar-single { border-right: 2px solid #555; }
@@ -131,7 +145,21 @@ button:hover { filter: brightness(1.1); }
 .cell.bar-rend { border-right: 3px solid #222; box-shadow: inset 6px 0 0 -4px #222; }
 .cell.bar-rstart + .cell { border-left: 1px solid #222; }
 .cell.bar-rend ~ .cell:last-child { }
-.volta-mark { position: absolute; top: -0.15em; left: 3px; font-size: .55rem; color: #7a4a1d; font-weight: bold; z-index: 2; background: #fffdf5; padding: 0 .15em; }
+/* volta [1]/[2]: malé číslo s vodorovnou linkou nad řádkem II (notový zápis),
+   NE velké [1] přes buňku */
+.volta-mark {
+  position: absolute;
+  top: -0.35em;
+  left: 0;
+  font-size: .6rem;
+  color: #222;
+  font-weight: bold;
+  z-index: 2;
+  padding: 0 .2em;
+  border-top: 1.5px solid #222;
+  background: transparent;
+}
+.volta-mark::before { content: ''; }
 .cell { position: relative; }
 .m-arrow { position: relative; }
 .m-arrow::before {
