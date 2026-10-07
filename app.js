@@ -407,7 +407,7 @@ doRender();
 /* deep-link ?pisen= (nebo píseň #1 při prvním načtení) — načti z knihovny do editoru */
 window.addEventListener('DOMContentLoaded', async () => {
     const m = location.search.match(/pisen=(\d+)/);
-    const id = m ? +m[1] : 1;
+    const id = m ? +m[1] : 35; /* default píseň při startu (Vilda 7.10.) */
     const r = await api('get&id=' + id);
     if (r.status !== 'ok') { $('save-status').textContent = 'Píseň nelze načíst: ' + (r.code || '?'); return; }
     const s = r.song;
