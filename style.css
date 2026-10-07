@@ -124,6 +124,13 @@ button:hover { filter: brightness(1.1); }
 .osnova-inner { min-width: 100%; }
 #toggle-osnova.on { background: #7a4a1d; color: #fff8e6; }
 /* M řádek — souvislá šipka měchu přes skupinu not (CSS čára, ne text) */
+/* Grid-Text: taktové čáry mezi sloupci a volta značky */
+.barline { width: 3px; background: #222; margin: 0 1px; align-self: stretch; }
+.barline.bar-single { background: #555; width: 2px; }
+.barline.bar-repeat-start { background: #222; width: 2px; box-shadow: -4px 0 0 #222; }
+.barline.bar-repeat-end { background: #222; width: 2px; box-shadow: 4px 0 0 #222; }
+.volta-mark { position: absolute; top: -0.2em; left: 2px; font-size: .55rem; color: #7a4a1d; font-weight: bold; }
+.cell { position: relative; }
 .m-arrow { position: relative; }
 .m-arrow::before {
   content: '';

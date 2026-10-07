@@ -110,8 +110,18 @@ function autoBass(key, deg, prevBas){
 }
 
 /* ================= PARSER ================= */
+/* detekce formátu: Grid-Text (nový, Vilda 7.10.2026) vs. starý řádkový */
+function isGridText(text){
+  for (const raw of text.split(/\r?\n/)){
+    const l = raw.trim();
+    if (/^TXT\s*:/i.test(l)) return true;
+    if (/^(\|:|\|)/.test(l)) return true;
+  }
+  return false;
+}
 function parseSong(text){
-  const song = { title:'Bez názvu', key:'F', beats:[], lyrics:[], abc:null };
+  const song = { title:'Bez názvu', key:'F', beats:[], lyrics:[], abc:null, grid:false };
+  if (isGridText(text)) return parseGridSong(text, song);
   for (const raw of text.split(/\r?\n/)){
     const line = raw.trim();
     if (!line || line.startsWith('#')) continue;
@@ -123,6 +133,80 @@ function parseSong(text){
     song.beats.push(line.split(/\s+/).map(parseNote));
   }
   return song;
+}
+
+/* ================= GRID-TEXT PARSER (nový formát) =================
+   Blok = <směr><melodie>;<bas>; sloupce mezerou, takty |; |: :| repetice;
+   [1]/[2] volty; TXT: řádek 1:1 slabiky (_ = prázdné).
+   > nový tlak, >> prodlužuje šipku, < nový tah, << prodlužuje. */
+function parseGridSong(text, song){
+  song.grid = true;
+  for (const raw of text.split(/\r?\n/)){
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    let m;
+    if ((m = line.match(/^title\s*:\s*(.+)$/i))){ song.title = m[1].trim(); continue; }
+    if ((m = line.match(/^key\s*:\s*(.+)$/i))){ song.key = m[1].trim().toUpperCase(); continue; }
+    if (/^TXT\s*:/i.test(line)){
+      const sys = song.beats[song.beats.length - 1];
+      if (!sys) continue;
+      const toks = line.replace(/^TXT\s*:\s*/i, '').split(/\s+/).filter(Boolean);
+      const syls = toks.filter(t => !/^(\|:|\||:\||\[[0-9]+\])$/.test(t));
+      let si = 0;
+      for (const n of sys){
+        if (n._isNote){ n.syl = (si < syls.length && syls[si] !== '_') ? syls[si] : ''; si++; }
+      }
+      continue;
+    }
+    if (/^(\|:|\|)/.test(line)){
+      const beat = [];
+      let lastNote = null;
+      let pendingVolta = null;
+      for (const t of line.split(/\s+/)){
+        if (t === '|:'){ if (lastNote) lastNote.barAfter = '|:'; else beat.barStart = '|:'; continue; }
+        if (t === ':|' || t === '|'){ if (lastNote) lastNote.barAfter = t; continue; }
+        if (/^\[[0-9]+\]$/.test(t)){ pendingVolta = t; continue; }
+        const n = parseGridNote(t);
+        if (pendingVolta){ n.voltaBefore = pendingVolta; pendingVolta = null; }
+        n._isNote = true;
+        beat.push(n);
+        lastNote = n;
+      }
+      song.beats.push(beat);
+      continue;
+    }
+  }
+  return song;
+}
+/* jeden blok: >II:6,5+I:8;Ff / >>-;F / <<.;c / II:5~ */
+function parseGridNote(tok){
+  const n = { row:'II', num:'', extras:[], cross:[], bas:'', tie:false, hold:false, empty:false, dir:null, newArrow:false };
+  let s = tok;
+  if (s.startsWith('>>')){ n.dir='push'; s=s.slice(2); }
+  else if (s.startsWith('<<')){ n.dir='pull'; s=s.slice(2); }
+  else if (s.startsWith('>')){ n.dir='push'; n.newArrow=true; s=s.slice(1); }
+  else if (s.startsWith('<')){ n.dir='pull'; n.newArrow=true; s=s.slice(1); }
+  const semi = s.indexOf(';');
+  const head = semi >= 0 ? s.slice(0, semi) : s;
+  if (semi >= 0) n.bas = s.slice(semi + 1);
+  if (head === '-'){ n.hold = true; return n; }
+  if (head === '.'){ n.empty = true; return n; }
+  /* hlasy spojené + (přes řady) */
+  const parts = head.split('+');
+  for (let pi = 0; pi < parts.length; pi++){
+    const pm = parts[pi].match(/^(II|I):(.+)$/);
+    let row = pi === 0 ? 'II' : null, nums;
+    if (pm){ row = pm[1]; nums = pm[2]; } else { nums = parts[pi]; }
+    const list = nums.split(',').map(x => {
+      let v = x; let tie = false;
+      if (v.endsWith('~')){ tie = true; v = v.slice(0, -1); }
+      if (pi === 0 && tie) n.tie = true;
+      return v;
+    });
+    if (pi === 0){ n.row = row; n.num = list[0]; n.extras = list.slice(1); }
+    else { n.cross.push({ row, num: list[0], extras: list.slice(1) }); }
+  }
+  return n;
 }
 /* nota: II:6/5;F~ | I:8;f | -;C | >>;B | <;~ skluzovka — a směr měchu: >II:5 = Tlak (→), <II:6 = Tah (←) */
 function parseNote(tok){
@@ -257,6 +341,13 @@ function renderBeats(song){
   let gi = -1, lastDir = null;
   flatNotes.forEach((n, i) => {
     const d = n.slide ? null : n.dir;
+    if (song.grid) {
+      /* Grid-Text: > = NOVÁ šipka (vždy začátek skupiny), >> = prodloužení předchozí */
+      if (n.newArrow && d) { gi = i; lastDir = d; n._mGroup = gi; n._mDir = d; return; }
+      if (d && d !== lastDir) { gi = i; lastDir = d; }
+      if (d) { n._mGroup = gi; n._mDir = d; } else { n._mGroup = null; n._mDir = null; }
+      return;
+    }
     if (d && d !== lastDir) { gi = i; lastDir = d; }
     if (d) {
       n._mGroup = gi; n._mDir = d;
@@ -271,7 +362,7 @@ function renderBeats(song){
   song.beats.forEach((beat)=>{
     beat.forEach(note=>{
       if (sysCells.children.length >= MAX_COLS) newSystem();
-      if (!note.bas && !note.hold){
+      if (!note.bas && !note.hold && !song.grid){
         note.bas = autoBass(song.key, +note.num || 1, prevBas);
       }
       if (note.bas) prevBas = note.bas;
@@ -283,12 +374,23 @@ function renderBeats(song){
       { const ad=document.createElement('div'); ad.className='alt-hint'; if (alt) ad.textContent='↷ '+alt; if (anyAlt) cell.insertBefore(ad, cell.children[2]); }
       cell.appendChild(rowDiv('B', note));
       cell.appendChild(rowDiv('M', note));
-      /* slabika pod dobou: basový fill text nekonzumuje; držení i nota konzumují (vzor: -;f má svou slabiku) */
-      if (note.fill) cell.appendChild(syllableDiv(-1));
+      /* slabika: Grid-Text ji nese parser (n.syl), starý formát ji přiřadí pořadím */
+      if (song.grid) {
+        const sd = document.createElement('div'); sd.className = 'rT'; sd.textContent = note.syl || '';
+        cell.appendChild(sd);
+      } else if (note.fill) cell.appendChild(syllableDiv(-1));
       else { cell.appendChild(syllableDiv(noteCount)); noteCount++; }
       if (note.tie) cell.classList.add('tie');
       if (note.slide) cell.classList.add('slide-'+note.slide);
+      /* Grid-Text: volta značka před dobou */
+      if (note.voltaBefore) { const v=document.createElement('div'); v.className='volta-mark'; v.textContent=note.voltaBefore; cell.appendChild(v); }
       sysCells.appendChild(cell);
+      /* Grid-Text: taktová čára za dobou (| / |: / :|) */
+      if (song.grid && note.barAfter) {
+        const bl=document.createElement('div'); bl.className='barline '+(note.barAfter==='|:'?'bar-repeat-start':note.barAfter===':|'?'bar-repeat-end':'bar-single');
+        bl.title = note.barAfter;
+        sysCells.appendChild(bl);
+      }
     });
   });
   /* poslední řádek tabulatury doplnit prázdnými sloupci na plný počet (vzor) */
@@ -317,8 +419,19 @@ function renderBeats(song){
 function rowDiv(row, note){
   const d=document.createElement('div'); d.className='r'+row;
   const isRow = note.row === row;
-  if (row==='II') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
-  else if (row==='I') d.textContent = isRow ? (note.glide ? note.num+'\n'+note.glide : (note.hold?'–':note.num)) : (note.hold?'–':'');
+  const numsOf = (n) => n.extras && n.extras.length ? [n.num, ...n.extras].join(',') : n.num;
+  const crossInRow = (note.cross || []).filter(c => c.row === row);
+  if (row==='II' || row==='I'){
+    let txt = '';
+    if (isRow) txt = note.hold ? '–' : (note.empty ? '' : numsOf(note));
+    else if (note.hold) txt = '–';
+    /* cross-row hlas v této řadě */
+    if (crossInRow.length) {
+      const cnum = crossInRow.map(c => numsOf(c)).join('+');
+      txt = txt ? txt + '+' + cnum : cnum;
+    }
+    d.textContent = txt;
+  }
   else if (row==='B') d.textContent = note.bas || '';
   else {
     /* M řádek: souvislá CSS šipka přes skupinu not (kreslí ji CSS čára, ne textový glyf) */
