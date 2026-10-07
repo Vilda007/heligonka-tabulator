@@ -20,7 +20,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="style.css?v=2026100703">
+<link rel="stylesheet" href="style.css?v=2026100704">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7a4a1d">
 <script>window.__GA_IDS=["G-04KFHFT8V8"];</script>
@@ -91,10 +91,12 @@
   </div>
   <textarea id="input" spellcheck="false" rows="12" title="Melodie ve textovém formátu: ŘÁDA:tlačítko;BAS — detaily v Nápovědě"></textarea>
   <div class="hint" data-i18n-html="hint.format.html">
-    <b>Formát:</b> <code>title:</code>, <code>key:</code>, nebo <code>abc:</code> (jednořádkový ABC zápis → automatický převod).<br>
-    Nota: <code>II:5;F</code> (řáda II, tlačítko 5, bas F stlačený) · <code>II:6/5;f</code> (skluz 6→5) · <code>I:8;f~</code> (oblouček na další notu) · <code>-;C</code> (drž/pauza) · <code>&gt;&gt;;B</code> (skluz doprava).<br>
-    Sloky: <code>v1:</code> text, svislítko <code>|</code> odděluje fráze <br>
-    Basy se doplní automaticky dle tóniny, pokud je nezadáš.
+    <b>Grid-Text formát:</b> řádky začínají <code>|</code>, každý sloupec = <code>směr;melodie;basy</code>.<br>
+    Směr: <code>&gt;</code> nový tlak, <code>&gt;&gt;</code> prodloužení, <code>&lt;</code> nový tah, <code>&lt;&lt;</code> prodloužení.<br>
+    Melodie: <code>II:6,5</code> (dva knoflíky nad sebou), <code>II:5+I:8</code> (akord přes řady), <code>~</code> oblouček, <code>-</code> držení, <code>.</code> prázdné.<br>
+    Basy za <code>;</code>: velké = bas, malé = akord, obojí <code>;Ff</code>. Takty <code>|</code>, repetice <code>|:</code> <code>:|</code>, volty <code>[1]</code> <code>[2]</code>.<br>
+    Text: <code>TXT:</code> řádek pod notami — slabika 1:1 na sloupec, <code>_</code> = prázdné.<br>
+    Starý formát (řádky <code>II:5;F</code> bez <code>|</code>) stále funguje.
   </div>
   <div class="controls">
     <button id="render" title="Vykreslí tabulaturu z aktuálního textu" data-i18n="tab.render">Vygenerovat tabulaturu</button>

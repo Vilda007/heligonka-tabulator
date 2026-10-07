@@ -10,7 +10,7 @@
 <meta name="description" content="Nápověda k aplikaci Heligonka Tabulator: zadání melodie, tóniny a transpozice, formát vstupu, MIDI a XLS import/export, knihovna písní a role uživatelů.">
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#7a4a1d">
-<link rel="stylesheet" href="style.css?v=2026100703">
+<link rel="stylesheet" href="style.css?v=2026100704">
 <script>window.__GA_IDS=["G-04KFHFT8V8"];</script>
 <script src="/consent.js" defer></script>
 </head>
@@ -54,20 +54,24 @@
 </section>
 
 <section>
-<h2>5. Formát vstupu (stručně)</h2>
+<h2>5. Formát zápisu — Grid-Text</h2>
+<p>Nový formát (řádky začínají <code>|</code>) — každý sloupec = jedna doba:</p>
 <table class="hinttable">
 <tr><th>Zápis</th><th>Význam</th></tr>
-<tr><td><code>title: Na Pankráci</code></td><td>název písně</td></tr>
-<tr><td><code>key: F</code></td><td>tónina (F default; F, C, G, A, D, B)</td></tr>
-<tr><td><code>abc: C D E F | G A B c</code></td><td>melodie v ABC (místo taktove řady)</td></tr>
-<tr><td><code>II:5;F</code></td><td>řada II, tlačítko 5, bas F (tlačící = velké, tažný = malé: F/f, B/b, C/c...)</td></tr>
-<tr><td><code>II:6/5;f</code></td><td>tl. 6 se skluzem na 5 (číslo/skluz u lomítko)</td></tr>
-<tr><td><code>I:8;f~</code></td><td>oblouček (skluzovka) na další notu (vlnovka na konci)</td></tr>
-<tr><td><code>-;C</code></td><td>drž/pauza v melodii, bas C zní</td></tr>
-<tr><td><code>&gt;&gt;;B</code> / <code>&lt;&lt;;B</code></td><td>skluz doprava / doleva (přes vlnovku do dalšího sloupce)</td></tr>
-<tr><td><code>v1: Na Pankráci | na malém...</code></td><td>sloha — <code>|</code> odděluje fráze</td></tr>
+<tr><td><code>title: / key:</code></td><td>název písně / tónina (F, C, G, A, D, B)</td></tr>
+<tr><td><code>|&gt;II:6,5;F >>II:5,4;f |</code></td><td>hudební řádek: sloupce mezerou, takty <code>|</code>, směr před notou</td></tr>
+<tr><td><code>&gt;</code> / <code>&gt;&gt;</code></td><td>nový tlak (šipka →) / prodloužení šipky přes další doby</td></tr>
+<tr><td><code>&lt;</code> / <code>&lt;&lt;</code></td><td>nový tah (šipka ←) / prodloužení</td></tr>
+<tr><td><code>II:6,5</code></td><td>dva knoflíky současně (čísla se zobrazí nad sebou)</td></tr>
+<tr><td><code>II:5+I:8</code></td><td>akord přes obě řady současně</td></tr>
+<tr><td><code>II:5~</code></td><td>oblouček (legato) na další notu — dlouhé mělké údolí v tabulatuře</td></tr>
+<tr><td><code>-;f</code> / <code>.</code></td><td>držení (bas zní) / zcela prázdná doba</td></tr>
+<tr><td><code>;F</code> / <code>;f</code> / <code>;Ff</code></td><td>basy za středníkem: velké = bas, malé = akord, obojí najednou</td></tr>
+<tr><td><code>|:</code> … <code>:|</code></td><td>repetice (opakování úseku), vykreslí se dvojitá čára s tečkami</td></tr>
+<tr><td><code>[1]</code> / <code>[2]</code></td><td>volta — 1. / 2. případ při repríze (malé číslo s linkou nad řádkem)</td></tr>
+<tr><td><code>TXT: | Na _ _ |</code></td><td>text pod notami: slabika 1:1 na sloupec, <code>_</code> = prázdný slot, takty i zde</td></tr>
 </table>
-<p>Pokud basu nezadáte, doplní se automaticky dle tóniny (pravidla I/IV/V).</p>
+<p><b>Starý formát</b> (řádky <code>II:5;F II:6;f</code> bez <code>|</code>, sloky <code>v1:</code>) aplikace stále umí — starší písně v knihovně se vykreslují beze změny.</p>
 </section>
 
 <section>
