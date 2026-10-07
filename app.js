@@ -382,15 +382,14 @@ function renderBeats(song){
       else { cell.appendChild(syllableDiv(noteCount)); noteCount++; }
       if (note.tie) cell.classList.add('tie');
       if (note.slide) cell.classList.add('slide-'+note.slide);
+      /* Grid-Text: taktová čára za dobou — jako TŘÍDA buňky (ne samostatný grid potomek,
+         který rozbíjel 1fr šířky sloupců); repetice |: :| jako tlustá čára + tenká linka */
+      if (song.grid && note.barAfter) {
+        cell.classList.add(note.barAfter === '|:' ? 'bar-rstart' : note.barAfter === ':|' ? 'bar-rend' : 'bar-single');
+      }
       /* Grid-Text: volta značka před dobou */
       if (note.voltaBefore) { const v=document.createElement('div'); v.className='volta-mark'; v.textContent=note.voltaBefore; cell.appendChild(v); }
       sysCells.appendChild(cell);
-      /* Grid-Text: taktová čára za dobou (| / |: / :|) */
-      if (song.grid && note.barAfter) {
-        const bl=document.createElement('div'); bl.className='barline '+(note.barAfter==='|:'?'bar-repeat-start':note.barAfter===':|'?'bar-repeat-end':'bar-single');
-        bl.title = note.barAfter;
-        sysCells.appendChild(bl);
-      }
     });
   });
   /* poslední řádek tabulatury doplnit prázdnými sloupci na plný počet (vzor) */
@@ -419,7 +418,7 @@ function renderBeats(song){
 function rowDiv(row, note){
   const d=document.createElement('div'); d.className='r'+row;
   const isRow = note.row === row;
-  const numsOf = (n) => n.extras && n.extras.length ? [n.num, ...n.extras].join(',') : n.num;
+  const numsOf = (n) => n.extras && n.extras.length ? [n.num, ...n.extras].join('\n') : n.num; /* multi-číslice NAD SEBOU (vzor), white-space:pre je v CSS */
   const crossInRow = (note.cross || []).filter(c => c.row === row);
   if (row==='II' || row==='I'){
     let txt = '';
