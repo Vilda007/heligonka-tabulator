@@ -178,7 +178,7 @@ button:hover { filter: brightness(1.1); }
 .libtable th, .libtable td { border-bottom: 1px solid #ddd; text-align: left; padding: .35em .5em; }
 .libtable th { font-size: .8rem; text-transform: uppercase; color: #777; }
 .libtable td.actions { white-space: nowrap; display: table-cell; margin-top: 0; }
-.cell.tie .rII::after, .cell.tie .rI::after { content: '⌒'; position: absolute; }
+.cell.tie .rII::after, .cell.tie .rI::after { content: '∪'; position: absolute; }
 .slide-right .rM::after { content: '→'; font-size: .9rem; }
 .slide-left  .rM::after { content: '←'; font-size: .9rem; }
 .verse { font-size: .95rem; margin: .2em 0; }
