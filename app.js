@@ -163,8 +163,8 @@ function parseGridSong(text, song){
       let lastNote = null;
       let pendingVolta = null;
       for (const t of line.split(/\s+/)){
-        if (t === '|:'){ if (lastNote) lastNote.barAfter = '|:'; else beat.barStart = '|:'; continue; }
-        if (t === ':|' || t === '|'){ if (lastNote) lastNote.barAfter = t; continue; }
+        if (t === '|:'){ if (lastNote) lastNote.barAfter = (lastNote.barAfter || '') + '|:'; else beat.barStart = (beat.barStart || '') + '|:'; continue; }
+        if (t === ':|' || t === '|'){ if (lastNote) lastNote.barAfter = (lastNote.barAfter || '') + t; continue; }
         if (/^\[[0-9]+\]$/.test(t)){ pendingVolta = t; continue; }
         const n = parseGridNote(t);
         if (pendingVolta){ n.voltaBefore = pendingVolta; pendingVolta = null; }
@@ -339,27 +339,33 @@ function renderBeats(song){
     if (autoDir) n.dir = autoDir;
   });
   let gi = -1, lastDir = null;
-  flatNotes.forEach((n, i) => {
-    const d = n.slide ? null : n.dir;
-    if (song.grid) {
-      /* Grid-Text: > = NOVÁ šipka (vždy začátek skupiny), >> = prodloužení předchozí */
-      if (n.newArrow && d) { gi = i; lastDir = d; n._mGroup = gi; n._mDir = d; return; }
-      if (d && d !== lastDir) { gi = i; lastDir = d; }
+  if (song.grid) {
+    /* Grid-Text: > = NOVÁ šipka, >> = prodloužení; na hranici taktu (barAfter)
+       se šipka láme — každý takt má vlastní šipku s hrotem (vzor) */
+    for (let bi = 0; bi < flatNotes.length; bi++) {
+      const n = flatNotes[bi];
+      const d = n.slide ? null : n.dir;
+      const prevN = flatNotes[bi - 1];
+      const barBreak = !!(prevN && prevN.barAfter); /* za taktovou čárou vždy nová skupina */
+      if (d && (n.newArrow || !prevN || !prevN.dir || barBreak)) { gi = bi; lastDir = d; n._mGroup = gi; n._mDir = d; continue; }
       if (d) { n._mGroup = gi; n._mDir = d; } else { n._mGroup = null; n._mDir = null; }
-      return;
     }
-    if (d && d !== lastDir) { gi = i; lastDir = d; }
-    if (d) {
-      n._mGroup = gi; n._mDir = d;
-    } else { n._mGroup = null; n._mDir = null; }
-  });
+  } else {
+    flatNotes.forEach((n, i) => {
+      const d = n.slide ? null : n.dir;
+      if (d && d !== lastDir) { gi = i; lastDir = d; }
+      if (d) {
+        n._mGroup = gi; n._mDir = d;
+      } else { n._mGroup = null; n._mDir = null; }
+    });
+  }
   flatNotes.forEach((n, i) => {
     if (n._mGroup == null) return;
     const prev = flatNotes[i-1], next = flatNotes[i+1];
     n._mStart = !(prev && prev._mGroup === n._mGroup);
     n._mEnd = !(next && next._mGroup === n._mGroup);
   });
-  song.beats.forEach((beat)=>{
+  song.beats.forEach((beat, beatIdx)=>{
     beat.forEach(note=>{
       if (sysCells.children.length >= MAX_COLS) newSystem();
       if (!note.bas && !note.hold && !song.grid){
@@ -380,13 +386,18 @@ function renderBeats(song){
         cell.appendChild(sd);
       } else if (note.fill) cell.appendChild(syllableDiv(-1));
       else { cell.appendChild(syllableDiv(noteCount)); noteCount++; }
-      if (note.tie) cell.classList.add('tie');
+      if (note.tie) cell.classList.add('tie', 'tie-' + (note.row || 'II'));
       if (note.slide) cell.classList.add('slide-'+note.slide);
-      /* Grid-Text: taktová čára za dobou — jako TŘÍDA buňky (ne samostatný grid potomek,
-         který rozbíjel 1fr šířky sloupců); repetice |: :| jako tlustá čára + tenká linka */
+      /* Grid-Text: taktové čáry za dobou — kombinace značek (:| a |: za sebou = bar-both) */
       if (song.grid && note.barAfter) {
-        cell.classList.add(note.barAfter === '|:' ? 'bar-rstart' : note.barAfter === ':|' ? 'bar-rend' : 'bar-single');
+        const ba = note.barAfter;
+        if (ba.includes(':|') && ba.includes('|:')) cell.classList.add('bar-both');
+        else if (ba.includes(':|')) cell.classList.add('bar-rend');
+        else if (ba.includes('|:')) cell.classList.add('bar-rstart');
+        else cell.classList.add('bar-single');
       }
+      /* Grid-Text: |: na začátku řádku — LEVÝ okraj prvního datového sloupce (ne pravý okraj = o buňku dřív) */
+      if (song.grid && beatIdx === 0 && beat.barStart && beat.barStart.includes('|:') && note === beat[0]) cell.classList.add('bar-lstart');
       /* Grid-Text: volta značka před dobou — jen číslo (1/2) s linkou, ne [1] s závorkami */
       if (note.voltaBefore) { const v=document.createElement('div'); v.className='volta-mark'; v.textContent=note.voltaBefore.replace(/\[|\]/g,''); cell.appendChild(v); }
       sysCells.appendChild(cell);

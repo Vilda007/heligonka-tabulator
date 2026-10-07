@@ -124,27 +124,64 @@ button:hover { filter: brightness(1.1); }
 .osnova-inner { min-width: 100%; }
 #toggle-osnova.on { background: #7a4a1d; color: #fff8e6; }
 /* M řádek — souvislá šipka měchu přes skupinu not (CSS čára, ne text) */
-/* oblouček (legato/tie): dlouhé mělké údolí — CSS kreslené, vpravo od čísla,
-   přesahuje k další notě (jako notová ligatura); NE znak ∪ uprostřed (zakrýval čísla) */
-.cell.tie .rII::after, .cell.tie .rI::after {
+/* oblouček (legato/tie): dlouhé mělké údolí JEN nad řadou noty (tie-II → rII, tie-I → rI),
+   vpravo od čísla, přesahuje k další notě (jako notová ligatura) */
+.cell.tie-II .rII::after, .cell.tie-I .rI::after {
   content: '';
   position: absolute;
   left: 38%;
   width: 90%;
-  top: 18%;
-  height: 34%;
-  border-bottom: 2.5px solid #222;
-  border-radius: 0 0 100% 100% / 0 0 230% 230%;
+  top: 22%;
+  height: 22%;
+  border-bottom: 2px solid #222;
+  border-radius: 0 0 100% 100% / 0 0 320% 320%;
+  pointer-events: none;
+  z-index: 1;
+}
+/* fallback pro starý formát (bez tie-II/tie-I): řada II */
+.cell.tie:not(.tie-II):not(.tie-I) .rII::after {
+  content: '';
+  position: absolute;
+  left: 38%;
+  width: 90%;
+  top: 22%;
+  height: 22%;
+  border-bottom: 2px solid #222;
+  border-radius: 0 0 100% 100% / 0 0 320% 320%;
   pointer-events: none;
   z-index: 1;
 }
 /* Grid-Text: taktové čáry — PRAVÝ okraj buňky (grid potomek by rozbil 1fr šířky);
    repetice |: :| = tlustá linka + tenká tečka/dvojlinka */
+/* repetiční čáry |: :| — dvě svislé tečky u čáry, vertikálně na středu řádku I */
+.cell.bar-rstart::before, .cell.bar-rend::before, .cell.bar-lstart::before, .cell.bar-both::before {
+  content: '';
+  position: absolute;
+  top: 40%; /* střed řádku I */
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #222;
+  box-shadow: 0 -9px 0 #222; /* druhá tečka nad */
+  z-index: 2;
+}
+.cell.bar-rstart::before { right: -7px; }  /* |: na konci buňky — tečky vpravo od čáry */
+.cell.bar-rend::before   { right: 4px; }    /* :| — tečky vlevo od čáry */
+.cell.bar-lstart::before { left: 5px; }     /* |: na začátku řádku — tečky vpravo od levé čáry */
+.cell.bar-both::before   { right: 4px; }    /* :||: — tečky uzavírací (vlevo) … */
+.cell.bar-both::after {                     /* … a tečky otevírací (vpravo) */
+  content: '';
+  position: absolute;
+  top: 40%;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #222;
+  box-shadow: 0 -9px 0 #222;
+  right: -7px;
+  z-index: 2;
+}
 .cell.bar-single { border-right: 2px solid #555; }
-.cell.bar-rstart { border-right: 3px solid #222; box-shadow: inset -6px 0 0 -4px #222; }
-.cell.bar-rend { border-right: 3px solid #222; box-shadow: inset 6px 0 0 -4px #222; }
-.cell.bar-rstart + .cell { border-left: 1px solid #222; }
-.cell.bar-rend ~ .cell:last-child { }
+.cell.bar-rstart, .cell.bar-rend, .cell.bar-both { border-right: 3px solid #222; box-shadow: inset -6px 0 0 -4px #222; }
+.cell.bar-lstart { border-left: 3px solid #222; box-shadow: inset 6px 0 0 -4px #222; }
 /* volta [1]/[2]: malé číslo s vodorovnou linkou nad řádkem II (notový zápis),
    NE velké [1] přes buňku */
 .volta-mark {
@@ -206,7 +243,7 @@ button:hover { filter: brightness(1.1); }
 .libtable th, .libtable td { border-bottom: 1px solid #ddd; text-align: left; padding: .35em .5em; }
 .libtable th { font-size: .8rem; text-transform: uppercase; color: #777; }
 .libtable td.actions { white-space: nowrap; display: table-cell; margin-top: 0; }
-.cell.tie .rII::after, .cell.tie .rI::after { content: '∪'; position: absolute; }
+.cell.tie .rII::after, .cell.tie .rI::after { content: ''; } /* nahrazeno CSS údolím výše */
 .slide-right .rM::after { content: '→'; font-size: .9rem; }
 .slide-left  .rM::after { content: '←'; font-size: .9rem; }
 .verse { font-size: .95rem; margin: .2em 0; }
