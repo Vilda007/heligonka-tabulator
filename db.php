@@ -173,20 +173,64 @@ function jt_json_decode($raw) {
     $raw = trim(strval($raw));
     if ($raw === '') return null;
     $data = stripslashes_safe_pairs($raw);
-    // Extract "key":"value" and "key":number/bool/null pairs
+    /* Stavový automat (PHP4-safe): čárky/závorky uvnitř "stringů" jsou legální,
+       regex verze je usekávala na první čárce — rozbíjela Grid-Text data (II:6,5). */
     $out = array();
-    if (preg_match_all('/"((?:[^"\\\\]|\\\\.)+)"\s*:\s*("?(?:[^",{}\\[\\]]*)"?)\s*[,}]/U', $data, $m, PREG_SET_ORDER)) {
-        foreach ($m as $pair) {
-            $k = jt_unescape($pair[1]);
-            $v = $pair[2];
-            $v = trim($v);
-            if ($v === 'true') $out[$k] = true;
-            elseif ($v === 'false') $out[$k] = false;
-            elseif ($v === 'null') $out[$k] = null;
-            elseif (strlen($v) >= 2 && $v[0] == '"') $out[$k] = jt_unescape(substr($v, 1, -1));
-            elseif (is_numeric($v)) $out[$k] = $v + 0;
-            else $out[$k] = $v;
+    $len = strlen($data);
+    $i = 0;
+    while ($i < $len) {
+        /* najdi začátek klíče " ... " */
+        while ($i < $len && $data[$i] !== '"') $i++;
+        if ($i >= $len) break;
+        $i++; /* přeskoč úvodní uvozovku */
+        $key = '';
+        while ($i < $len && $data[$i] !== '"') {
+            if ($data[$i] === '\\' && $i + 1 < $len) { $key .= $data[$i] . $data[$i+1]; $i += 2; }
+            else { $key .= $data[$i]; $i++; }
         }
+        $i++; /* koncová uvozovka klíče */
+        /* přeskoč : a mezery */
+        while ($i < $len && ($data[$i] === ':' || $data[$i] === ' ' || $data[$i] === "\n" || $data[$i] === "\r" || $data[$i] === "\t")) $i++;
+        if ($i >= $len) break;
+        /* hodnota */
+        $val = null;
+        if ($data[$i] === '"') {
+            /* string — čárky a závorky uvnitř jsou součástí hodnoty */
+            $i++;
+            $str = '';
+            while ($i < $len && $data[$i] !== '"') {
+                if ($data[$i] === '\\' && $i + 1 < $len) { $str .= $data[$i] . $data[$i+1]; $i += 2; }
+                else { $str .= $data[$i]; $i++; }
+            }
+            $i++; /* koncová uvozovka */
+            $val = jt_unescape($str);
+        } else {
+            /* číslo/bool/null/objekt — poznáme podle prvního znaku */
+            $vstart = $i;
+            if ($data[$i] === '{' || $data[$i] === '[') {
+                /* vnořený objekt/pole — jen skipneme (aplikace nepoužívá) */
+                $depth = 0;
+                while ($i < $len) {
+                    $c = $data[$i];
+                    if ($c === '"') { /* skip string uvnitř */ $i++; while ($i < $len && $data[$i] !== '"') { if ($data[$i] === '\\' && $i+1 < $len) $i += 2; else $i++; } }
+                    elseif ($c === '{' || $c === '[') { $depth++; $i++; }
+                    elseif ($c === '}' || $c === ']') { $depth--; $i++; if ($depth === 0) break; }
+                    else $i++;
+                }
+            } else {
+                while ($i < $len && $data[$i] !== ',' && $data[$i] !== '}') { $i++; }
+            }
+            $v = trim(substr($data, $vstart, $i - $vstart));
+            if ($v === 'true') $val = true;
+            elseif ($v === 'false') $val = false;
+            elseif ($v === 'null') $val = null;
+            elseif (is_numeric($v)) $val = $v + 0;
+            else $val = $v;
+        }
+        $k = jt_unescape($key);
+        if ($k !== '') $out[$k] = $val;
+        /* přeskoč oddělovač , */
+        while ($i < $len && ($data[$i] === ',' || $data[$i] === ' ' || $data[$i] === "\n" || $data[$i] === "\r" || $data[$i] === "\t")) $i++;
     }
     return count($out) ? $out : null;
 }
