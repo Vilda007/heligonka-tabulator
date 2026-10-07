@@ -208,15 +208,16 @@ button:hover { filter: brightness(1.1); }
 }
 /* čára i hrot končí stejně daleko od rámečku jako začátek (12 % inset) —
    ale na hranici skupin se inset zdvojnásobí, aby sousední šipky nesplynuly */
-.m-push.m-start::before { left: 12%; }
-.m-pull.m-end::before { right: 12%; }
-.m-push.m-end::before { right: 12%; }
-.m-pull.m-start::before { left: 12%; }
+/* šipky měchu: začátek i konec 20 % od okraje buňky (Vilda 7.10.) */
+.m-push.m-start::before { left: 20%; }
+.m-pull.m-end::before { right: 20%; }
+.m-push.m-end::before { right: 20%; }
+.m-pull.m-start::before { left: 20%; }
 /* hranice skupin: extra odsazení na straně BEZ hrotu, aby sousední šipky nesplynuly
    (push má hrot vpravo → extra inset vlevo; pull má hrot vlevo → extra inset vpravo,
    čára začíná u hrotu na 12 %, aby na něj navazovala) */
-.m-push.m-start.m-end::before { left: 22%; }
-.m-pull.m-start.m-end::before { left: 12%; right: 22%; }
+.m-push.m-start.m-end::before { left: 20%; }
+.m-pull.m-start.m-end::before { left: 20%; right: 20%; }
 /* hrot šipky: push → hrot vpravo na konci skupiny, pull ← hrot vlevo na začátku */
 .m-arrow::after {
   content: '';
@@ -226,8 +227,8 @@ button:hover { filter: brightness(1.1); }
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
 }
-.m-push.m-end::after { right: calc(12% - 9px); border-left: 9px solid #222; }
-.m-pull.m-start::after { left: calc(12% - 9px); border-right: 9px solid #222; }
+.m-push.m-end::after { right: calc(20% - 9px); border-left: 9px solid #222; }
+.m-pull.m-start::after { left: calc(20% - 9px); border-right: 9px solid #222; }
 /* patička tisků — na obrazovce skrytá, při tisku viditelná */
 .print-footer { text-align: center; font-size: .75rem; color: #999; margin-top: 1.2rem; }
 .print-footer.screen-hidden { display: none; }
