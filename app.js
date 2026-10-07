@@ -216,7 +216,7 @@ function renderBeats(song){
   const hdr = document.createElement('h3'); hdr.className='song-title'; hdr.textContent = song.title + ((song.key)?'  ('+song.key+' dur)':'');
   wrap.appendChild(hdr);
 
-  let sysEl=null, sysCells=null; const MAX_COLS=8;
+  let sysEl=null, sysCells=null; const MAX_COLS=15; /* hlavička + 15 datových = 16 sloupců (Vilda 7.10.) */
   /* slabiky textu: sloky 1..N spoj, rozděl na slova (slabiky) — přiřazují se postupně notám */
   const verses = {};
   song.lyrics.forEach(v=>{ (verses[v.verse] = verses[v.verse] || []).push(...v.text); });
