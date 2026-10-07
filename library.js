@@ -113,14 +113,21 @@ async function saveSong() {
     const user = getUser();
     if (!roleCanEdit(user)) { alert('Ukládat mohou jen editoři. Napiš adminovi, ať ti dá roli Editor.'); return; }
     const title = ($('song-title') && $('song-title').value.trim()) || EDITING.title || 'Bez názvu';
-    const payload = { title, key: $('key') ? $('key').value : EDITING.the_key, data: $('input') ? $('input').value : EDITING.data, lang: ($('song-lang') && $('song-lang').value) || EDITING.lang || 'CZ' };
+    const data = $('input') ? $('input').value : EDITING.data;
+    const payload = { title, key: $('key') ? $('key').value : EDITING.the_key, data, lang: ($('song-lang') && $('song-lang').value) || EDITING.lang || 'CZ' };
     let r;
     if (EDITING) { payload.id = EDITING.id; r = await api('update', { method: 'POST', body: payload }); }
     else { r = await api('create', { method: 'POST', body: payload }); }
     if (r.status !== 'ok') { alert('Uložení selhalo: ' + (r.code || '?')); return; }
-    $('save-status').textContent = 'Uloženo ✓ (v' + (r.version || 1) + ')';
-    EDITING = null;
-    await loadLibrary();
+    /* aktualizuj editační stav (NE nulovat!) — verze/titul/data odpovídají uloženému */
+    if (r.id) { /* nová píseň */ EDITING = { id: r.id, title, the_key: payload.key, data, version: r.version || 1, lang: payload.lang }; }
+    else { EDITING.title = title; EDITING.the_key = payload.key; EDITING.data = data; EDITING.version = r.version || (EDITING.version + 1); EDITING.lang = payload.lang; }
+    OPENED_TITLE = title;
+    DIRTY = false; /* změny uloženy */
+    $('save-status').textContent = 'Uloženo ✓ (v' + EDITING.version + ')';
+    if (typeof setClean === 'function') setClean();
+    /* knihovna existuje jen na její stránce — refresh jen tam */
+    if (typeof loadLibrary === 'function' && $('library-rows')) loadLibrary();
 }
 
 async function rateSong(id, stars) {

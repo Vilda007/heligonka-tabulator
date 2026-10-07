@@ -343,6 +343,28 @@ function syllableDiv(i){
 
 /* ================= PIPELINE ================= */
 let OPENED_TITLE = ''; // název naposledy otevřené písně (i pro anonyma)
+
+/* sledování neuložených změn — varování při odchodu z editace */
+let DIRTY = false;
+let _cleanSnapshot = '';
+function snapshotClean() {
+    _cleanSnapshot = ($('input') ? $('input').value : '') + '|' + ($('song-title') ? $('song-title').value : '') + '|' + ($('key') ? $('key').value : '');
+}
+function setClean() { snapshotClean(); DIRTY = false; }
+function checkDirty() {
+    const cur = ($('input') ? $('input').value : '') + '|' + ($('song-title') ? $('song-title').value : '') + '|' + ($('key') ? $('key').value : '');
+    DIRTY = (cur !== _cleanSnapshot);
+    return DIRTY;
+}
+function wireDirtyTracking() {
+    const inp = $('input'), ttl = $('song-title'), key = $('key');
+    [inp, ttl, key].forEach(el => { if (el) el.addEventListener('input', () => { checkDirty(); }); });
+    if (key) key.addEventListener('change', () => { checkDirty(); });
+    /* varování při zavření/přechodu s neuloženými změnami */
+    window.addEventListener('beforeunload', (e) => {
+        if (checkDirty()) { e.preventDefault(); e.returnValue = ''; return ''; }
+    });
+}
 function currentSongAndKey(){
   const selKey = $('key').value;
   let song = parseSong($('input').value);
@@ -426,6 +448,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     if ($('key')) { $('key').value = s.the_key || 'F'; $('key').dispatchEvent(new Event('change')); }
     $('save-status').textContent = isAnon ? '' : ((typeof t === 'function' ? t('msg.editing') : 'Editace: ') + s.title + ' (v' + s.version + ')');
     if (!isAnon && typeof updateShareLinks === 'function') updateShareLinks(s);
+    /* čistý snapshot po načtení — dokud uživatel nezmění, není co ukládat */
+    if (typeof setClean === 'function') setTimeout(setClean, 50);
 });
 /* export XLS + uložení (index) */
 window.addEventListener('DOMContentLoaded', () => {
@@ -443,6 +467,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }); if (!getUser()) em.style.display = 'none'; }
     const sv = $('save-song');
     if (sv) { sv.addEventListener('click', saveSong); if (!getUser()) sv.style.display = 'none'; }
+    /* sledování neuložených změn + varování při odchodu */
+    if (typeof wireDirtyTracking === 'function') wireDirtyTracking();
     /* Alternativy hmatů — přepínač */
     const ta = $('toggle-alts');
     if (ta) ta.addEventListener('click', () => {
