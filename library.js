@@ -103,7 +103,7 @@ async function newSong() {
     if (!roleCanEdit(user)) { alert('Zakládat písně může jen editor. Napiš adminovi, ať ti dá roli Editor.'); return; }
     const title = prompt('Název nové písně:');
     if (!title || !title.trim()) return;
-    const r = await api('create', { method: 'POST', body: { title: title.trim(), key: 'F', data: 'II:1;F', published: 1 } });
+    const r = await api('create', { method: 'POST', body: { title: title.trim(), key: 'F', data: 'title: Nová\nkey: F\n', published: 1 } });
     if (r.status !== 'ok') { alert('Vytvoření selhalo: ' + (r.code || '?')); return; }
     await loadLibrary();
     openSong(r.id);

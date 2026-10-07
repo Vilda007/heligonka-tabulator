@@ -480,5 +480,5 @@ window.addEventListener('DOMContentLoaded', () => {
     const fi = $('file');
     if (fi && !getUser()) { fi.style.display = 'none'; fi.parentElement.style.display = 'none'; }
     const nw = $('new-song');
-    if (nw) nw.addEventListener('click', () => { EDITING = null; $('input').value = ''; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; });
+    if (nw) nw.addEventListener('click', () => { EDITING = null; $('input').value = 'title: Nová\nkey: F\n'; $('save-status').textContent = 'Nová píseň'; $('key').value = 'F'; doRender(); });
 });
