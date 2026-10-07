@@ -164,10 +164,10 @@ button:hover { filter: brightness(1.1); }
   box-shadow: 0 -9px 0 #222; /* druhá tečka nad */
   z-index: 2;
 }
-.cell.bar-rstart::before { right: -7px; }  /* |: na konci buňky — tečky vpravo od čáry */
-.cell.bar-rend::before   { right: 4px; }    /* :| — tečky vlevo od čáry */
-.cell.bar-lstart::before { left: 5px; }     /* |: na začátku řádku — tečky vpravo od levé čáry */
-.cell.bar-both::before   { right: 4px; }    /* :||: — tečky uzavírací (vlevo) … */
+.cell.bar-rstart::before { right: -12px; } /* |: na konci buňky — tečky vpravo od čáry, odsazené */
+.cell.bar-rend::before   { right: 9px; }     /* :| — tečky vlevo od čáry, odsazené */
+.cell.bar-lstart::before { left: 10px; }    /* |: na začátku řádku — tečky vpravo od levé čáry */
+.cell.bar-both::before   { right: 9px; }    /* :||: — tečky uzavírací (vlevo) … */
 .cell.bar-both::after {                     /* … a tečky otevírací (vpravo) */
   content: '';
   position: absolute;
@@ -176,7 +176,7 @@ button:hover { filter: brightness(1.1); }
   border-radius: 50%;
   background: #222;
   box-shadow: 0 -9px 0 #222;
-  right: -7px;
+  right: -12px;
   z-index: 2;
 }
 .cell.bar-single { border-right: 2px solid #555; }
