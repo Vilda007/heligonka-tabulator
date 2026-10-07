@@ -129,12 +129,14 @@ button:hover { filter: brightness(1.1); }
 .cell.tie-II .rII::after, .cell.tie-I .rI::after {
   content: '';
   position: absolute;
-  left: 38%;
-  width: 90%;
-  top: 22%;
-  height: 22%;
+  /* dle Vildova nákresu: KRÁTKÝ ÚZKÝ oblouček hned napravo od čísel,
+     v horní části řádku, končí cca v polovině buňky (ne přes celou šířku) */
+  left: 45%;
+  width: 45%;
+  top: 12%;
+  height: 30%;
   border-bottom: 2px solid #222;
-  border-radius: 0 0 100% 100% / 0 0 320% 320%;
+  border-radius: 0 0 150% 150% / 0 0 180% 180%;
   pointer-events: none;
   z-index: 1;
 }
@@ -142,12 +144,12 @@ button:hover { filter: brightness(1.1); }
 .cell.tie:not(.tie-II):not(.tie-I) .rII::after {
   content: '';
   position: absolute;
-  left: 38%;
-  width: 90%;
-  top: 22%;
-  height: 22%;
+  left: 45%;
+  width: 45%;
+  top: 12%;
+  height: 30%;
   border-bottom: 2px solid #222;
-  border-radius: 0 0 100% 100% / 0 0 320% 320%;
+  border-radius: 0 0 150% 150% / 0 0 180% 180%;
   pointer-events: none;
   z-index: 1;
 }
